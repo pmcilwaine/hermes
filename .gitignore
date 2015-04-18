@@ -43,6 +43,8 @@ htmlcov/
 .cache
 nosetests.xml
 coverage.xml
+coverage*.xml
+version.properties
 
 # Translations
 *.mo
