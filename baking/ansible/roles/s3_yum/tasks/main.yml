@@ -1,0 +1,14 @@
+---
+- name: Download s3-yum rpm
+  shell: aws s3 cp s3://hermes-common-repo-paulmcilwaine-com/yum-plugin-s3-iam-1.0-1.noarch.rpm /tmp
+
+- name: Install s3-yum-iam plugin
+  yum: name=/tmp/yum-plugin-s3-iam-1.0-1.noarch.rpm
+
+- name: Install Project Repositories
+  copy: src={{item}} dest=/etc/yum.repos.d/
+  with_fileglob:
+    - "*.repo"
+
+- name: YUM update cache
+  shell: yum makecache --enablerepo epel

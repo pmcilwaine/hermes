@@ -1,0 +1,5 @@
+---
+dependencies:
+  - { role: timezone }
+  - { role: logrotate }
+  - { role: s3_yum }

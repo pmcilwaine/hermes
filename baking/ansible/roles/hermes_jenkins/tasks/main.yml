@@ -1,0 +1,23 @@
+---
+- name: Install Packages
+  yum: name={{ item }} enablerepo=epel
+  with_items:
+    - git
+    - nodejs
+    - npm
+    - jq
+    - xorg-x11-server-Xvfb
+    - pandoc
+    - doxygen
+    - rpm-build
+    - createrepo
+
+- name: Install PIP Packages
+  pip: name={{ item }}
+  with_items:
+    - doxypy
+    - pylint
+    - tox
+
+- name: Install Packer
+  include: install_packer.yml
