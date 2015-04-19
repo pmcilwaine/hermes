@@ -1,0 +1,30 @@
+---
+- name: create GOPATH directory
+  file: path=~/go state=directory
+  sudo: yes
+  sudo_user: ec2-user
+
+- name: create GOBIN directory
+  file: path=~/go/bin state=directory
+  sudo: yes
+  sudo_user: ec2-user
+
+- name: Add GOPATH to environment
+  lineinfile: dest="~/.bashrc" line="export GOPATH=~/go"
+  sudo: yes
+  sudo_user: ec2-user
+
+- name: Add $GOPATH/bin to $PATH
+  lineinfile: dest="~/.bashrc" line="export PATH=$GOPATH/bin:$PATH"
+  sudo: yes
+  sudo_user: ec2-user
+
+- name: Get Packer Package 64bit
+  shell: wget https://dl.bintray.com/mitchellh/packer/packer_0.7.5_linux_amd64.zip
+  sudo: yes
+  sudo_user: ec2-user
+
+- name: Unarchive Package
+  unarchive: src=packer_0.7.5_linux_amd64.zip dest=~/go/bin
+  sudo: yes
+  sudo_user: ec2-user
