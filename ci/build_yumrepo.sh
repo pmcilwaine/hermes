@@ -49,6 +49,6 @@ cd ${ROOT_DIR}
 
 mkdir -p ${ROOT_DIR}/${S3_BUCKET}
 aws s3 sync --delete s3://${S3_BUCKET}/ ${S3_BUCKET}
-cp dist/*${VERSION}*.rpm ${S3_BUCKET}/
+cp dist/*${VERSION}*.rpm ${S3_BUCKET}/ || true
 createrepo --update ${S3_BUCKET}
 aws s3 sync --delete ${S3_BUCKET} s3://${S3_BUCKET}/
