@@ -1,0 +1,6 @@
+-r requirements.txt
+pytest
+pytest-cov
+pytest-capturelog
+pytest-flask
+mock >= 1.0.0
