@@ -1,0 +1,2 @@
+recursive-include hermes_cms/templates *
+include requirements.txt README.md

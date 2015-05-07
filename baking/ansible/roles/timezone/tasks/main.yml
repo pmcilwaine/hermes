@@ -1,3 +1,6 @@
 ---
+- name: Install rsync
+  yum: name=rsync
+
 - name: Setting Timezone
   shell: rsync /usr/share/zoneinfo/{{ timezone }} /etc/localtime

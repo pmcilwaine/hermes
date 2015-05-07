@@ -108,4 +108,13 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 
-
+# Hermes folders
+.vagrant/
+packer_cache/
+output-virtualbox-iso/
+vms/
+box/
+node_modules/
+bower_components/
+*.db
+junit-*.xml
