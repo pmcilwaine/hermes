@@ -118,3 +118,5 @@ node_modules/
 bower_components/
 *.db
 junit-*.xml
+npm-debug.log
+.DS_Store
