@@ -45,6 +45,6 @@ rm -f ${ROOT_DIR}/dist/*.rpm
 mkdir -p ${ROOT_DIR}/dist
 
 for i in hermes_cms; do
-    ${i}/setup.py bdist_rpm --release=${RELEASE}
+    python ${i}/setup.py bdist_rpm --release=${RELEASE}
     mv ${i}/dist/*.rpm ${ROOT_DIR}/dist/
 done
