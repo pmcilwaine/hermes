@@ -32,6 +32,6 @@ app = create_app(config_obj=LocalConfig)
 
 @app.route('/assets/<path:filename>')
 def public_static(filename):
-    return send_from_directory(os.path.abspath('../../hermes_ui/src'), filename)
+    return send_from_directory(os.path.abspath('../../hermes_ui/dist'), filename)
 
 app.run(debug=True)

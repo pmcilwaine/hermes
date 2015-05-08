@@ -32,6 +32,14 @@ class Auth(object):
             session['auth_user'] = user.as_json()
 
     @staticmethod
+    def delete_session():
+        if 'auth_user' in session:
+            session.pop('auth_user')
+            return True
+
+        return False
+
+    @staticmethod
     def is_logged_in(func):
         @wraps(func)
         def _is_logged(*args, **kwargs):
