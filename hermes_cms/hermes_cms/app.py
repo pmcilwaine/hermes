@@ -1,7 +1,7 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import Flask, g, current_app
+from flask import Flask, current_app
 from hermes_cms.core.registry import Registry
 from sqlobject import sqlhub, connectionForURI
 

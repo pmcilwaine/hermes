@@ -1,7 +1,8 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from sqlobject import SQLObject, StringCol, PickleCol, DateTimeCol, BoolCol
+from sqlobject import SQLObject
+from sqlobject.col import StringCol, PickleCol, DateTimeCol, BoolCol
 import hashlib
 
 __all__ = ['User']
@@ -18,6 +19,7 @@ class User(SQLObject):
     permissions = PickleCol(default=set())
 
     def _set_password(self, value):
+        # pylint: disable=no-member
         self._SO_set_password(User.hash_password(value))
 
     @staticmethod
@@ -29,9 +31,9 @@ class User(SQLObject):
         :param password:
         :return: str
         """
-        h = hashlib.sha256()
-        h.update(password)
-        return h.hexdigest()
+        value = hashlib.sha256()
+        value.update(password)
+        return value.hexdigest()
 
     def as_json(self):
         """

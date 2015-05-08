@@ -1,4 +1,4 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from auth import Auth
+from hermes_cms.core.auth import Auth
