@@ -4,3 +4,4 @@ pytest-cov
 pytest-capturelog
 pytest-flask
 mock >= 1.0.0
+moto >= 0.3.4, < 0.4.0
