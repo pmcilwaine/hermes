@@ -120,3 +120,4 @@ bower_components/
 junit-*.xml
 npm-debug.log
 .DS_Store
+jshint.xml
