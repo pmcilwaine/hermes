@@ -32,7 +32,7 @@ def create_app(app_name='hermes_cms', config_obj=None, blueprints=None):
     if config_obj:
         app.config.from_object(config_obj)
 
-    blueprints = blueprints or Registry().get('blueprint')
+    blueprints = blueprints or Registry().get('blueprint').get('blueprint')
 
     for blueprint in blueprints:
         route = getattr(__import__(blueprint['name'], fromlist=blueprint['from']), blueprint['from'])

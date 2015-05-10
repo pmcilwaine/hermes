@@ -15,11 +15,15 @@ def app():
 
 @pytest.fixture
 def blueprint_config():
-    instance = MagicMock(name='Config')
-    instance.get.return_value = [{
-        'name': 'hermes_cms.views.admin',
-        'from': 'route'
-    }]
+    instance = MagicMock(name='Registry')
+    instance.get.return_value = {
+        'blueprint': [
+            {
+                'name': 'hermes_cms.views.admin',
+                'from': 'route'
+            }
+        ]
+    }
 
     return instance
 

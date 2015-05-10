@@ -27,7 +27,16 @@ User.createTable(ifNotExists=True)
 sqlhub.threadConnection.close()
 # close for application to begin
 
-app = create_app(config_obj=LocalConfig)
+app = create_app(config_obj=LocalConfig, blueprints=[
+    {
+        'name': 'hermes_cms.views.main',
+        'from': 'route'
+    },
+    {
+        'name': 'hermes_cms.views.admin',
+        'from': 'route'
+    }
+])
 
 
 @app.route('/assets/<path:filename>')

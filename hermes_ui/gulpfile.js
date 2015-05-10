@@ -8,6 +8,7 @@ var $ = require('gulp-load-plugins')();
 var del = require('del');
 var runSequence = require('run-sequence');
 var bower = require('gulp-bower');
+var mainBowerFiles = require('main-bower-files');
 
 process.env.JSHINT_CHECKSTYLE_FILE = 'jshint.xml';
 
@@ -19,6 +20,11 @@ var buildPaths = {
 buildPaths.patterns = {
     js: /\.js$/,
     css: /\.css$/
+};
+
+buildPaths.hermes = {
+    js: 'dist/admin/js',
+    templates: 'dist/admin/templates'
 };
 
 var devWatchPaths = {
@@ -33,7 +39,8 @@ var devWatchPaths = {
     ],
     cssPublic: [
         'src/public/css/**/*'
-    ]
+    ],
+    templates: 'src/admin/templates/**/*.html'
 };
 
 gulp.task('jshint', function () {
@@ -47,8 +54,40 @@ gulp.task('jshint', function () {
        .pipe($.jshint.reporter(checkstyleFileReporter));
 });
 
+gulp.task('jsvendor', function() {
+    return gulp.src(mainBowerFiles({ filter: buildPaths.patterns.js }))
+        .pipe($.concat('lib.js', { newLine: ';\n' }))
+        .pipe(gulp.dest(buildPaths.hermes.js));
+});
+
+gulp.task('jscopy', ['jsvendor'], function() {
+    gulp.src(devWatchPaths.jsAdmin)
+        .pipe($.concat('app.js'))
+        .on('error', function (err) {
+            gutil.log(err.message)
+            this.emit('end')
+        })
+        .pipe($.ngAnnotate())
+        .on('error', function (err) {
+            gutil.log(err.message)
+            this.emit('end')
+        })
+        .pipe(gulp.dest(buildPaths.hermes.js))
+        .pipe($.size({title: 'js_uncompressed'}));
+})
+
+gulp.task('views', function () {
+    return gulp.src(devWatchPaths.templates)
+        .pipe($.angularTemplatecache('template.js', {
+            standalone: true,
+            root: 'templates/',
+            module: 'hermes.templates'
+        }))
+        .pipe(gulp.dest(buildPaths.hermes.templates));
+});
+
 gulp.task('bower', function() {
-    return bower()
+    return bower();
 });
 
 gulp.task('stylevendor_public', function () {
@@ -56,7 +95,7 @@ gulp.task('stylevendor_public', function () {
     return gulp.src('bower_components/bootstrap-theme-bootswatch-flatly/css/bootstrap.min.css')
         .pipe($.concat('lib.css'))
         .pipe(gulp.dest('dist/public/css'))
-        .pipe($.size({title: 'CSS - public vendor'}))
+        .pipe($.size({title: 'CSS - public vendor'}));
 });
 
 gulp.task('styles_admin', function () {
@@ -99,9 +138,9 @@ gulp.task('styles', function () {
 });
 
 gulp.task('default', ['clean'], function (cb) {
-   runSequence('bower', ['styles', 'jshint'], cb);
+   runSequence('bower', ['styles', 'jshint', 'views', 'jscopy'], cb);
 });
 
 gulp.task('build:prod', ['clean'], function (cb) {
-    runSequence('bower', ['stylevendor_public', 'styles', 'jshint'], cb)
+    runSequence('bower', ['styles', 'jshint'], cb);
 });
