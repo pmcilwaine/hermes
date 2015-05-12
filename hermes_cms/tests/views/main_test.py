@@ -94,3 +94,27 @@ def test_post_login_valid(auth, db_connect_mock, config, blueprint_config, caplo
     })
 
     assert response.status_code == 302
+
+
+@patch('hermes_cms.views.main.Auth')
+@patch('hermes_cms.app.db_connect')
+@patch('hermes_cms.app.Registry')
+def test_logout_ok(config, db_connect_mock, auth_mock, blueprint_config):
+    config.return_value = blueprint_config
+    db_connect_mock.return_value = None
+    auth_mock.delete_session.return_value = True
+
+    response = app().get('/logout')
+    assert response.status_code == 302
+
+
+@patch('hermes_cms.views.main.Auth')
+@patch('hermes_cms.app.db_connect')
+@patch('hermes_cms.app.Registry')
+def test_logout_fail(config, db_connect_mock, auth_mock, blueprint_config):
+    config.return_value = blueprint_config
+    db_connect_mock.return_value = None
+    auth_mock.delete_session.return_value = False
+
+    response = app().get('/logout')
+    assert response.status_code == 400

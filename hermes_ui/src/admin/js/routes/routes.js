@@ -15,12 +15,59 @@
             });
 
             $stateProvider.state('users', {
+                abstract: true,
                 url: '/user',
                 templateUrl: 'templates/views/user.html',
-                controller: 'UserListController',
+                controller: 'UserController',
                 data: {
-                    tab: true,
+                    tab: false,
                     label: 'Users'
+                },
+                resolve: {
+                    UserList: function () { return {}; },
+                    user: function () { return {}; }
+                }
+            });
+
+            $stateProvider.state('users.list', {
+                url: '/list',
+                templateUrl: 'templates/views/user-list.html',
+                controller: 'UserListController',
+                resolve: {
+                    UserList: ['Users', function (Users) {
+                        return Users.getAll();
+                    }]
+                },
+                data: {
+                    tab: true
+                }
+            });
+
+            $stateProvider.state('users.add', {
+                url: '/add',
+                templateUrl: 'templates/views/user-form.html',
+                controller: 'UserFormController',
+                data: {
+                    tab: false
+                },
+                resolve: {
+                    user: ['Users', function (Users) {
+                        return Users.createNew();
+                    }]
+                }
+            });
+
+            $stateProvider.state('users.modify', {
+                url: '/modify/:id',
+                templateUrl: 'templates/views/user-form.html',
+                controller: 'UserFormController',
+                data: {
+                    tab: false
+                },
+                resolve: {
+                    user: ['Users', '$stateParams', function (Users, params) {
+                        return Users.getById(params.id);
+                    }]
                 }
             });
 

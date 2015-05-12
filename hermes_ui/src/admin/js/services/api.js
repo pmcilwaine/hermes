@@ -1,0 +1,13 @@
+(function () {
+
+    angular.module('hermes.services', ['ngResource'])
+        .factory('UserResource', ['$resource', function (resource) {
+            return resource('/admin/user/:id', {id: '@user_id'}, {
+                get: {method: 'GET'},
+                post: {method: 'POST'},
+                put: {method: 'PUT'},
+                delete: {method: 'DELETE'}
+            });
+        }]);
+
+})();

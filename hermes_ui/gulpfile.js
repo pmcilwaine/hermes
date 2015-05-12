@@ -137,6 +137,12 @@ gulp.task('styles', function () {
     runSequence('bower', ['styles_public', 'styles_admin', 'stylevendor_public']);
 });
 
+gulp.task('watch', function () {
+    gulp.watch('src/admin/templates/**/*.html', ['views']);
+    gulp.watch('src/**/*.{css,scss}', ['styles']);
+    gulp.watch('src/admin/js/**/*.js', ['jshint', 'jscopy']);
+});
+
 gulp.task('default', ['clean'], function (cb) {
    runSequence('bower', ['styles', 'jshint', 'views', 'jscopy'], cb);
 });

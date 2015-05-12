@@ -31,6 +31,7 @@
     "gulp-sass": "^2.0.0",
     "gulp-size": "^1.2.1",
     "gulp-util": "^3.0.4",
+    "gulp-watch": "^4.2.4",
     "jshint-checkstyle-file-reporter": "0.0.1",
     "jshint-stylish": "^1.0.2",
     "main-bower-files": "^2.7.0",
