@@ -73,6 +73,4 @@ def user_post(user_id=None):
 
 @route.route('/user/<user_id>', methods=['DELETE'])
 def user_delete(user_id=None):
-    print user_id
-    print User.deleteBy(uid=user_id)
     return Response(status=200)

@@ -52,7 +52,7 @@ class User(SQLObject):
             user = User(**record)
         else:
             user = User.selectBy(email=record['email'])
-            user.set()
+            user.set(**record)
 
         return user
 

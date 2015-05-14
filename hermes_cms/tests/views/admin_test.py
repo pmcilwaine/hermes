@@ -120,6 +120,39 @@ def test_user_save_invalid_request(config, db_connect_mock, blueprint_config):
     assert response.status_code == 400
 
 
+@patch('hermes_cms.views.admin.User')
+@patch('hermes_cms.views.admin.UserValidation')
+@patch('hermes_cms.app.db_connect')
+@patch('hermes_cms.app.Registry')
+def test_user_update(config, db_connect_mock, validation_mock, user_mock, blueprint_config):
+    config.return_value = blueprint_config
+    db_connect_mock.return_value = None
+    validation_mock.validate.return_value = True
+
+    user_mock.save.return_value = MagicMock(
+        uid='abcdef',
+        email='test@example.org',
+        first_name='Test',
+        last_name='User'
+    )
+
+    response = app().put('/admin/user/abcdef', data=json.dumps({
+        'email': 'test@example.org',
+        'password': '',
+        'first_name': 'Test',
+        'last_name': 'User'
+    }), content_type='application/json')
+
+    expected = {
+        'uid': 'abcdef',
+        'email': 'test@example.org',
+        'first_name': 'Test',
+        'last_name': 'User'
+    }
+
+    assert json.loads(response.data) == expected
+    assert response.status_code == 200
+
 
 @patch('hermes_cms.views.admin.User')
 @patch('hermes_cms.app.db_connect')

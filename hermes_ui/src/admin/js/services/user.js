@@ -14,22 +14,14 @@
 
             if (record.is_new || record.user_id === undefined) {
                 UserResource.post(record, function ok (msg) {
-                    console.log('ok post');
-                    console.log(msg);
                     deferred.resolve(msg);
                 }, function fail (msg) {
-                    console.log('fail post');
-                    console.log(msg);
                     deferred.reject(msg);
                 });
             } else {
                 UserResource.put(record, function ok (msg) {
-                    console.log('ok put');
-                    console.log(msg);
                     deferred.resolve(msg);
                 }, function fail (msg) {
-                    console.log('fail put');
-                    console.log(msg);
                     deferred.reject(msg);
                 });
             }
@@ -39,7 +31,6 @@
 
         user.getById = function (user_id) {
             var t = _.findWhere(data, {uid: user_id});
-            console.log(t);
             return t;
         };
 
@@ -55,7 +46,6 @@
         };
 
         user.getAll = function () {
-            console.log('getAll');
             return UserResource.get().$promise.then(function (users) {
                 data = users.users;
                 return data;
