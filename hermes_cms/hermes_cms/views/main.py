@@ -40,6 +40,14 @@ def post_login():
     })
 
 
+@route.route('/logout', methods=['GET'])
+def logout():
+    if Auth.delete_session():
+        return redirect('/')
+
+    return Response(status=400)
+
+
 @route.route('/', methods=['GET'])
 @route.route('/<path:path>', methods=['GET', 'POST', 'PUT'])
 def main_site(path=None):

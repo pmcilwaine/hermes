@@ -4,11 +4,15 @@
 from sqlobject import SQLObject
 from sqlobject.col import StringCol, PickleCol, DateTimeCol, BoolCol
 import hashlib
+import uuid
 
 __all__ = ['User']
 
 
 class User(SQLObject):
+    idType = str
+
+    uid = StringCol(length=36, alternateID=True)
     email = StringCol(length=255, alternateID=True)
     password = StringCol(length=64)
     first_name = StringCol(length=255)
@@ -34,6 +38,23 @@ class User(SQLObject):
         value = hashlib.sha256()
         value.update(password)
         return value.hexdigest()
+
+    @staticmethod
+    def save(record):
+        """
+
+        :type record: dict
+        :param record:
+        :return:
+        """
+        if 'uid' not in record:
+            record['uid'] = str(uuid.uuid4())
+            user = User(**record)
+        else:
+            user = User.selectBy(email=record['email'])
+            user.set(**record)
+
+        return user
 
     def as_json(self):
         """

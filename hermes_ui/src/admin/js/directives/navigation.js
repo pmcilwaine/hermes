@@ -10,9 +10,9 @@
         states.forEach(function (state) {
             if (state.data && state.data.tab) {
                 tabs.push({
-                    state: state.name,
+                    state: _.first(state.name.split('.')),
                     label: state.data.label,
-                    url: state.url
+                    url: $state.href(state.name)
                 });
             }
         });
