@@ -8,6 +8,14 @@
                 put: {method: 'PUT'},
                 delete: {method: 'DELETE'}
             });
+        }])
+        .factory('DocumentResource', ['$resource', function (resource) {
+            return resource('/admin/document/:id', {id: '@id'}, {
+                get: {method: 'GET'},
+                post: {method: 'POST'},
+                put: {method: 'PUT'},
+                delete: {method: 'DELETE'}
+            });
         }]);
 
 })();

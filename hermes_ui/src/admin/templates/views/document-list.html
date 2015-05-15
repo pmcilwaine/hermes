@@ -1,0 +1,35 @@
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1>Documents</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-4">
+        <button ui-sref="documents.add" class="btn btn-sm">Add Document</button>
+    </div>
+</div>
+
+<div class="row padding">
+    <div class="col-lg-12">
+
+        <table class="table table-bordered table-striped" ng-show="documents.length !== 0">
+            <tr>
+                <th>Name</th>
+                <th>Url</th>
+                <th></th>
+            </tr>
+            <tr ng-repeat="document in documents">
+                <td>{{ document.name }}</td>
+                <td>{{ document.url }}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm">Edit</button>
+                    <button class="btn btn-danger btn-sm">Delete</button>
+                </td>
+            </tr>
+        </table>
+
+        <p ng-show="documents.length === 0">There are currently no documents to list.</p>
+
+    </div>
+</div>

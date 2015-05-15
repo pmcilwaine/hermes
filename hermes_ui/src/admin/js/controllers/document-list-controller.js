@@ -2,11 +2,13 @@
 
     var dependencies, documentController;
 
-    documentController = function () {
-
+    documentController = function (scope, DocumentList) {
+        scope.documents = DocumentList.documents;
     };
 
     dependencies = [
+        '$scope',
+        'DocumentList',
         documentController
     ];
 
