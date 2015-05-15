@@ -8,10 +8,33 @@
                 url: '/document',
                 templateUrl: 'templates/views/document.html',
                 controller: 'DocumentListController',
+                resolve: {
+                    DocumentList: function () { return {}; }
+                },
                 data: {
-                    tab: true,
+                    tab: false,
                     label: 'Documents'
                 }
+            });
+
+            $stateProvider.state('document.list', {
+                url: '/list',
+                templateUrl: 'templates/views/document-list.html',
+                controller: 'DocumentListController',
+                resolve: {
+                    DocumentList: ['Documents', function (Documents) {
+                        return Documents.get();
+                    }]
+                },
+                data: {
+                    tab: true
+                }
+            });
+
+            $stateProvider.state('document.add', {
+                url: '/add',
+                templateUrl: 'templates/views/document-form.html',
+                controller: 'DocumentFormController'
             });
 
             $stateProvider.state('users', {

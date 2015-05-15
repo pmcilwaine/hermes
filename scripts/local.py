@@ -3,7 +3,7 @@
 
 import os
 from sqlobject import connectionForURI, sqlhub
-from hermes_cms.db import User
+from hermes_cms.db import User, Document
 from hermes_cms.app import create_app
 from flask import send_from_directory
 
@@ -24,6 +24,7 @@ class LocalConfig(object):
 # setup application
 sqlhub.threadConnection = connectionForURI(LocalConfig.DATABASE)
 User.createTable(ifNotExists=True)
+Document.createTable(ifNotExists=True)
 sqlhub.threadConnection.close()
 # close for application to begin
 

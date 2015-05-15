@@ -3,7 +3,7 @@
 
 from hermes_cms.core import Auth
 from hermes_cms.views.exceptions import HermesRequestException, HermesNotSavedException
-from hermes_cms.db import User
+from hermes_cms.db import User, Document
 from hermes_cms.validators import User as UserValidation
 from flask import Blueprint, Response, request, json
 from mako.lookup import TemplateLookup
@@ -74,3 +74,27 @@ def user_post(user_id=None):
 @route.route('/user/<user_id>', methods=['DELETE'])
 def user_delete(user_id=None):
     return Response(status=200)
+
+
+@route.route('/document', methods=['GET'])
+def document_list():
+
+    offset = 0
+    limit = 100
+
+    documents = []
+    for document in Document.selectBy(Document.q.archived is False)[offset:offset + limit]:
+        documents.append({
+            'gid': document.gid,
+            'name': document.name,
+            'url': document.url,
+            'type': document.type
+        })
+
+    return Response(response=json.dumps({
+        'documents': documents,
+        'meta': {
+            'offset': offset,
+            'limit': limit
+        }
+    }), status=200, content_type='application/json')

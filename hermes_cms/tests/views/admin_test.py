@@ -178,3 +178,51 @@ def test_user_get_list(config, db_connect_mock, user_mock, blueprint_config):
     response = app().get('/admin/user')
     assert json.loads(response.data) == expected
     assert response.status_code == 200
+
+
+@pytest.fixture
+def documents():
+    d1 = MagicMock(gid=1, url='/', type='Page', uuid='some-id', path='1/',
+                   published=True, archived=False, menutitle='Homepage', show_in_menu=True)
+    d1.name = 'Homepage'
+
+    d2 = MagicMock(gid=2, url='/second-page', type='Page', uuid='some-id', path='2/',
+                   published=True, archived=False, menutitle='Second Page', show_in_menu=True)
+    d2.name = 'Second Page'
+
+    return [d1, d2]
+
+
+@patch('hermes_cms.views.admin.Document')
+@patch('hermes_cms.app.db_connect')
+@patch('hermes_cms.app.Registry')
+def test_document_list_first_page_no_children(config, db_connect_mock, document_mock, documents, blueprint_config):
+    config.return_value = blueprint_config
+    db_connect_mock.return_value = None
+
+    document_mock.selectBy.return_value = documents
+
+    expected = {
+        'documents': [
+            {
+                'gid': 1,
+                'name': 'Homepage',
+                'url': '/',
+                'type': 'Page'
+            },
+            {
+                'gid': 2,
+                'name': 'Second Page',
+                'url': '/second-page',
+                'type': 'Page'
+            }
+        ],
+        'meta': {
+            'offset': 0,
+            'limit': 100
+        }
+    }
+
+    response = app().get('/admin/document')
+    assert response.status_code == 200
+    assert json.loads(response.data) == expected
