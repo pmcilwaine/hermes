@@ -144,7 +144,7 @@ gulp.task('watch', function () {
 });
 
 gulp.task('default', ['clean'], function (cb) {
-   runSequence('bower', ['styles', 'jshint', 'views', 'jscopy'], cb);
+   runSequence('bower', ['styles', 'jshint', 'views', 'jscopy', 'watch'], cb);
 });
 
 gulp.task('build:prod', ['clean'], function (cb) {

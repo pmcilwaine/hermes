@@ -1,0 +1,6 @@
+-r requirements.txt
+pytest
+pytest-cov
+pytest-capturelog
+mock >= 1.0.0
+moto >= 0.3.4, < 0.4.0

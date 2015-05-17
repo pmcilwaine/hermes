@@ -3,4 +3,8 @@
   padding: 10px 0;
 }
 
+textarea {
+  resize: vertical;
+}
+
 @import "../../share/css/nav";

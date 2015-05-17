@@ -1,0 +1,46 @@
+<div class="row">
+
+    <div class="col-lg-offset-2 col-lg-8">
+
+        <h1>Add Document</h1>
+
+        <form name="documentForm" ng-submit="submit()" novalidate>
+
+            <div class="form-group" ng-class="{'has-error': documentForm.name.$invalid}">
+                <label>Name</label>
+                <input type="text" class="form-control" name="name" ng-model="record.document.name">
+                <p ng-show="documentForm.name.$invalid" class="help-block">{{ errors.name }}</p>
+            </div>
+
+            <div class="form-group" ng-class="{'has-error': documentForm.parent.$invalid}">
+                <label>Parent</label>
+                <input type="text" class="form-control" name="parent" ng-model="record.document.parent">
+                <p ng-show="documentForm.parent.$invalid" class="help-block">{{ errors.parent }}</p>
+            </div>
+
+            <div class="form-group" ng-class="{'has-error': documentForm.url.$invalid}">
+                <label>URL</label>
+                <input type="text" class="form-control" name="url" ng-model="record.document.url">
+                <p ng-show="documentForm.url.$invalid" class="help-block">{{ errors.url }}</p>
+            </div>
+
+            <div class="form-group" ng-class="{'has-error': documentForm.type.$invalid}">
+                <label>Type</label>
+                <select name="type" ng-model="record.document.type" ng-options="value for value in documentTypes" class="form-control"></select>
+                <p ng-show="documentForm.type.$invalid" class="help-block">{{ errors.type }}</p>
+            </div>
+
+            <div class="form-group" ng-class="{'has-error': documentForm.template.$invalid}" ng-show="record.document.type == 'Page'">
+                <label>Template</label>
+                <select name="type" ng-model="record.page.template" ng-options="template for template in pageTemplates" class="form-control"></select>
+                <p ng-show="documentForm.template.$invalid" class="help-block">{{ errors.template }}</p>
+            </div>
+
+            <button type="submit" class="btn btn-primary" accesskey="n">Next</button>
+            <button type="button" ui-sref="document.list" class="btn btn-default">Cancel</button>
+
+        </form>
+
+    </div>
+
+</div>
