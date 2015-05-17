@@ -4,7 +4,7 @@
 from hermes_cms.core import Auth
 from hermes_cms.views.exceptions import HermesRequestException, HermesNotSavedException
 from hermes_cms.db import User, Document
-from hermes_cms.validators import User as UserValidation
+from hermes_cms.validators import User as UserValidation, Document as DocumentValidation
 from flask import Blueprint, Response, request, json
 from mako.lookup import TemplateLookup
 from pkg_resources import resource_filename
@@ -98,3 +98,21 @@ def document_list():
             'limit': limit
         }
     }), status=200, content_type='application/json')
+
+
+@route.route('/document', methods=['POST'])
+def document_add():
+
+    document_data = request.json
+    validation = DocumentValidation(data=document_data)
+    if not validation.validate():
+        return Response(response=json.dumps({
+            'fields': validation.errors()
+        }), status=400, content_type='application/json')
+
+    if 'validate' in request.args:
+        return Response(response=json.dumps(document_data), status=200, content_type='application/json')
+
+    document = Document.save(document_data)
+    print document
+    return Response(response=json.dumps({}), status=200, content_type='application/json')

@@ -226,3 +226,65 @@ def test_document_list_first_page_no_children(config, db_connect_mock, document_
     response = app().get('/admin/document')
     assert response.status_code == 200
     assert json.loads(response.data) == expected
+
+
+@patch('hermes_cms.views.admin.DocumentValidation')
+@patch('hermes_cms.app.db_connect')
+@patch('hermes_cms.app.Registry')
+def test_document_validate_fail(config, db_connect_mock, validation_mock, blueprint_config):
+    config.return_value = blueprint_config
+    db_connect_mock.return_value = None
+    validation_instance = validation_mock.return_value
+
+    validation_instance.validate.return_value = False
+    validation_instance.errors.return_value = {
+        'document': {
+            'name': 'Must enter name',
+            'url': 'Must enter a URL',
+            'type': 'Must select a type'
+        }
+    }
+
+    response = app().post('/admin/document?validate=true', data=json.dumps({}))
+    expected = {
+        'fields': {
+            'document': {
+                'name': 'Must enter name',
+                'url': 'Must enter a URL',
+                'type': 'Must select a type'
+            }
+        }
+    }
+
+    assert json.loads(response.data) == expected
+    assert response.status_code == 400
+
+
+@patch('hermes_cms.views.admin.DocumentValidation')
+@patch('hermes_cms.app.db_connect')
+@patch('hermes_cms.app.Registry')
+def test_document_validate_success(config, db_connect_mock, validation_mock, blueprint_config):
+    config.return_value = blueprint_config
+    db_connect_mock.return_value = None
+    validation_mock.validate.return_value = True
+
+    response = app().post('/admin/document?validate=true', data=json.dumps({
+        'document': {
+            'name': 'First Document',
+            'url': '/first-document',
+            'type': 'Page',
+            'parent': None
+        }
+    }), content_type='application/json')
+
+    expected = {
+        'document': {
+            'name': 'First Document',
+            'url': '/first-document',
+            'type': 'Page',
+            'parent': None
+        }
+    }
+
+    assert json.loads(response.data) == expected
+    assert response.status_code == 200

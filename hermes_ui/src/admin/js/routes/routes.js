@@ -9,7 +9,8 @@
                 templateUrl: 'templates/views/document.html',
                 controller: 'DocumentListController',
                 resolve: {
-                    DocumentList: function () { return {}; }
+                    DocumentList: function () { return {}; },
+                    document: function () { return {}; }
                 },
                 data: {
                     tab: false,
@@ -34,7 +35,23 @@
             $stateProvider.state('document.add', {
                 url: '/add',
                 templateUrl: 'templates/views/document-form.html',
-                controller: 'DocumentFormController'
+                controller: 'DocumentFormController',
+                resolve: {
+                    document: function () { return {}; }
+                }
+            });
+
+            $stateProvider.state('document.page', {
+                url: '/page/:id',
+                templateUrl: 'templates/views/page-form.html',
+                controller: 'PageFormController',
+                resolve: {
+                    document: ['Documents', 'DocumentResource', '$stateParams',
+                        function (Documents, DocumentResource, stateParams) {
+                            console.log(stateParams);
+                            return Documents.getNewDocument();
+                        }]
+                }
             });
 
             $stateProvider.state('users', {
