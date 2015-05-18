@@ -53,15 +53,21 @@ class Document(SQLObject):
 
     @staticmethod
     def get_document(record):
-        if os.path.exists('/tmp/data/%s' % (record['uid'], )):
-            with open('/tmp/data/%s' % (record['uid'], ), 'r') as f:
+        """
+
+        :type record: Document
+        :param record:
+        :return:
+        """
+        if os.path.exists('/tmp/data/%s' % (record.uid, )):
+            with open('/tmp/data/%s' % (record.uid, ), 'r') as f:
                 contents = f.read().strip()
         else:
-            key_name = "%s/%s/%s/%s" % (record['created'].day, record['created'].month,
-                                        record['created'].year, record['uid'])
+            key_name = "%s/%s/%s/%s" % (record.created.day, record.created.month,
+                                        record.created.year, record.uid)
             contents = S3.get_string(Registry().get('storage')['bucket_name'], key_name).strip()
 
-            with open('/tmp/data/%s' % (record['uid'], ), 'w+') as f:
+            with open('/tmp/data/%s' % (record.uid, ), 'w+') as f:
                 f.write(contents)
 
         return json.loads(contents)
