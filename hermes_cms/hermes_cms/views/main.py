@@ -3,6 +3,7 @@
 
 from flask import Blueprint, Response, json, request, redirect
 from hermes_cms.core.auth import Auth
+from hermes_cms.core.route import route as route_handler
 from mako.lookup import TemplateLookup
 from pkg_resources import resource_filename
 
@@ -51,4 +52,4 @@ def logout():
 @route.route('/', methods=['GET'])
 @route.route('/<path:path>', methods=['GET', 'POST', 'PUT'])
 def main_site(path=None):
-    return Response(status=200)
+    return route_handler(path or 'index')
