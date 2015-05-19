@@ -23,11 +23,11 @@ load-plugins=
 
 # Deprecated. It was used to include message's id in output. Use --msg-template
 # instead.
-include-ids=no
+# include-ids=no
 
 # Deprecated. It was used to include symbolic ids of messages in output. Use
 # --msg-template instead.
-symbols=no
+# symbols=no
 
 # Use multiple processes to speed up Pylint.
 jobs=1
@@ -101,7 +101,7 @@ comment=no
 
 # Template used to display messages. This is a python new-style format string
 # used to format the message information. See doc for all details
-#msg-template=
+msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}
 
 
 [BASIC]
@@ -281,7 +281,7 @@ ignored-modules=
 
 # List of classes names for which member attributes should not be checked
 # (useful for classes with attributes dynamically set).
-ignored-classes=SQLObject
+ignored-classes=SQLObject,Document,User
 
 # When zope mode is activated, add a predefined set of Zope acquired attributes
 # to generated-members.
