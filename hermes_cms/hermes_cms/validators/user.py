@@ -1,11 +1,12 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from wtforms import Form, StringField, PasswordField, validators, ValidationError
+from wtforms import StringField, PasswordField, validators, ValidationError
 from hermes_cms.db import User as UserModel
+from hermes_cms.validators.customform import CustomForm
 
 
-class User(Form):
+class User(CustomForm):
     uid = StringField('uid')
 
     email = StringField('email', validators=[
@@ -30,16 +31,3 @@ class User(Form):
             raise ValidationError('Email address already in use')
 
         return True
-
-    def errors(self):
-        """
-        Returns all the errors messages as a dictionary.
-
-        :rtype: dict
-        """
-        _errors = {}
-        for name, field in self._fields.items():
-            if field.errors:
-                _errors[name] = field.errors.pop()
-
-        return _errors
