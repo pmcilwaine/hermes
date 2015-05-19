@@ -1,6 +1,7 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
-from wtforms import Form, StringField, validators, IntegerField
+from wtforms import StringField, validators, IntegerField
+from hermes_cms.validators.customform import CustomForm
 
 
 __all__ = ['Document']
@@ -40,7 +41,8 @@ class Document(object):
         """
         return self._errors
 
-class DocumentForm(Form):
+
+class DocumentForm(CustomForm):
     gid = IntegerField()
     name = StringField(validators=[validators.DataRequired('Must enter the name of the document.')])
     url = StringField(validators=[validators.DataRequired('Must enter a URL')])
@@ -49,11 +51,3 @@ class DocumentForm(Form):
     @staticmethod
     def validate_url(form, field):
         pass
-
-    def errors(self):
-        _errors = {}
-        for name, field in self._fields.items():
-            if field.errors:
-                _errors[name] = field.errors.pop()
-
-        return _errors
