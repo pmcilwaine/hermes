@@ -9,6 +9,8 @@ from flask import Blueprint, Response, request, json
 from mako.lookup import TemplateLookup
 from pkg_resources import resource_filename
 from werkzeug.datastructures import MultiDict
+from hermes_aws.s3 import S3
+from hermes_cms.core.registry import Registry
 
 route = Blueprint('admin', __name__, url_prefix='/admin')
 lookup = TemplateLookup(directories=[
@@ -114,5 +116,18 @@ def document_add():
         return Response(response=json.dumps(document_data), status=200, content_type='application/json')
 
     document = Document.save(document_data)
-    print document
     return Response(response=json.dumps({}), status=200, content_type='application/json')
+
+
+@route.route('/upload_url', methods=['POST'])
+def sign_upload_url():
+    # build_post_form_args
+
+    bucket = Registry().get('files')['bucket_name']
+    signed_form = S3.generate_form(bucket)
+    signed_form['file'] = {
+        'bucket': bucket,
+        'key': [item['value'] for item in signed_form['fields'] if item['name'] == 'key'].pop()
+    }
+
+    return Response(response=json.dumps(signed_form), content_type='application/json', status=201)

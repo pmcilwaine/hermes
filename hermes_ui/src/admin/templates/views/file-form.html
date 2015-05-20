@@ -1,0 +1,39 @@
+<div class="row">
+
+    <div class="col-lg-offset-2 col-lg-8">
+
+        <h1>File</h1>
+
+        <form name="fileForm" ng-submit="submit()" novalidate>
+
+            <div class="form-group" ng-class="{'has-error': fileForm.name.$invalid}">
+                <label>Name</label>
+                <input type="text" class="form-control" name="name" ng-model="record.document.name">
+                <p ng-show="fileForm.name.$invalid" class="help-block">{{ errors.name }}</p>
+            </div>
+
+            <div class="form-group" ng-class="{'has-error': fileForm.parent.$invalid}">
+                <label>Parent</label>
+                <input type="text" class="form-control" name="parent" ng-model="record.document.parent">
+                <p ng-show="fileForm.parent.$invalid" class="help-block">{{ errors.parent }}</p>
+            </div>
+
+            <div class="form-group" ng-class="{'has-error': fileForm.url.$invalid}">
+                <label>URL</label>
+                <input type="text" class="form-control" name="url" ng-model="record.document.url">
+                <p ng-show="fileForm.url.$invalid" class="help-block">{{ errors.url }}</p>
+            </div>
+
+            <div class="form-group">
+                <label>File</label>
+                <input type="file" name="file" ngf-select="" ng-model="file">
+            </div>
+
+            <button type="submit" class="btn btn-primary" accesskey="s">Save</button>
+            <button type="button" ui-sref="document.list" class="btn btn-default">Cancel</button>
+
+        </form>
+
+    </div>
+
+</div>

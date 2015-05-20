@@ -37,7 +37,7 @@
             console.log(scope.record);
             Documents.dryRun(scope.record).$promise.then(function ok (msg) {
                 Documents.createNewDocument(scope.record);
-                $state.go('document.page');
+                $state.go('document.' + scope.record.document.type.toLowerCase());
             }, function fail (msg) {
                 console.log('errors');
                 console.log(msg);

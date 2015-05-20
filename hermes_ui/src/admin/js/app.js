@@ -10,7 +10,8 @@
         'hermes.core',
         'hermes.templates',
         'ui.router',
-        'ui.bootstrap'
+        'ui.bootstrap',
+        'ngFileUpload'
     ];
 
     angular.module('hermes.app', dependencies);

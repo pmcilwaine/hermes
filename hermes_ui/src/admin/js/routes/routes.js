@@ -54,6 +54,19 @@
                 }
             });
 
+            $stateProvider.state('document.file', {
+                'url': '/file/:id',
+                templateUrl: 'templates/views/file-form.html',
+                controller: 'FileFormController',
+                resolve: {
+                    document: ['Documents', 'DocumentResource', '$stateParams',
+                        function (Documents, DocumentResource, stateParams) {
+                            console.log(stateParams);
+                            return Documents.getNewDocument();
+                        }]
+                }
+            });
+
             $stateProvider.state('users', {
                 abstract: true,
                 url: '/user',
