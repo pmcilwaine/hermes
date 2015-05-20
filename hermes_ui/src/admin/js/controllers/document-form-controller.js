@@ -25,23 +25,16 @@
         scope.submit = function () {
             // TODO do document validation
             scope.errors = {};
-            console.log('the documentForm');
-            console.log(scope.documentForm);
 
             _.each(['name', 'type', 'parent', 'url'], function (key) {
                 scope.documentForm[key].$dirty = false;
                 scope.documentForm[key].$setValidity(key, true);
             });
 
-            console.log('before go');
-            console.log(scope.record);
-            Documents.dryRun(scope.record).$promise.then(function ok (msg) {
+            Documents.dryRun(scope.record).then(function ok () {
                 Documents.createNewDocument(scope.record);
-                $state.go('document.page');
+                $state.go('document.' + scope.record.document.type.toLowerCase());
             }, function fail (msg) {
-                console.log('errors');
-                console.log(msg);
-
                 _.each(msg.data.fields, function (value, key) {
                     scope.documentForm[key].$dirty = true;
                     scope.documentForm[key].$setValidity(key, false);

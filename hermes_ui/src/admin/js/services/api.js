@@ -17,6 +17,11 @@
                 delete: {method: 'DELETE'},
                 dryRun: {method: 'POST', params: {validate: true}}
             });
+        }])
+        .factory('UploadUrlResource', ['$resource', function (resource) {
+            return resource('/admin/upload_url', {}, {
+                post: {method: 'POST'}
+            })
         }]);
 
 })();

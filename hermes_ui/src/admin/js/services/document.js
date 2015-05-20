@@ -11,7 +11,7 @@
 
         document.createNewDocument = function (record) {
             new_document = record;
-        }
+        };
 
         document.getNewDocument = function () {
             var d = new_document;
@@ -21,28 +21,23 @@
 
         document.dryRun = function (record) {
             return this.save(record, true);
-        }
+        };
 
         document.save = function (record, is_dry_run) {
             var deferred = $q.defer();
             if (is_dry_run !== undefined) {
-                return DocumentResource.dryRun(record, function ok (msg) {
-                    console.log('ok dryrun');
-                    console.log(msg);
-                    deferred.resolve(msg);
+                DocumentResource.dryRun(record, function ok (msg) {
+                    console.log('ok dryRun');
+                    deferred.resolve(msg.data);
                 }, function fail (msg) {
-                    console.log('fail dryrun');
+                    console.log('fail dryRun');
                     console.log(msg);
-                    deferred.reject(msg);
+                    deferred.reject(msg.data);
                 });
             } else {
-                return DocumentResource.post(record, function ok (msg) {
-                    console.log('ok save');
-                    console.log(msg);
+                DocumentResource.post(record, function ok (msg) {
                     deferred.resolve(msg);
                 }, function fail (msg) {
-                    console.log('fail save');
-                    console.log(msg);
                     deferred.reject(msg);
                 });
             }
