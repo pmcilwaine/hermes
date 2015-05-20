@@ -105,3 +105,11 @@ class S3(object):
             'signed_url': signed_url,
             'key_name': key_name
         }
+
+    @staticmethod
+    def stream_file(bucket_name, key_name):
+        connection = boto.connect_s3()
+        bucket = connection.get_bucket(bucket_name)
+
+        for f in bucket.get_key(key_name):
+            yield f

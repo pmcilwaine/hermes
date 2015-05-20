@@ -2,22 +2,17 @@
 # -*- coding: utf-8 -*-
 
 from hermes_cms.controller.document import Document
+from hermes_aws.s3 import S3
 from flask import Response
 
 
 class File(Document):
 
     def get(self):
-        return {
-            'file': {
-                'filename': '',
-                'content_type': '',
-                's3': {
-                    'bucket_name': '',
-                    'key_name': ''
-                }
-            }
-        }
+        generator = S3.stream_file(self._document['file']['bucket'], self._document['file']['key'])
+        return Response(generator, status=200, mimetype=self._document['file']['type'], headers={
+            'Content-Disposition': 'attachment; filename={0}'.format(self._document['file']['name'])
+        })
 
     def put(self):
         pass
