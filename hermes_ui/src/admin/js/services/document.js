@@ -26,16 +26,19 @@
         document.save = function (record, is_dry_run) {
             var deferred = $q.defer();
             if (is_dry_run !== undefined) {
-                return DocumentResource.dryRun(record, function ok (msg) {
-                    return deferred.resolve(msg);
+                DocumentResource.dryRun(record, function ok (msg) {
+                    console.log('ok dryRun');
+                    deferred.resolve(msg.data);
                 }, function fail (msg) {
-                    return deferred.reject(msg);
+                    console.log('fail dryRun');
+                    console.log(msg);
+                    deferred.reject(msg.data);
                 });
             } else {
-                return DocumentResource.post(record, function ok (msg) {
-                    return deferred.resolve(msg);
+                DocumentResource.post(record, function ok (msg) {
+                    deferred.resolve(msg);
                 }, function fail (msg) {
-                    return deferred.reject(msg);
+                    deferred.reject(msg);
                 });
             }
 

@@ -36,13 +36,12 @@ class S3(object):
         return key.get_contents_as_string()
 
     @staticmethod
-    def generate_form(bucket_name, expires_in=None, filename=None, key_name=None, acl='private'):
+    def generate_form(bucket_name, expires_in=None, key_name=None, acl='private'):
         """
         Generates what is required for a form to post directly to S3 bucket.
 
         :param bucket_name:
         :param expires_in:
-        :param filename:
         :param key_name:
         :param acl:
         :return: Returns a dictionary ready to send to the client to produce a Form.
@@ -60,9 +59,11 @@ class S3(object):
             'value': '201'
         }]
 
+        conditions = ["{'success_action_status': '201'}"]
+
         connection = boto.connect_s3()
         response = connection.build_post_form_args(bucket_name, key_name, expires_in=expires_in, acl=acl,
-                                                   fields=fields, http_method='https')
+                                                   fields=fields, http_method='https', conditions=conditions)
 
         return response
 
