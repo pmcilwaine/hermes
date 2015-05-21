@@ -1,1 +1,11 @@
 @import "../../share/css/nav";
+
+footer {
+  background: #eee;
+  border-top: 1px solid #aaa;
+  padding: 10px 0;
+}
+
+.nav-list .nav-list > li > a {
+  margin-left: 10px;
+}

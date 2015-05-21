@@ -2,15 +2,13 @@
 
 var gulp = require('gulp');
 var gutil = require('gulp-util');
-var checkstyleFileReporter = require('jshint-checkstyle-file-reporter');
+var jshintXMLReporter = require('gulp-jshint-xml-file-reporter');
 
 var $ = require('gulp-load-plugins')();
 var del = require('del');
 var runSequence = require('run-sequence');
 var bower = require('gulp-bower');
 var mainBowerFiles = require('main-bower-files');
-
-process.env.JSHINT_CHECKSTYLE_FILE = 'jshint.xml';
 
 var buildPaths = {
     publicRoot: 'dist/public',
@@ -19,11 +17,13 @@ var buildPaths = {
 
 buildPaths.patterns = {
     js: /\.js$/,
-    css: /\.css$/
+    css: /\.css$/,
+    jsPublic: ['bower_components/jquery/dist/**/*.min.js', 'bower_components/bootstrap/dist/js/**/*.min.js']
 };
 
 buildPaths.hermes = {
-    js: 'dist/admin/js',
+    jsAdmin: 'dist/admin/js',
+    jsPublic: 'dist/public/js',
     templates: 'dist/admin/templates'
 };
 
@@ -51,16 +51,27 @@ gulp.task('jshint', function () {
    return gulp.src(jsPaths)
        .pipe($.jshint())
        .pipe($.jshint.reporter('jshint-stylish'))
-       .pipe($.jshint.reporter(checkstyleFileReporter));
+       .pipe($.jshint.reporter(jshintXMLReporter))
+       .on('end', jshintXMLReporter.writeFile({
+           format: 'checkstyle',
+           filePath: './jshint.xml',
+           alwaysReport: true
+       }));
 });
 
-gulp.task('jsvendor', function() {
+gulp.task('jsvendor_admin', function() {
     return gulp.src(mainBowerFiles({ filter: buildPaths.patterns.js }))
         .pipe($.concat('lib.js', { newLine: ';\n' }))
-        .pipe(gulp.dest(buildPaths.hermes.js));
+        .pipe(gulp.dest(buildPaths.hermes.jsAdmin));
 });
 
-gulp.task('jscopy', ['jsvendor'], function() {
+gulp.task('jsvendor_public', function() {
+    return gulp.src(buildPaths.patterns.jsPublic)
+        .pipe($.concat('lib.js', { newLine: ';\n' }))
+        .pipe(gulp.dest(buildPaths.hermes.jsPublic));
+});
+
+gulp.task('jscopy', ['jsvendor_admin', 'jsvendor_public'], function() {
     gulp.src(devWatchPaths.jsAdmin)
         .pipe($.concat('app.js'))
         .on('error', function (err) {
@@ -72,7 +83,7 @@ gulp.task('jscopy', ['jsvendor'], function() {
             gutil.log(err.message)
             this.emit('end')
         })
-        .pipe(gulp.dest(buildPaths.hermes.js))
+        .pipe(gulp.dest(buildPaths.hermes.jsAdmin))
         .pipe($.size({title: 'js_uncompressed'}));
 })
 

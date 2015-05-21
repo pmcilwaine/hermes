@@ -21,7 +21,7 @@
         .factory('UploadUrlResource', ['$resource', function (resource) {
             return resource('/admin/upload_url', {}, {
                 post: {method: 'POST'}
-            })
+            });
         }]);
 
 })();
