@@ -25,6 +25,7 @@
     "fontawesome": "~4.3.0",
     "lodash": "~3.8.0",
     "angular-ui-router": "~0.2.14",
-    "ng-file-upload": "~4.2.1"
+    "ng-file-upload": "~4.2.1",
+    "jquery": "~2.1.4"
   }
 }

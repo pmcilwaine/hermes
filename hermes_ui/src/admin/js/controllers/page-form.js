@@ -17,7 +17,7 @@
 
         scope.submit = function () {
             console.log('attempted to submit');
-            Documents.save(scope.record).$promise.then(function ok (msg) {
+            Documents.save(scope.record).then(function ok (msg) {
                 console.log('ok');
                 console.log(msg);
                 $state.go('document.list');
