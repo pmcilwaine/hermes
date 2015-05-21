@@ -19,9 +19,3 @@ class Page(Document):
         template = self.lookup.get_template(self._config['templates'][self._document['page']['template']])
         return Response(response=template.render(**self._document),
                         status=200, content_type='text/html')
-
-    def put(self):
-        pass
-
-    def post(self):
-        pass
