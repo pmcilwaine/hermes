@@ -95,8 +95,6 @@ class S3(object):
         if method not in ['PUT', 'GET']:
             pass
 
-        connection.generate_url_sigv4()
-
         signed_url = connection.generate_url(expires_in, method, bucket=bucket_name, key=key_name,
                                              headers={'Content-Type': 'applcation/octet-stream'})
 
