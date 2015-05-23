@@ -1,0 +1,25 @@
+{
+  "name": "hermes_tests",
+  "version": "0.1.0",
+  "description": "This will run the integration and end to end tests for the hermes cms.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pmcilwaine/hermes"
+  },
+  "scripts": {
+    "test": "protractor --baseUrl=${BASE_URL} ${TEST}/${CONFIGURATION}.js",
+    "webdriver": "webdriver-manager update; webdriver-manager start",
+    "start": "gulp --gulpfile ${TEST}/gulpfile.js server"
+  },
+  "author": "Paul Mcilwaine",
+  "license": "BSD",
+  "devDependencies": {
+    "browser-sync": "^2.7.3",
+    "chai": "^2.3.0",
+    "chai-as-promised": "^5.0.0",
+    "gulp": "^3.8.11",
+    "mocha": "^2.2.5",
+    "mocha-jenkins-reporter": "^0.1.8",
+    "protractor": "^2.1.0"
+  }
+}
