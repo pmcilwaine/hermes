@@ -12,7 +12,7 @@
         user.save = function (record) {
             var deferred = $q.defer();
 
-            if (record.is_new || record.user_id === undefined) {
+            if (record.is_new || record.uid === undefined) {
                 UserResource.post(record, function ok (msg) {
                     deferred.resolve(msg);
                 }, function fail (msg) {

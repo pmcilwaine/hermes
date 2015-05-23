@@ -2,7 +2,7 @@
 
     angular.module('hermes.services', ['ngResource'])
         .factory('UserResource', ['$resource', function (resource) {
-            return resource('/admin/user/:id', {id: '@user_id'}, {
+            return resource('/admin/user/:id', {id: '@uid'}, {
                 get: {method: 'GET'},
                 post: {method: 'POST'},
                 put: {method: 'PUT'},
