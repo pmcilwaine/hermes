@@ -66,34 +66,37 @@ export CONFIGURATION="ci" # "local"
 export BASE_URL="${BASE_URL-http://localhost:3000/}"
 
 ROOT_DIR=$(readlink -m $(dirname $0)/..)
+cd ${ROOT_DIR}/hermes_ui
+npm install
+npm run build
+
 cd ${ROOT_DIR}/tests
 
 # setup environment
 npm install
 
-if [ "${CONFIGURATION}" == "local" ]; then
-    until $(bash -c "echo > /dev/tcp/localhost/3000" 2> /dev/null); do
-        echo "Starting browsersync webserver"
-        npm run start &
-        SERVER_PID=$!
-        echo "Current PID is ${SERVER_PID}"
-        sleep 20
-    done
+until $(bash -c "echo > /dev/tcp/localhost/3000" 2> /dev/null); do
+    echo "Starting browsersync webserver"
+    npm run start &
+    SERVER_PID=$!
+    echo "Current PID is ${SERVER_PID}"
+    sleep 20
+done
 
-    # Run the web driver and wait for it to come up
+# Run the web driver and wait for it to come up
+if [ "${CONFIGURATION}" == "local" ]; then
     npm run webdriver > webdriver-debug.log &
     while ! timeout 1 bash -c "echo > /dev/tcp/localhost/4444"; do sleep 1; done
-else
-
+else    
     # ci and install sauce connect
     if [ $(uname) == "Darwin" ]; then
         curl https://saucelabs.com/downloads/sc-4.3.8-osx.zip -o sc-4.3.zip --silent
         unzip sc-4.3.zip
         mv sc-4.3.8-osx sc
     elif [ $(uname) == "Linux" ]; then
-        curl https://saucelabs.com/downloads/sc-4.3-linux.tar.gz -o sc-4.3.tar.gz --silent
+        curl https://saucelabs.com/downloads/sc-4.3.8-linux.tar.gz -o sc-4.3.tar.gz --silent
         tar -zxvf sc-4.3.tar.gz
-        mv sc-4.3-linux sc
+        mv sc-4.3.8-linux sc
     else
         echo "Unknown operating system"
         exit 1
@@ -120,12 +123,13 @@ fi
 npm test
 status=$?
 
-if [ "${CONFIGURATION}" = local ]; then
-    # Kill the web-driver server
+# Kill the web-driver server
+if [ "${CONFIGURATION}" == "local" ]; then
     curl http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer > /dev/null
-    if [ ! -z ${SERVER_PID} ]; then
-        kill ${SERVER_PID}
-    fi
+fi
+
+if [ ! -z ${SERVER_PID} ]; then
+    kill ${SERVER_PID}
 fi
 
 # kill sauce connect

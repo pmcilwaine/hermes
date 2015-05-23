@@ -159,5 +159,5 @@ gulp.task('default', ['clean'], function (cb) {
 });
 
 gulp.task('build:prod', ['clean'], function (cb) {
-    runSequence('bower', ['styles', 'jshint'], cb);
+    runSequence('bower', ['styles', 'jshint', 'views', 'jscopy'], cb);
 });
