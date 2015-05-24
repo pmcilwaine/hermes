@@ -44,7 +44,19 @@ cd ${ROOT_DIR}
 rm -f ${ROOT_DIR}/dist/*.rpm
 mkdir -p ${ROOT_DIR}/dist
 
-for i in hermes_cms; do
+for i in hermes_cms hermes_aws; do
     python ${i}/setup.py bdist_rpm --release=${RELEASE}
     mv ${i}/dist/*.rpm ${ROOT_DIR}/dist/
 done
+
+# setup frontend ui rpm
+cd ${ROOT_DIR}/hermes_ui
+npm install
+npm run build
+mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+sed "s/{IMAGE_VERSION}/${RELEASE}/g" hermes_ui.spec > rpmbuild/SPECS/hermes_ui.spec
+FOLDER_NAME=$(cat hermes_ui.spec | grep Name | awk '{ print $2 }')-$(cat hermes_ui.spec | grep Version | awk '{ print $2 }')
+cp -R dist/ ${FOLDER_NAME}
+tar -cvf rpmbuild/SOURCES/$(cat hermes_ui.spec | grep Name | awk '{ print $2 }')-$(cat hermes_ui.spec | grep Version | awk '{ print $2 }')-${RELEASE}.tar.gz ${FOLDER_NAME}
+rpmbuild --define "_topdir ${PWD}/rpmbuild" -ba rpmbuild/SPECS/hermes_ui.spec
+mv rpmbuild/RPMS/noarch/*.rpm ${ROOT_DIR}/dist/
