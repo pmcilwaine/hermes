@@ -14,14 +14,15 @@
             "instance_type": "{{ user `instance_type`}}",
             "iam_instance_profile": "",
             "ami_name": "{{ user `image_name`}}_{{ user `version`}}",
-            "ssh_username": "ec2-user"
+            "ssh_username": "centos"
         }
     ],
     "provisioners": [
         {
             "type": "ansible-local",
             "extra_arguments": [
-                "-e hermes_role={{user `image_name`}}"
+                "-e hermes_role={{user `image_name`}}",
+                "-e hermes_image_version={{ user `version` }}"
             ],
             "playbook_dir": "ansible",
             "playbook_file": "ansible/one_role.yml",
