@@ -1,0 +1,6 @@
+---
+- name: Precache the YUM repo
+  shell: yum makecache --enablerepo {{ item }}
+  with_items:
+    - hermes-ci
+    - epel
