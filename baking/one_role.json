@@ -12,7 +12,7 @@
             "region": "{{ user `region`}}",
             "source_ami": "{{ user `base_ami`}}",
             "instance_type": "{{ user `instance_type`}}",
-            "iam_instance_profile": "",
+            "iam_instance_profile": "s3access",
             "ami_name": "{{ user `image_name`}}_{{ user `version`}}",
             "ssh_username": "centos"
         }

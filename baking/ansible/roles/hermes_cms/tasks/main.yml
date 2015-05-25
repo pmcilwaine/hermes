@@ -1,7 +1,19 @@
 ---
 - name: Install Packages
-  yum: name={{ item }} enablerepo=epel,hermes-ci
+  yum: name={{ item }} enablerepo=hermes-ci,epel
   with_items:
     - hermes_cms-*-{{ hermes_image_version }}
     - hermes_ui-*-{{ hermes_image_version }}
     - hermes_aws-*-{{ hermes_image_version }}
+
+- name: Install Config Bucket
+  copy: src=config-bucket dest=/etc/sysconfig/config-bucket owner=root group=root mode=0644
+
+- name: Install apache config
+  copy: src=hermes_cms.conf dest=/etc/httpd/conf.d/ owner=root group=root mode=0644
+
+- name: Create Folder
+  file: path=/var/www/hermes_cms state=directory owner=apache group=apache
+
+- name: Install wsgi
+  copy: src=hermes_cms.wsgi dest=/var/www/hermes_cms/hermes_cms.wsgi owner=apache group=apache mode=0444
