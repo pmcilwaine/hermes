@@ -61,8 +61,6 @@ done
 
 export CONFIGURATION="${CONFIGURATION-ci}" # Defaults to running on browserstack
 export TEST="integration"
-
-export CONFIGURATION="ci" # "local"
 export BASE_URL="${BASE_URL-http://localhost:3000/}"
 
 ROOT_DIR=$(readlink -m $(dirname $0)/..)
