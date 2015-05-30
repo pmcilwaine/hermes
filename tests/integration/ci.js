@@ -6,6 +6,7 @@ exports.config.sauceSeleniumAddress = 'localhost:4445/wd/hub';
 
 exports.config.capabilities = {
     browserName: 'chrome',
+    version: '41.0',
     name: process.env.VERSION || 'local',
     count: 1
 };
