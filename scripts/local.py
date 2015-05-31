@@ -18,7 +18,7 @@ port – connection port number (defaults to 5432 if not provided)
 
 
 class LocalConfig(object):
-    DATABASE = 'sqlite://%s' % (os.path.join(os.path.dirname(__file__), 'database.db'), )
+    DATABASE = 'sqlite://%s' % (os.path.abspath(os.path.join(os.path.dirname(__file__), 'database.db')), ) 
     SECRET_KEY = 'the_secret_key'
 
 # setup application
@@ -42,7 +42,6 @@ app = create_app(config_obj=LocalConfig, blueprints=[
 
 @app.route('/assets/<path:filename>')
 def public_static(filename):
-    print os.path.abspath('../hermes_ui/dist'), filename
-    return send_from_directory(os.path.abspath('../hermes_ui/dist'), filename)
+    return send_from_directory(os.path.abspath('../../hermes_ui/dist'), filename)
 
 app.run(debug=True)

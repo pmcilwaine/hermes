@@ -118,7 +118,7 @@ def document_add():
         return Response(response=json.dumps(document_data), status=200, content_type='application/json')
 
     # todo we should use Auth class to get this
-    document_data['user'] = session['auth_user'].get('id', -1)
+    document_data['document']['user'] = session['auth_user'].get('id', -1)
     document = Document.save(document_data)
     return Response(response=json.dumps({}), status=200, content_type='application/json')
 

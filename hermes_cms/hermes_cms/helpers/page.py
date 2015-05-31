@@ -24,12 +24,12 @@ def navigation(document, depth=None):
 
     # depth = depth or NAVIGATION_ALL
 
-    query = ((Document.q.archived == True) & (Document.q.show_in_menu == True) &
+    query = ((Document.q.archived == False) & (Document.q.show_in_menu == True) &
              (Document.q.published == True))
 
     results = []
     parent = {}
-    for page in Document.selectBy(query):
+    for page in Document.select().filter(query):
 
         record = {
             'url': page.url,

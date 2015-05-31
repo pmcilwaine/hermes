@@ -47,7 +47,11 @@ class User(SQLObject):
         if 'id' not in record:
             user = User(**record)
         else:
-            user = User.selectBy(email=record['email'])
+            user = User.selectBy(email=record['email']).getOne(None)
+            if not user:
+                # todo better exception handling here
+                raise Exception('Cannot find user record to update')
+            record.pop('id')  # todo find out how we can force id to be par of the kwargs
             user.set(**record)
 
         return user

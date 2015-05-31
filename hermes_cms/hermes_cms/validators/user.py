@@ -13,8 +13,7 @@ class User(CustomForm):
         validators.Email(message='Invalid Email'),
         validators.DataRequired(message='Email address is required')])
 
-    password = PasswordField('password', validators=[
-        validators.Length(min=6, max=36, message='Must enter a password')])
+    password = PasswordField('password', validators=[])
 
     first_name = StringField('first_name')
     last_name = StringField('last_name')
@@ -31,3 +30,11 @@ class User(CustomForm):
             raise ValidationError('Email address already in use')
 
         return True
+
+    @staticmethod
+    def validate_password(form, field):
+        user_record = UserModel.selectBy(email=form.email.data).filter(UserModel.q.id == form.id.data).getOne(None)
+        if user_record and not field.data:
+            return True
+
+        validators.Length(min=6, max=36, message='Must enter a password')(form, field)
