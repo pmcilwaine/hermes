@@ -14,7 +14,7 @@
                 clearFile: '='
             },
             restrict: 'A',
-            link: function (scope, element, attr) {
+            link: function (scope, element) {
                 scope.$watch('clearFile', function (value) {
                     if (value === true) {
                         scope.clearFile = false;

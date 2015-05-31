@@ -85,6 +85,15 @@ module.exports = {
                     return [200, data.document, {}];
                 });
 
+                $httpBackend.whenPOST('/admin/file/upload').respond({});
+
+                $httpBackend.whenPOST('/admin/upload_url').respond({
+                    fields: [{
+                        bucket: null
+                    }],
+                    action: '/admin/file/upload'
+                });
+
                 $httpBackend.when('OPTIONS', /.*/).passThrough();
             });
         };
