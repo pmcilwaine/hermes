@@ -55,7 +55,7 @@
                         key: form.file.key,
                         type: scope.file[0].type,
                         name: scope.file[0].name
-                    }
+                    };
 
                     file = Upload.upload({
                         url: formUpload.action,
