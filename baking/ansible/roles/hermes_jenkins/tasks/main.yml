@@ -20,6 +20,7 @@
     - doxypy
     - pylint
     - tox
+    - awscli
 
 - name: Install Packer
   include: install_packer.yml
