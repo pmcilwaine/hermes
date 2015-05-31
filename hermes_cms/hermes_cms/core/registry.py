@@ -3,6 +3,7 @@
 import os
 import json
 import logging
+# todo aws stuff should be moved into hermes_aws package
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
@@ -16,6 +17,9 @@ class Registry(object):
         self._log = log or logging.getLogger('hermes_cms.core.registry.Registry')
         self._bucket_name_ = None
         self._cache = {}
+        if not os.path.exists(Registry.CACHE):
+            self._log.debug('Creating Registry Cache directory')
+            os.makedirs(Registry.CACHE)
 
     def get(self, key):
         """

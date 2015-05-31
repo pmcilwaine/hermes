@@ -5,7 +5,7 @@ module.exports = {
             angular.module('hermes.httpmock', ['hermes.app', 'ngMockE2E']).run(function($httpBackend) {
 
                 var users = [{
-                    uid: 'some-id-to-test',
+                    id: 1,
                     email: 'test@example.org',
                     first_name: 'Test',
                     last_name: 'User'
@@ -23,8 +23,8 @@ module.exports = {
                     users: users
                 });
 
-                $httpBackend.whenPUT('/admin/user/some-id-to-test', {
-                    uid: 'some-id-to-test',
+                $httpBackend.whenPUT('/admin/user/1', {
+                    id: 1,
                     email: 'test@example.org',
                     first_name: 'My First Name',
                     last_name: 'User'
@@ -40,7 +40,7 @@ module.exports = {
 
                 $httpBackend.whenPOST('/admin/user').respond(function (method, url, data) {
                     data = angular.fromJson(data);
-                    data.uid = uuid();
+                    data.id = users.length;
                     users.push(data);
                     return [200, data, {}];
                 });
@@ -49,7 +49,7 @@ module.exports = {
                     var user_id = url.split('/')[3];
 
                     users = users.filter(function (item) {
-                        return item.uid !== user_id;
+                        return item.id !== user_id;
                     });
 
                     return [200, data, {}];
@@ -80,7 +80,7 @@ module.exports = {
                     return ['first-document', 'first-file'].indexOf(data.document.url) !== -1;
                 }).respond(function (method, url, data) {
                     data = angular.fromJson(data);
-                    data.document.gid = uuid();
+                    data.document.id = documents.length;
                     documents.push(data.document);
                     return [200, data.document, {}];
                 });

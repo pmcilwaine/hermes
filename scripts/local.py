@@ -42,6 +42,7 @@ app = create_app(config_obj=LocalConfig, blueprints=[
 
 @app.route('/assets/<path:filename>')
 def public_static(filename):
-    return send_from_directory(os.path.abspath('../../hermes_ui/dist'), filename)
+    print os.path.abspath('../hermes_ui/dist'), filename
+    return send_from_directory(os.path.abspath('../hermes_ui/dist'), filename)
 
 app.run(debug=True)

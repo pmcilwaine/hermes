@@ -3,6 +3,8 @@
 import pytest
 import json
 from mock import patch, MagicMock
+from utils import mocks
+mocks.mock_modules()
 from hermes_cms.app import create_app
 
 
@@ -50,14 +52,14 @@ def test_user_save(config, db_connect_mock, validation_mock, user_mock, blueprin
     db_connect_mock.return_value = None
     validation_mock.validate.return_value = True
     user_mock.save.return_value = MagicMock(
-        uid='some-uid',
+        id=1,
         email='test@example.org',
         first_name='',
         last_name=''
     )
 
     expected = {
-        'uid': 'some-uid',
+        'id': 1,
         'email': 'test@example.org',
         'first_name': '',
         'last_name': ''
@@ -130,13 +132,13 @@ def test_user_update(config, db_connect_mock, validation_mock, user_mock, bluepr
     validation_mock.validate.return_value = True
 
     user_mock.save.return_value = MagicMock(
-        uid='abcdef',
+        id=2,
         email='test@example.org',
         first_name='Test',
         last_name='User'
     )
 
-    response = app().put('/admin/user/abcdef', data=json.dumps({
+    response = app().put('/admin/user/2', data=json.dumps({
         'email': 'test@example.org',
         'password': '',
         'first_name': 'Test',
@@ -144,7 +146,7 @@ def test_user_update(config, db_connect_mock, validation_mock, user_mock, bluepr
     }), content_type='application/json')
 
     expected = {
-        'uid': 'abcdef',
+        'id': 2,
         'email': 'test@example.org',
         'first_name': 'Test',
         'last_name': 'User'
@@ -161,13 +163,13 @@ def test_user_get_list(config, db_connect_mock, user_mock, blueprint_config):
     config.return_value = blueprint_config
     db_connect_mock.return_value = None
     user_mock.selectBy.return_value = [
-        MagicMock(email='test@example.org', first_name='Test', last_name='User', uid='some-id')
+        MagicMock(email='test@example.org', first_name='Test', last_name='User', id=3)
     ]
 
     expected = {
         'users': [
             {
-                'uid': 'some-id',
+                'id': 3,
                 'email': 'test@example.org',
                 'first_name': 'Test',
                 'last_name': 'User'
@@ -182,11 +184,11 @@ def test_user_get_list(config, db_connect_mock, user_mock, blueprint_config):
 
 @pytest.fixture
 def documents():
-    d1 = MagicMock(gid=1, url='/', type='Page', uuid='some-id', path='1/',
+    d1 = MagicMock(id=1, url='/', type='Page', uuid='some-id', path='1/',
                    published=True, archived=False, menutitle='Homepage', show_in_menu=True)
     d1.name = 'Homepage'
 
-    d2 = MagicMock(gid=2, url='/second-page', type='Page', uuid='some-id', path='2/',
+    d2 = MagicMock(id=2, url='/second-page', type='Page', uuid='some-id', path='2/',
                    published=True, archived=False, menutitle='Second Page', show_in_menu=True)
     d2.name = 'Second Page'
 
@@ -205,13 +207,13 @@ def test_document_list_first_page_no_children(config, db_connect_mock, document_
     expected = {
         'documents': [
             {
-                'gid': 1,
+                'id': 1,
                 'name': 'Homepage',
                 'url': '/',
                 'type': 'Page'
             },
             {
-                'gid': 2,
+                'id': 2,
                 'name': 'Second Page',
                 'url': '/second-page',
                 'type': 'Page'

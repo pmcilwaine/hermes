@@ -1,8 +1,12 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
+
+import logging
 from hermes_cms.db import Document
 from sqlobject.sqlbuilder import IN
 from flask import Response, request
+
+log = logging.getLogger('hermes_cms.core.route')
 
 
 # todo this registry should be removed later. for Prototype purposes we keep this hardcoded.
@@ -49,6 +53,7 @@ def route(path):
         if tmp_str:
             urls.append(tmp_str)
 
+    log.debug('Attempting to get urls %s' % (urls, ))
     record = Document.select(IN(Document.q.url, urls)).getOne(None)
     if not record:
         return Response(status=404)

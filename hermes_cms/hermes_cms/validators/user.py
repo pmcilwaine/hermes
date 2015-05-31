@@ -7,7 +7,7 @@ from hermes_cms.validators.customform import CustomForm
 
 
 class User(CustomForm):
-    uid = StringField('uid')
+    id = StringField('id')
 
     email = StringField('email', validators=[
         validators.Email(message='Invalid Email'),
@@ -27,7 +27,7 @@ class User(CustomForm):
         :param field:
         :return:
         """
-        if UserModel.selectBy(email=field.data).filter(UserModel.q.uid != form.uid.data).getOne(None):
+        if UserModel.selectBy(email=field.data).filter(UserModel.q.id != form.id.data).getOne(None):
             raise ValidationError('Email address already in use')
 
         return True
