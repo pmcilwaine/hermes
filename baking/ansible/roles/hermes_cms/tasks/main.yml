@@ -2,9 +2,9 @@
 - name: Install Packages
   yum: name={{ item }} enablerepo=hermes-ci,epel
   with_items:
-    - hermes_cms-*-{{ hermes_image_version }}
     - hermes_ui-*-{{ hermes_image_version }}
     - hermes_aws-*-{{ hermes_image_version }}
+    - hermes_cms-*-{{ hermes_image_version }}
 
 - name: Install Config Bucket
   copy: src=config-bucket dest=/etc/sysconfig/config-bucket owner=root group=root mode=0644
