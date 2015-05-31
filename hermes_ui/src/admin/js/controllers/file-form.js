@@ -47,7 +47,7 @@
                     var fields = {}, file, deferred = $q.defer();
 
                     _.forEach(formUpload.fields, function (item) {
-                        fields[item['name']] = item['value'];
+                        fields[item.name] = item.value;
                     });
 
                     scope.record.file = {
@@ -86,7 +86,7 @@
 
             promises.push(Documents.dryRun(scope.record));
 
-            $q.all(promises).then(function ok (response) {
+            $q.all(promises).then(function ok () {
                 Documents.save(scope.record).then(function ok () {
                     $state.go('document.list');
                 }, function fail (response) {
