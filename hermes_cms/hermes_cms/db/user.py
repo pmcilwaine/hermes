@@ -5,7 +5,6 @@ from datetime import datetime
 from sqlobject import SQLObject
 from sqlobject.col import StringCol, PickleCol, DateTimeCol, BoolCol
 import hashlib
-import uuid
 
 __all__ = ['User']
 

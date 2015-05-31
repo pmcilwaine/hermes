@@ -35,7 +35,7 @@ class Registry(object):
             self._log.debug("Registry.get('%s') returns %s" % (key, value))
             return json.loads(value)
         except (TypeError, ValueError) as e:
-            self._log.error('Unable to parse registry file %s from %s [%s]' % (key, value, str(e)))
+            self._log.error('Unable to parse registry file %s from %s [%s]', key, value, str(e))
 
         return {}
 

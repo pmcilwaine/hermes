@@ -53,7 +53,7 @@ def route(path):
         if tmp_str:
             urls.append(tmp_str)
 
-    log.debug('Attempting to get urls %s' % (urls, ))
+    log.debug('Attempting to get urls %s', urls)
     record = Document.select(IN(Document.q.url, urls)).getOne(None)
     if not record:
         return Response(status=404)
