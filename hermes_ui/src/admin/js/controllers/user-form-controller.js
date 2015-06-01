@@ -8,7 +8,7 @@
         scope.errors = {};
 
         scope.submit = function () {
-            Users.save(scope.record).then(function save (msg) {
+            Users.save(scope.record).then(function save () {
                 state.go('users.list');
             }, function failed(msg) {
                 _.each(msg.data.fields, function (value, key) {

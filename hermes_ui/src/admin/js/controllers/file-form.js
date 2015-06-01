@@ -64,7 +64,7 @@
                         fields: fields
                     });
 
-                    file.progress(function (evt) {
+                    file.progress(function () {
                         //console.log('progress');
                         //console.log(evt);
                     });

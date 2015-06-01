@@ -1,8 +1,10 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import logging
 from hermes_cms.db import Document
 
+log = logging.getLogger('hermes_cms.helpers.page')
 NAVIGATION_ALL = 'all'
 NAVIGATION_CURRENT_DEPTH = 'current_depth'
 
@@ -19,6 +21,8 @@ def navigation(document, depth=None):
     :rtype: dict
     """
 
+    log.debug('Document=%s', document)
+
     if depth not in [NAVIGATION_ALL, NAVIGATION_CURRENT_DEPTH]:
         pass
 
@@ -31,17 +35,21 @@ def navigation(document, depth=None):
     parent = {}
     for page in Document.select().filter(query):
 
+        print document['document']['path'], page.path
+
         record = {
-            'url': page.url,
+            'url': '/' if page.url == 'index' else page.url,
             'menutitle': page.menutitle,
             'current': document['document']['path'].startswith(page.path),
             'children': []
         }
 
-        parent.update({page.gid: record})
+        parent.update({page.id: record})
         if page.parent in parent:
             parent[page.parent]['children'].append(record)
         else:
             results.append(record)
 
+    log.debug('Navigation has %d results', len(results))
+    log.debug(results)
     return results

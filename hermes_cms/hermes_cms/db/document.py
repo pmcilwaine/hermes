@@ -39,10 +39,11 @@ class Document(SQLObject):
         if not document.path:
             path = "%d/" % (document.id, )
             # todo this query is wrong, fix it.
-            parent = Document.selectBy(uuid=record['document']['uuid']).getOne(None)
+            parent = Document.selectBy(id=record['document']['parent']).getOne(None)
             if parent:
                 path = "%s%s" % (parent.path, path)
 
+            record['document']['path'] = path
             document.set(path=path)
 
         # upload files

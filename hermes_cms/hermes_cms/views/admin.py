@@ -125,7 +125,6 @@ def document_add():
 
 @route.route('/upload_url', methods=['POST'])
 def sign_upload_url():
-    # build_post_form_args
 
     bucket = Registry().get('files')['bucket_name']
     signed_form = S3.generate_form(bucket)
