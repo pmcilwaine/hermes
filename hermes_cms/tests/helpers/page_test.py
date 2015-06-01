@@ -84,7 +84,7 @@ def two_level_nav():
 
 @patch('hermes_cms.helpers.page.Document')
 def test_single_level_navigation(document_mock, single_level_nav):
-    document_mock.selectBy.return_value = single_level_nav
+    document_mock.select.return_value.filter.return_value = single_level_nav
 
     expected = [
         {
@@ -112,7 +112,7 @@ def test_single_level_navigation(document_mock, single_level_nav):
 
 @patch('hermes_cms.helpers.page.Document')
 def test_second_level_navigation(document_mock, two_level_nav):
-    document_mock.selectBy.return_value = two_level_nav
+    document_mock.select.return_value.filter.return_value = two_level_nav
 
     expected = [
         {

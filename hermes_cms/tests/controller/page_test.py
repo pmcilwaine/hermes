@@ -34,9 +34,11 @@ def document_fixture():
     }
 
 
+@patch('hermes_cms.controller.page.navigation')
 @patch('hermes_cms.controller.page.resource_filename')
-def test_get_page(resource_mock, document_fixture, config_fixture):
+def test_get_page(resource_mock, navigation_mock, document_fixture, config_fixture):
     resource_mock.return_value = os.path.join(os.path.dirname(__file__), 'data')
+    navigation_mock.return_value = []
 
     page = Page(document_fixture, config_fixture)
     response = page.get()
