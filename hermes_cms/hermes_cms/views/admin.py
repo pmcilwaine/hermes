@@ -5,7 +5,7 @@ import logging
 from hermes_cms.core import Auth
 from hermes_cms.views.exceptions import HermesRequestException, HermesNotSavedException
 from hermes_cms.db import User, Document
-from sqlobject.sqlbuilder import *
+from sqlobject.sqlbuilder import DESC
 from hermes_cms.validators import User as UserValidation, Document as DocumentValidation
 from flask import Blueprint, Response, request, json, session
 from mako.lookup import TemplateLookup
