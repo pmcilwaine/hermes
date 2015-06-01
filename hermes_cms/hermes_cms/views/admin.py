@@ -5,6 +5,7 @@ import logging
 from hermes_cms.core import Auth
 from hermes_cms.views.exceptions import HermesRequestException, HermesNotSavedException
 from hermes_cms.db import User, Document
+from sqlobject.sqlbuilder import *
 from hermes_cms.validators import User as UserValidation, Document as DocumentValidation
 from flask import Blueprint, Response, request, json, session
 from mako.lookup import TemplateLookup
@@ -83,13 +84,16 @@ def user_delete(user_id=None):
 @route.route('/document', methods=['GET'])
 def document_list():
 
-    offset = 0
-    limit = 100
+    offset = int(request.args.get('offset', 0))
+    limit = int(request.args.get('limit', 100))
 
     documents = []
-    for document in Document.selectBy(Document.q.archived is False)[offset:offset + limit]:
+    for document in Document.query(Document.all(), where=Document.q.archived == False, groupBy=Document.q.url,
+                                   orderBy=DESC(Document.q.created), start=offset, end=offset + limit):
+
         documents.append({
             'id': document.id,
+            'uuid': document.uuid,
             'name': document.name,
             'url': document.url,
             'type': document.type
@@ -102,6 +106,23 @@ def document_list():
             'limit': limit
         }
     }), status=200, content_type='application/json')
+
+
+@route.route('/document/<uuid>', methods=['GET'])
+def document_get(uuid=None):
+    record = Document.selectBy(uuid=uuid).getOne(None)
+    if not record:
+        # todo handle 404 requests correctly
+        return Response(response=json.dumps({}), status=404, content_type='application/json')
+
+    return Response(response=json.dumps(Document.get_document(record)), status=200,
+                    content_type='application/json')
+
+
+@route.route('/document/<uuid>', methods=['DELETE'])
+def document_delete(uuid=None):
+    Document.delete_document(doc_uuid=uuid)
+    return Response(status=200)
 
 
 @route.route('/document', methods=['POST'])

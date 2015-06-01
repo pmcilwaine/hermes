@@ -3,7 +3,7 @@
 
 import logging
 from hermes_cms.db import Document
-from sqlobject.sqlbuilder import IN
+from sqlobject.sqlbuilder import IN, DESC
 from flask import Response, request
 
 log = logging.getLogger('hermes_cms.core.route')
@@ -54,7 +54,8 @@ def route(path):
             urls.append(tmp_str)
 
     log.debug('Attempting to get urls %s', urls)
-    record = Document.select(IN(Document.q.url, urls)).getOne(None)
+    record = Document.select(IN(Document.q.url, urls), orderBy=(DESC(Document.q.url), DESC(Document.q.created)),
+                             limit=1).getOne(None)
     if not record:
         return Response(status=404)
 

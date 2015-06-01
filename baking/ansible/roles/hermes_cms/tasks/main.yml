@@ -17,3 +17,6 @@
 
 - name: Install wsgi
   copy: src=hermes_cms.wsgi dest=/var/www/hermes_cms/hermes_cms.wsgi owner=apache group=apache mode=0444
+
+- name: Automatically Start Apache
+  service: name=httpd enabled=yes state=started

@@ -6,6 +6,7 @@ import uuid
 import json
 import arrow
 from sqlobject import SQLObject
+from sqlobject.sqlbuilder import Select, Update
 from hermes_cms.core.registry import Registry
 from sqlobject.col import StringCol, DateTimeCol, BoolCol, IntCol
 from hermes_aws.s3 import S3
@@ -75,3 +76,46 @@ class Document(SQLObject):
                 f.write(contents)
 
         return json.loads(contents)
+
+    @staticmethod
+    def delete_document(doc_uuid):
+        record = Document.selectBy(uuid=doc_uuid).getOne(None)
+
+        # todo must do better exception handling
+        if not record:
+            raise Exception('Cannot find document')
+
+        update = Update(Document.sqlmeta.table, values={'archived': 1}, where=Document.q.url == record.url)
+        print Document._connection.sqlrepr(update)
+        Document._connection.query(Document._connection.sqlrepr(update))
+
+    @staticmethod
+    def all():
+        fields = [Document.q.id]
+        for col in Document.sqlmeta.columnList:
+            fields.append(getattr(Document.q, col.name))
+
+        return fields
+
+    @staticmethod
+    def query(fields, **kwargs):
+        """
+
+        :param fields:
+        :param kwargs:
+        :return:
+        """
+        connection = Document._connection
+        kwargs['staticTables'] = [Document.sqlmeta.table]
+        kwargs['items'] = fields
+        query = connection.sqlrepr(Select(**kwargs))
+        num_columns = len(fields)
+        print query
+
+        items = []
+        for result in connection.queryAll(query):
+            _id, select_results = result[0], result[1:num_columns]
+            entry = Document.get(_id, selectResults=select_results)
+            items.append(entry)
+
+        return items

@@ -24,7 +24,7 @@
                 controller: 'DocumentListController',
                 resolve: {
                     DocumentList: ['Documents', function (Documents) {
-                        return Documents.get();
+                        return Documents.getAll();
                     }]
                 },
                 data: {
@@ -48,8 +48,11 @@
                 resolve: {
                     document: ['Documents', 'DocumentResource', '$stateParams',
                         function (Documents, DocumentResource, stateParams) {
-                            console.log(stateParams);
-                            return Documents.getNewDocument();
+                            if (stateParams.id) {
+                                return Documents.getDocument(stateParams.id);
+                            } else {
+                                return Documents.getNewDocument();
+                            }
                         }]
                 }
             });

@@ -33,9 +33,7 @@ def navigation(document, depth=None):
 
     results = []
     parent = {}
-    for page in Document.select().filter(query):
-
-        print document['document']['path'], page.path
+    for page in Document.query(Document.all(), where=query, groupBy=Document.q.url):
 
         record = {
             'url': '/' if page.url == 'index' else page.url,

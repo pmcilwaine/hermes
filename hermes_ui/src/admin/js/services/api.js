@@ -10,7 +10,7 @@
             });
         }])
         .factory('DocumentResource', ['$resource', function (resource) {
-            return resource('/admin/document/:id', {id: '@id'}, {
+            return resource('/admin/document/:id', {id: '@uuid'}, {
                 get: {method: 'GET'},
                 post: {method: 'POST'},
                 put: {method: 'PUT'},

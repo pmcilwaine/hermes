@@ -188,7 +188,7 @@ def documents():
                    published=True, archived=False, menutitle='Homepage', show_in_menu=True)
     d1.name = 'Homepage'
 
-    d2 = MagicMock(id=2, url='/second-page', type='Page', uuid='some-id', path='2/',
+    d2 = MagicMock(id=2, url='/second-page', type='Page', uuid='some-id-2', path='2/',
                    published=True, archived=False, menutitle='Second Page', show_in_menu=True)
     d2.name = 'Second Page'
 
@@ -202,18 +202,20 @@ def test_document_list_first_page_no_children(config, db_connect_mock, document_
     config.return_value = blueprint_config
     db_connect_mock.return_value = None
 
-    document_mock.selectBy.return_value = documents
+    document_mock.query.return_value = documents
 
     expected = {
         'documents': [
             {
                 'id': 1,
+                'uuid': 'some-id',
                 'name': 'Homepage',
                 'url': '/',
                 'type': 'Page'
             },
             {
                 'id': 2,
+                'uuid': 'some-id-2',
                 'name': 'Second Page',
                 'url': '/second-page',
                 'type': 'Page'
