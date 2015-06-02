@@ -12,13 +12,13 @@
         // TODO this should be pulled in from Configuration Registry
         scope.documentTypes = [
             'Page',
-            'File',
-            'MultiPage'
+            'File'/*,
+            'MultiPage'*/
         ];
 
         // TODO this should be pulled in from Configuration Registry
         scope.pageTemplates = [
-            'Homepage',
+            /*'Homepage',*/
             'Standard'
         ];
 

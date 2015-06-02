@@ -15,21 +15,21 @@ def create_document_mock(**kwargs):
 @pytest.fixture
 def single_level_nav():
     results = [create_document_mock(
-        gid=1,
+        id=1,
         url='/',
         path='1/',
         parent=None,
         published=True,
         menutitle='Homepage'
     ), create_document_mock(
-        gid=2,
+        id=2,
         url='/first-page',
         path='2/',
         parent=None,
         published=True,
         menutitle='First Page'
     ), create_document_mock(
-        gid=3,
+        id=3,
         url='/second-page',
         path='3/',
         parent=None,
@@ -43,35 +43,35 @@ def single_level_nav():
 @pytest.fixture
 def two_level_nav():
     results = [create_document_mock(
-        gid=1,
+        id=1,
         url='/',
         path='1/',
         parent=None,
         published=True,
         menutitle='Homepage'
     ), create_document_mock(
-        gid=2,
+        id=2,
         url='/first-page',
         path='2/',
         parent=None,
         published=True,
         menutitle='First Page'
     ), create_document_mock(
-        gid=3,
+        id=3,
         url='/second-page',
         path='3/',
         parent=None,
         published=True,
         menutitle='Second Page'
     ), create_document_mock(
-        gid=4,
+        id=4,
         url='/second-page/first-node',
         path='3/4/',
         parent=3,
         published=True,
         menutitle='First Node'
     ), create_document_mock(
-        gid=5,
+        id=5,
         url='/second-page/second-node',
         path='3/5/',
         parent=3,
@@ -84,7 +84,7 @@ def two_level_nav():
 
 @patch('hermes_cms.helpers.page.Document')
 def test_single_level_navigation(document_mock, single_level_nav):
-    document_mock.selectBy.return_value = single_level_nav
+    document_mock.query.return_value = single_level_nav
 
     expected = [
         {
@@ -112,7 +112,7 @@ def test_single_level_navigation(document_mock, single_level_nav):
 
 @patch('hermes_cms.helpers.page.Document')
 def test_second_level_navigation(document_mock, two_level_nav):
-    document_mock.selectBy.return_value = two_level_nav
+    document_mock.query.return_value = two_level_nav
 
     expected = [
         {

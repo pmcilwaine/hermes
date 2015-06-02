@@ -1,24 +1,21 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 from sqlobject import SQLObject
 from sqlobject.col import StringCol, PickleCol, DateTimeCol, BoolCol
 import hashlib
-import uuid
 
 __all__ = ['User']
 
 
 class User(SQLObject):
-    idType = str
-
-    uid = StringCol(length=36, alternateID=True)
-    email = StringCol(length=255, alternateID=True)
+    email = StringCol(length=255)
     password = StringCol(length=64)
     first_name = StringCol(length=255)
     last_name = StringCol(length=255)
-    created = DateTimeCol().now()
-    modified = DateTimeCol().now()
+    created = DateTimeCol(default=datetime.now())
+    modified = DateTimeCol(default=datetime.now())
     archived = BoolCol(default=False)
     permissions = PickleCol(default=set())
 
@@ -47,11 +44,14 @@ class User(SQLObject):
         :param record:
         :return:
         """
-        if 'uid' not in record:
-            record['uid'] = str(uuid.uuid4())
+        if 'id' not in record:
             user = User(**record)
         else:
-            user = User.selectBy(email=record['email'])
+            user = User.selectBy(email=record['email']).getOne(None)
+            if not user:
+                # todo better exception handling here
+                raise Exception('Cannot find user record to update')
+            record.pop('id')  # todo find out how we can force id to be par of the kwargs
             user.set(**record)
 
         return user
@@ -61,4 +61,4 @@ class User(SQLObject):
 
         :return: dict
         """
-        return {'email': self.email, 'permissions': list(self.permissions)}
+        return {'id': self.id, 'email': self.email, 'permissions': list(self.permissions)}

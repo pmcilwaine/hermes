@@ -45,7 +45,24 @@
             return deferred.promise;
         };
 
-        document.get = function (offset, limit) {
+        document.getDocument = function (uuid) {
+            return DocumentResource.get({id: uuid}).$promise.then(function (document) {
+                return document;
+            });
+        };
+
+        document.deleteById = function (document_id) {
+            var deferred = $q.defer();
+            DocumentResource.delete({id: document_id}, function ok (msg) {
+                deferred.resolve(msg);
+            }, function fail (msg) {
+                deferred.reject(msg);
+            });
+
+            return deferred.promise;
+        };
+
+        document.getAll = function (offset, limit) {
             offset = offset || 0;
             limit = limit || 100;
 

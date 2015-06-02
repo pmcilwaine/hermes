@@ -3,11 +3,17 @@
 
 from flask import Flask, current_app
 from hermes_cms.core.registry import Registry
+from hermes_cms.core.log import setup_logging
 from sqlobject import sqlhub, connectionForURI
+
+setup_logging()
 
 
 def db_connect():
-    sqlhub.threadConnection = connectionForURI(current_app.config.get('DATABASE'))
+    database_url = current_app.config.get('DATABASE')
+    if not database_url:
+        database_url = Registry().get('database').get('database')
+    sqlhub.threadConnection = connectionForURI(database_url)
 
 
 def db_close(resp):
@@ -31,6 +37,9 @@ def create_app(app_name='hermes_cms', config_obj=None, blueprints=None):
 
     if config_obj:
         app.config.from_object(config_obj)
+    else:
+        # todo this needs to be in Configuration Registry
+        app.secret_key = 'testing-key'
 
     blueprints = blueprints or Registry().get('blueprint').get('blueprint')
 

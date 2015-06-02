@@ -18,7 +18,7 @@ port – connection port number (defaults to 5432 if not provided)
 
 
 class LocalConfig(object):
-    DATABASE = 'sqlite://%s' % (os.path.join(os.path.dirname(__file__), 'database.db'), )
+    DATABASE = 'sqlite://%s' % (os.path.abspath(os.path.join(os.path.dirname(__file__), 'database.db')), ) 
     SECRET_KEY = 'the_secret_key'
 
 # setup application

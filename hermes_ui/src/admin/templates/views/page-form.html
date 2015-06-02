@@ -6,34 +6,40 @@
 
         <form name="pageForm" ng-submit="submit()" novalidate>
 
-            <div class="form-group" ng-class="{'has-error': userForm.name.$invalid}">
+            <div class="form-group" ng-class="{'has-error': pageForm.name.$invalid}">
                 <label>Name</label>
                 <input type="text" class="form-control" name="name" ng-model="record.document.name">
-                <p ng-show="userForm.name.$invalid" class="help-block">{{ errors.name }}</p>
+                <p ng-show="pageForm.name.$invalid" class="help-block">{{ errors.name }}</p>
             </div>
 
-            <div class="form-group" ng-class="{'has-error': userForm.parent.$invalid}">
+            <div class="form-group" ng-class="{'has-error': pageForm.menutitle.$invalid}">
+                <label>Menutitle</label>
+                <input type="text" class="form-control" name="menutitle" ng-model="record.document.menutitle">
+                <p ng-show="documentForm.menutitle.$invalid" class="help-block">{{ errors.menutitle }}</p>
+            </div>
+
+            <div class="form-group" ng-class="{'has-error': pageForm.parent.$invalid}">
                 <label>Parent</label>
                 <input type="text" class="form-control" name="parent" ng-model="record.document.parent">
-                <p ng-show="userForm.parent.$invalid" class="help-block">{{ errors.parent }}</p>
+                <p ng-show="pageForm.parent.$invalid" class="help-block">{{ errors.parent }}</p>
             </div>
 
-            <div class="form-group" ng-class="{'has-error': userForm.url.$invalid}">
+            <div class="form-group" ng-class="{'has-error': pageForm.url.$invalid}">
                 <label>URL</label>
                 <input type="text" class="form-control" name="url" ng-model="record.document.url">
-                <p ng-show="userForm.url.$invalid" class="help-block">{{ errors.url }}</p>
+                <p ng-show="pageForm.url.$invalid" class="help-block">{{ errors.url }}</p>
             </div>
 
-            <div class="form-group" ng-class="{'has-error': userForm.template.$invalid}" ng-show="record.document.type == 'Page'">
+            <div class="form-group" ng-class="{'has-error': pageForm.template.$invalid}" ng-show="record.document.type == 'Page'">
                 <label>Template</label>
                 <select name="type" ng-model="record.page.template" ng-options="template for template in pageTemplates" class="form-control"></select>
-                <p ng-show="userForm.template.$invalid" class="help-block">{{ errors.template }}</p>
+                <p ng-show="pageForm.template.$invalid" class="help-block">{{ errors.template }}</p>
             </div>
 
-            <div class="form-group" ng-class="{'has-error': userForm.content.$invalid}">
+            <div class="form-group" ng-class="{'has-error': pageForm.content.$invalid}">
                 <label>Content</label>
                 <textarea class="form-control" ng-model="record.page.content" name="content"></textarea>
-                <p ng-show="userForm.content.$invalid" class="help-block">{{ errors.content }}</p>
+                <p ng-show="pageForm.content.$invalid" class="help-block">{{ errors.content }}</p>
             </div>
 
             <button type="submit" class="btn btn-primary" accesskey="s">Save</button>

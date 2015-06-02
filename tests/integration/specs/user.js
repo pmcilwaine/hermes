@@ -32,7 +32,7 @@ describe('Users', function () {
         var row = element.all(by.repeater('user in users')).get(0);
         var columns = row.all(by.css('td'));
         columns.get(3).all(by.css('button')).get(0).click();
-        expect(browser.getLocationAbsUrl()).to.eventually.match(/\/user\/modify\/some-id-to-test/);
+        expect(browser.getLocationAbsUrl()).to.eventually.match(/\/user\/modify\/1/);
     });
 
     it('Record Values in Modify Form', function () {

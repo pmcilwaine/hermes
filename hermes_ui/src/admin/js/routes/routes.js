@@ -2,7 +2,7 @@
     angular.module('hermes.app').config(['$stateProvider', '$urlRouterProvider',
         function ($stateProvider, $urlRouterProvider) {
 
-            $urlRouterProvider.otherwise('/document');
+            $urlRouterProvider.otherwise('/document/list');
 
             $stateProvider.state('document', {
                 url: '/document',
@@ -24,7 +24,7 @@
                 controller: 'DocumentListController',
                 resolve: {
                     DocumentList: ['Documents', function (Documents) {
-                        return Documents.get();
+                        return Documents.getAll();
                     }]
                 },
                 data: {
@@ -48,8 +48,11 @@
                 resolve: {
                     document: ['Documents', 'DocumentResource', '$stateParams',
                         function (Documents, DocumentResource, stateParams) {
-                            console.log(stateParams);
-                            return Documents.getNewDocument();
+                            if (stateParams.id) {
+                                return Documents.getDocument(stateParams.id);
+                            } else {
+                                return Documents.getNewDocument();
+                            }
                         }]
                 }
             });
@@ -111,7 +114,7 @@
             });
 
             $stateProvider.state('users.modify', {
-                url: '/modify/:id',
+                url: '/modify/{id:int}',
                 templateUrl: 'templates/views/user-form.html',
                 controller: 'UserFormController',
                 data: {
