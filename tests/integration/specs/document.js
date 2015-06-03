@@ -82,6 +82,12 @@ describe('Documents', function () {
         expect(element.all(by.css('table tbody tr')).count()).to.eventually.equal(3);
     });
 
+    it('Validation message is displayed for blank form', function () {
+        element.all(by.css('button')).get(0).click();
+        element.all(by.css('button')).get(0).click();
+        expect(element.all(by.css('.help-block')).count()).to.eventually.equal(3);
+    });
+
     after(function() {
         browser.takeScreenshot()
     });
