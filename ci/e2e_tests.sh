@@ -6,7 +6,7 @@ function help_text {
 
     cat <<EOF
 
-    Usage: ci/integration_tests.sh [ -v|--version VERSION ] [ -c|--config CONFIGURATION ] [ -u|--url BASE_URL ]
+    Usage: ci/e2e_tests.sh [ -v|--version VERSION ] [ -c|--config CONFIGURATION ] [ -u|--url BASE_URL ]
 
         VERSION:        The RPM version to test against
         CONFIGURATION:  ci or local (defaults to ci)
