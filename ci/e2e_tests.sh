@@ -82,7 +82,5 @@ until $(curl --output /dev/null --silent --get --fail ${BASE_URL}); do
     sleep 5
 done
 
-echo "OK"
-
 npm test
 status=$?
