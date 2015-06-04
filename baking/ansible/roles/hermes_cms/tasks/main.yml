@@ -20,3 +20,6 @@
 
 - name: Automatically Start Apache
   service: name=httpd enabled=yes state=started
+
+- name: Ensure permissions are setup
+  command: setsebool -P httpd_can_network_connect=On
