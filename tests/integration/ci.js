@@ -8,6 +8,7 @@ exports.config.capabilities = {
     browserName: 'firefox',
     version: '32.0',
     platform: 'Windows 7',
-    name: process.env.VERSION || 'local',
+    name: 'Integration' || 'local Integration',
+    build: process.env.VERSION,
     count: 1
 };
