@@ -17,6 +17,18 @@ multiCapabilities.push({
     platform: 'Windows 7'
 });
 
+multiCapabilities.push({
+    browserName: 'firefox',
+    version: '37.0',
+    platform: 'OS X 10.10'
+});
+
+multiCapabilities.push({
+    browserName: 'chrome',
+    version: '39.0',
+    platform: 'OS X 10.10'
+});
+
 multiCapabilities.forEach(function (item) {
     item.name = 'End-to-End' || 'local Integration';
     item.build = process.env.VERSION || 'local';
