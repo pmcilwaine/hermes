@@ -83,9 +83,20 @@ describe('Documents', function () {
     });
 
     it('Validation message is displayed for blank form', function () {
-        element.all(by.css('button')).get(0).click();
-        element.all(by.css('button')).get(0).click();
-        expect(element.all(by.css('.help-block')).count()).to.eventually.equal(3);
+        element.all(by.css('button')).get(0).click().then(function () {
+            element.all(by.css('button')).get(0).click().then(function () {
+                element.all(by.css('button')).get(0).click().then(function () {
+
+                    expect(element.all(by.css('.help-block')).filter(function (elem) {
+                        return elem.isDisplayed().then(function (isPresent) {
+                            return isPresent;
+                        });
+                    }).count()).to.eventually.equal(3);
+
+                });
+            });
+
+        });
     });
 
     after(function() {

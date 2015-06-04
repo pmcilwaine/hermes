@@ -75,9 +75,20 @@ module.exports = {
                     }}, {}];
                 });
 
+                $httpBackend.whenPOST('/admin/document?validate=true', function (data) {
+                    data = angular.fromJson(data);
+                    return data.document.url === undefined;
+                }).respond(function (method, url, data) {
+                    return [400, {fields: {
+                        name: 'Must enter a name',
+                        url: 'URL is already in use',
+                        type: 'Must select a type'
+                    }}, {}];
+                });
+
                 $httpBackend.whenPOST('/admin/document', function (data) {
                     data = angular.fromJson(data);
-                    return ['first-document', 'first-file'].indexOf(data.document.url) !== -1;
+                    return ['first-document', 'first-file'].indexOf(data.document.url) !== -1 && data.document.url !== '';
                 }).respond(function (method, url, data) {
                     data = angular.fromJson(data);
                     data.document.id = documents.length;
