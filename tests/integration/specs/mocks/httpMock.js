@@ -5,7 +5,7 @@ module.exports = {
             angular.module('hermes.httpmock', ['hermes.app', 'ngMockE2E']).run(function($httpBackend) {
 
                 var users = [{
-                    uid: 'some-id-to-test',
+                    id: 1,
                     email: 'test@example.org',
                     first_name: 'Test',
                     last_name: 'User'
@@ -23,8 +23,8 @@ module.exports = {
                     users: users
                 });
 
-                $httpBackend.whenPUT('/admin/user/some-id-to-test', {
-                    uid: 'some-id-to-test',
+                $httpBackend.whenPUT('/admin/user/1', {
+                    id: 1,
                     email: 'test@example.org',
                     first_name: 'My First Name',
                     last_name: 'User'
@@ -40,7 +40,7 @@ module.exports = {
 
                 $httpBackend.whenPOST('/admin/user').respond(function (method, url, data) {
                     data = angular.fromJson(data);
-                    data.uid = uuid();
+                    data.id = users.length;
                     users.push(data);
                     return [200, data, {}];
                 });
@@ -49,7 +49,7 @@ module.exports = {
                     var user_id = url.split('/')[3];
 
                     users = users.filter(function (item) {
-                        return item.uid !== user_id;
+                        return item.id !== user_id;
                     });
 
                     return [200, data, {}];
@@ -75,14 +75,34 @@ module.exports = {
                     }}, {}];
                 });
 
+                $httpBackend.whenPOST('/admin/document?validate=true', function (data) {
+                    data = angular.fromJson(data);
+                    return data.document.url === undefined;
+                }).respond(function (method, url, data) {
+                    return [400, {fields: {
+                        name: 'Must enter a name',
+                        url: 'URL is already in use',
+                        type: 'Must select a type'
+                    }}, {}];
+                });
+
                 $httpBackend.whenPOST('/admin/document', function (data) {
                     data = angular.fromJson(data);
-                    return ['first-document', 'first-file'].indexOf(data.document.url) !== -1;
+                    return ['first-document', 'first-file'].indexOf(data.document.url) !== -1 && data.document.url !== '';
                 }).respond(function (method, url, data) {
                     data = angular.fromJson(data);
-                    data.document.gid = uuid();
+                    data.document.id = documents.length;
                     documents.push(data.document);
                     return [200, data.document, {}];
+                });
+
+                $httpBackend.whenPOST('/admin/file/upload').respond({});
+
+                $httpBackend.whenPOST('/admin/upload_url').respond({
+                    fields: [{
+                        bucket: null
+                    }],
+                    action: '/admin/file/upload'
                 });
 
                 $httpBackend.when('OPTIONS', /.*/).passThrough();

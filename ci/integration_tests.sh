@@ -61,8 +61,6 @@ done
 
 export CONFIGURATION="${CONFIGURATION-ci}" # Defaults to running on browserstack
 export TEST="integration"
-
-export CONFIGURATION="ci" # "local"
 export BASE_URL="${BASE_URL-http://localhost:3000/}"
 
 ROOT_DIR=$(readlink -m $(dirname $0)/..)
@@ -91,7 +89,7 @@ else
     # ci and install sauce connect
     if [ $(uname) == "Darwin" ]; then
         curl https://saucelabs.com/downloads/sc-4.3.8-osx.zip -o sc-4.3.zip --silent
-        unzip sc-4.3.zip
+        unzip -o sc-4.3.zip
         mv sc-4.3.8-osx sc
     elif [ $(uname) == "Linux" ]; then
         curl https://saucelabs.com/downloads/sc-4.3.8-linux.tar.gz -o sc-4.3.tar.gz --silent

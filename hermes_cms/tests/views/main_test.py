@@ -5,6 +5,8 @@ import json
 import pytest
 import logging
 from mock import patch, MagicMock
+from utils import mocks
+mocks.mock_modules()
 from hermes_cms.app import create_app
 
 

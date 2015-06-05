@@ -12,7 +12,7 @@
         user.save = function (record) {
             var deferred = $q.defer();
 
-            if (record.is_new || record.uid === undefined) {
+            if (record.is_new || record.id === undefined) {
                 UserResource.post(record, function ok (msg) {
                     deferred.resolve(msg);
                 }, function fail (msg) {
@@ -30,7 +30,7 @@
         };
 
         user.getById = function (user_id) {
-            var t = _.findWhere(data, {uid: user_id});
+            var t = _.findWhere(data, {id: user_id});
             return t;
         };
 

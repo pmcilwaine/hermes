@@ -1,0 +1,8 @@
+[hermes-ci]
+name=hermes-ci
+baseurl=http://hermes-ci-paulmcilwaine-com.s3.amazonaws.com/
+failovermethod=priority
+enabled=0
+s3_enabled=1
+gpgcheck=0
+priority=1

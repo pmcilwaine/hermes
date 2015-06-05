@@ -9,6 +9,3 @@
   copy: src={{item}} dest=/etc/yum.repos.d/
   with_fileglob:
     - "*.repo"
-
-- name: YUM update cache
-  shell: yum makecache --enablerepo epel

@@ -8,6 +8,7 @@ packer build -var version=$(date +%Y%m%d%H%M) -var base_ami=%amazon linux% -var 
 
 ## Creating Hermes SELinux
 
+
 ```
 packer build -var version=$(date +%Y%m%d%H%M) -var base_ami=%hermes_linux% -var image_name=hermes_selinux selinux.json
 ```

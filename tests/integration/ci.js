@@ -5,7 +5,10 @@ exports.config.sauceKey = process.env.SAUCE_KEY;
 exports.config.sauceSeleniumAddress = 'localhost:4445/wd/hub';
 
 exports.config.capabilities = {
-    browserName: 'chrome',
-    name: process.env.VERSION || 'local',
+    browserName: 'firefox',
+    version: '32.0',
+    platform: 'Windows 7',
+    name: 'Integration' || 'local Integration',
+    build: process.env.VERSION,
     count: 1
 };

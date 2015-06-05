@@ -1,12 +1,14 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import logging
 from flask import Blueprint, Response, json, request, redirect
 from hermes_cms.core.auth import Auth
 from hermes_cms.core.route import route as route_handler
 from mako.lookup import TemplateLookup
 from pkg_resources import resource_filename
 
+log = logging.getLogger('hermes_cms.views.main')
 route = Blueprint('main', __name__)
 # todo this should be a configurable list of paths
 lookup = TemplateLookup(directories=[

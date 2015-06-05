@@ -7,9 +7,9 @@
 
         scope.deleteItem = function (index) {
             var record = scope.users[index];
-            Users.deleteById(record.uid).then(function ok (response) {
+            Users.deleteById(record.id).then(function ok () {
                 scope.users.splice(index, 1);
-            }, function fail (response) {
+            }, function fail () {
             });
         };
     };

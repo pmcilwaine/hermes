@@ -12,13 +12,13 @@
         // TODO this should be pulled in from Configuration Registry
         scope.documentTypes = [
             'Page',
-            'File',
-            'MultiPage'
+            'File'/*,
+            'MultiPage'*/
         ];
 
         // TODO this should be pulled in from Configuration Registry
         scope.pageTemplates = [
-            'Homepage',
+            /*'Homepage',*/
             'Standard'
         ];
 
@@ -35,7 +35,7 @@
                 Documents.createNewDocument(scope.record);
                 $state.go('document.' + scope.record.document.type.toLowerCase());
             }, function fail (msg) {
-                _.each(msg.data.fields, function (value, key) {
+                _.each(msg.fields, function (value, key) {
                     scope.documentForm[key].$dirty = true;
                     scope.documentForm[key].$setValidity(key, false);
                     scope.errors[key] = value;

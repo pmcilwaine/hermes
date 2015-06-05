@@ -68,9 +68,35 @@ describe('Documents', function () {
         var fileToUpload = '../../data/test_cases.dot',
             absolutePath = path.resolve(__dirname, fileToUpload);
 
-        file.sendKeys(absolutePath);
+        //console.log(browser.driver.remote)
+
+        //var remote = require('protractor/node_modules/selenium-webdriver/remote');
+        //browser.setFileDetector(new remote.FileDetector);
+
+        //browser.driver.setFileDetector(new browser.driver.remote.FileDetector);
+        file.sendKeys('https://s3-ap-southeast-2.amazonaws.com/tests-paulmcilwaine-com/systemwide_req_spec.dot');
         element.all(by.css('button')).get(0).click();
+        /*browser.manage().logs().get('browser').then(function(browserLog) {
+            console.log('\n log: ' + require('util').inspect(browserLog));
+        });*/
         expect(element.all(by.css('table tbody tr')).count()).to.eventually.equal(3);
+    });
+
+    it('Validation message is displayed for blank form', function () {
+        element.all(by.css('button')).get(0).click().then(function () {
+            element.all(by.css('button')).get(0).click().then(function () {
+                element.all(by.css('button')).get(0).click().then(function () {
+
+                    expect(element.all(by.css('.help-block')).filter(function (elem) {
+                        return elem.isDisplayed().then(function (isPresent) {
+                            return isPresent;
+                        });
+                    }).count()).to.eventually.equal(3);
+
+                });
+            });
+
+        });
     });
 
     after(function() {
