@@ -1,5 +1,5 @@
 Name:           hermes_ui
-Version:        0.2.0
+Version:        0.3.0
 Release:        {IMAGE_VERSION}
 Source0:        %{name}-%{version}-%{release}.tar.gz
 Group:          Development/Libraries
