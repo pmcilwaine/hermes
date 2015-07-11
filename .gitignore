@@ -122,3 +122,5 @@ junit-*.xml
 npm-debug.log
 .DS_Store
 jshint.xml
+report*.xml
+sc*
