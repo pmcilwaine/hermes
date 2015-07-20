@@ -1,0 +1,110 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Template for Jumpbox",
+     "Parameters" : {
+        "InstanceType" : {
+            "Description" : "NAT Device EC2 instance type",
+            "Type" : "String",
+            "Default" : "t2.micro"
+        },
+        "AMI": {
+            "Description" : "AMI of the NAT instance server image",
+            "Type" : "String"
+        }
+    },
+    "Resources": {
+        <%include file="instance-iamrole.template"/>
+        "EC2IAMPolicy" : {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "nat_instance_ec2_policy",
+                "PolicyDocument": {
+                    "Statement": [{
+                        "Effect": "Allow",
+                        "Action": [
+                            "ec2:DescribeInstances",
+                            "ec2:CreateRoute",
+                            "ec2:ReplaceRoute",
+                            "ec2:StartInstances",
+                            "ec2:StopInstances"
+                        ],
+                        "Resource": ["*"]
+                    }]
+                },
+                "Roles": [{"Ref": "EC2IAMRole"}]
+            }
+        },
+        <% cidr = {'AZ1': '10.0.253.0/28', 'AZ2': '10.0.253.16/28'} %>
+        % for zone_name in zone_names:
+            "RouteToNAT${zone_name}" : {
+                "Type" : "AWS::EC2::Route",
+                "Properties" : {
+                    "RouteTableId" : "${stack_out['vpc']['PrivateRouteTable' + zone_name]}",
+                    "DestinationCidrBlock" : "0.0.0.0/0",
+                    "InstanceId" : { "Ref" : "NATDevice${zone_name}" }
+                }
+            },
+            "NATDevice${zone_name}" : {
+                "Type" : "AWS::EC2::Instance",
+                "Properties" : {
+                    "InstanceType" : { "Ref" : "InstanceType" },
+                    "KeyName" : "${ssh_key}",
+                    "SubnetId" :  { "Ref" : "SubNetnat${zone_name}" },
+                    "SourceDestCheck" : "false",
+                    "ImageId" : { "Ref" : "AMI" },
+                    "SecurityGroupIds" : [{ "Ref" : "NATSecurityGroup" }],
+                    "IamInstanceProfile" : { "Ref" : "EC2IAMInstProf" },
+                    "Tags" : [
+                        {"Key": "Name", "Value": { "Fn::Join" : [ "-", [ { "Ref" : "AWS::StackName" }, "${zone_name}" ] ] } }
+                    ]
+                }
+            },
+            "SubNetnat${zone_name}": {
+                "Type" : "AWS::EC2::Subnet",
+                "Properties" : {
+                    "AvailabilityZone": "${availability_zones[zone_name]}",
+                    "CidrBlock" : "${cidr[zone_name]}",
+                    "VpcId" : "${stack_out['vpc']['VPCID']}"
+                }
+            },
+            "SubNetnatAssoc${zone_name}" : {
+                "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+                "Properties" : {
+                    "SubnetId" : { "Ref" : "SubNetnat${zone_name}" },
+                    "RouteTableId" : "${stack_out['vpc']['CMSRouteTable' + zone_name]}"
+                }
+            },
+            "NATIPAddress${zone_name}" : {
+                "Type" : "AWS::EC2::EIP",
+                "Properties" : {
+                    "Domain" : "vpc",
+                    "InstanceId" : { "Ref" : "NATDevice${zone_name}" }
+                }
+            },
+        % endfor
+        "NATSecurityGroup" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "Properties" : {
+                "GroupDescription" : "Enable internal access to the NAT device(s)",
+                "VpcId" : "${stack_out['vpc']['VPCID']}",
+                "SecurityGroupIngress" : [
+                   { "IpProtocol" : "tcp", "FromPort" : "22",  "ToPort" : "22",    "CidrIp" : "0.0.0.0/0"} ,
+                   { "IpProtocol" : "-1", "FromPort" : "0",    "ToPort" : "65535", "CidrIp" : "10.0.0.0/16" }
+                ]
+            }
+        }
+    },
+    "Outputs" : {
+        % for zone_name in zone_names:
+            "NATInstance${zone_name}" : {
+                "Value" : { "Ref" : "NATDevice${zone_name}" }
+            },
+            "NATInstanceEIP${zone_name}" : {
+                "Value" : { "Ref" : "NATIPAddress${zone_name}" }
+            },
+        % endfor
+        "NATSecurityGroup" : {
+            "Value" : { "Ref" : "NATSecurityGroup" }
+        }
+    }
+}

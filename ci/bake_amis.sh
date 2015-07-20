@@ -29,3 +29,4 @@ ROOT_DIR=$(readlink -m $(dirname $0)/..)
 cd ${ROOT_DIR}/baking
 
 packer build -var version=${VERSION} -var base_ami=ami-f7740dcd -var image_name=hermes_cms one_role.json
+packer build -var version=${VERSION} -var base_ami=ami-f7740dcd -var image_name=hermes_cloud one_role.json

@@ -1,0 +1,17 @@
+% for zone in zone_names:
+    "SubNet${service_id}${name}${zone}": {
+        "Type" : "AWS::EC2::Subnet",
+        "Properties" : {
+            "AvailabilityZone": "${availability_zones[zone]}",
+            "CidrBlock" : "${cidr[name][zone]}",
+            "VpcId" : "${stack_out['vpc']['VPCID']}"
+        }
+    },
+    "SubNet${service_id}${name}Assoc${zone}" : {
+        "Type" : "AWS::EC2::SubnetRouteTacbleAssociation",
+        "Properties" : {
+            "SubnetId" : { "Ref" : "SubNet${service_id}${name}${zone}" },
+            "RouteTableId" : "${stack_out['vpc']['CMSRouteTable' + zone]}"
+        }
+    },
+% endfor

@@ -1,0 +1,4 @@
+---
+- ami:
+  - jumpbox: amzn-ami-vpc-nat-hvm-2015.03.0.x86_64-ebs
+  - cms: hermes_cms_{{ hermes_image_version }}
