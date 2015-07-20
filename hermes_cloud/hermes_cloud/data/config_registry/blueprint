@@ -1,0 +1,12 @@
+{
+    "blueprint": [
+        {
+            "name": "hermes_cms.views.main",
+            "from": "route"
+        },
+        {
+            "name": "hermes_cms.views.admin",
+            "from": "route"
+        }
+    ]
+}

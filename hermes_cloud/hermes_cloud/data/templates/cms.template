@@ -1,0 +1,289 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Template to create CMS Instances",
+    "Parameters": {
+        "MinInstances": {
+            "Description" : "Minimum number of CMS Server instances",
+            "Type" : "Number",
+            "Default" : "1"
+        },
+        "MaxInstances": {
+            "Description" : "Maximum number of CMS Server instances",
+            "Type" : "Number",
+            "Default" : "1"
+        },
+        "MinInstancesInService": {
+            "Description" : "The minimum number of services which must be available during an update",
+            "Type" : "Number",
+            "Default" : "1"
+        },
+        "AMI": {
+            "Description" : "AMI of the CMS instance server image",
+            "Type" : "String"
+        }
+    },
+    "Resources": {
+        <%include file="instance-iamrole.template"/>
+        <% cidr_jumpbox = {'AZ1': '10.0.253.0/28', 'AZ2': '10.0.253.16/28'} %>
+        <% cidr_rds = {'AZ1': '10.0.30.64/28', 'AZ2': '10.0.30.80/28'} %>
+        <% cidr = {'elb': {'AZ1': '10.0.10.0/24', 'AZ2': '10.0.20.0/24'}, 'asg': {'AZ1': '10.0.40.0/24', 'AZ2': '10.0.50.0/24'}} %>
+        "CMSLoadBalancerSG": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Allow TCP in",
+                "VpcId": "${stack_out['vpc']['VPCID']}",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol" : "tcp",
+                        "FromPort" : "80",
+                        "ToPort" : "80",
+                        "CidrIp" : "0.0.0.0/0"
+                    }
+                ]
+            }
+        },
+        "CMSSG": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Allow TCP in",
+                "VpcId": "${stack_out['vpc']['VPCID']}",
+                "SecurityGroupIngress": [
+                    % for zone_name in zone_names:
+                    {
+                        "IpProtocol" : "tcp",
+                        "FromPort" : "22",
+                        "ToPort" : "22",
+                        "CidrIp": "${cidr_jumpbox[zone_name]}"
+                    },
+                    % endfor
+                    {
+                        "IpProtocol" : "tcp",
+                        "FromPort" : "80",
+                        "ToPort" : "80",
+                        "SourceSecurityGroupId" : {"Ref": "CMSLoadBalancerSG"}
+                    }
+                ]
+            }
+        },
+
+        % for zone in zone_names:
+            "SubNetCMSelb${zone}": {
+                "Type" : "AWS::EC2::Subnet",
+                "Properties" : {
+                    "AvailabilityZone": "${availability_zones[zone]}",
+                    "CidrBlock" : "${cidr['elb'][zone]}",
+                    "VpcId" : "${stack_out['vpc']['VPCID']}"
+                }
+            },
+            "SubNetCMSelbAssoc${zone}" : {
+                "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+                "Properties" : {
+                    "SubnetId" : { "Ref" : "SubNetCMSelb${zone}" },
+                    "RouteTableId" : "${stack_out['vpc']['CMSRouteTable' + zone]}"
+                }
+            },
+        % endfor
+
+        "CMSLoadBalancer": {
+            "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
+            "Properties": {
+                "Listeners": [
+                    {
+                        "LoadBalancerPort" : "80",
+                        "InstancePort" : "80",
+                        "Protocol" : "HTTP"
+                    }
+                ],
+                "HealthCheck": {
+                    "Target": "HTTP:80/assets/public/css/app.css",
+                    "HealthyThreshold": "2",
+                    "UnhealthyThreshold": "2",
+                    "Interval": "15",
+                    "Timeout": "5"
+                },
+                "SecurityGroups" : [ { "Ref" : "CMSLoadBalancerSG" } ],
+                "Subnets" : [ { "Ref" : "SubNetCMSelbAZ1" },
+                              { "Ref" : "SubNetCMSelbAZ2" } ],
+                "AppCookieStickinessPolicy": [
+                    {
+                        "CookieName": "session",
+                        "PolicyName": "FollowSessionPolicy"
+                    }
+                ]
+            }
+        },
+
+        % for zone in zone_names:
+            "SubNetCMSasg${zone}": {
+                "Type" : "AWS::EC2::Subnet",
+                "Properties" : {
+                    "AvailabilityZone": "${availability_zones[zone]}",
+                    "CidrBlock" : "${cidr['asg'][zone]}",
+                    "VpcId" : "${stack_out['vpc']['VPCID']}"
+                }
+            },
+            "SubNetCMSasgAssoc${zone}" : {
+                "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+                "Properties" : {
+                    "SubnetId" : { "Ref" : "SubNetCMSasg${zone}" },
+                    "RouteTableId" : "${stack_out['vpc']['PrivateRouteTable' + zone]}"
+                }
+            },
+        % endfor
+
+        "CMSASG": {
+            "Type": "AWS::AutoScaling::AutoScalingGroup",
+            "Properties": {
+                "AvailabilityZones": [
+                    "${availability_zones['AZ1']}",
+                    "${availability_zones['AZ2']}"
+                ],
+                "LaunchConfigurationName": {"Ref": "CMSLC"},
+                "MinSize": {"Ref": "MinInstances"},
+                "MaxSize": {"Ref": "MaxInstances"},
+                "LoadBalancerNames": [
+                    {"Ref": "CMSLoadBalancer"}
+                ],
+                "VPCZoneIdentifier": [
+                    {"Ref": "SubNetCMSasgAZ1"},
+                    {"Ref": "SubNetCMSasgAZ2"}
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {"Ref": "AWS::StackName"},
+                        "PropagateAtLaunch": true
+                    }
+                ]
+            }
+        },
+        "CMSLC": {
+            "Type": "AWS::AutoScaling::LaunchConfiguration",
+            "Properties": {
+                "KeyName": "${ssh_key}",
+                "ImageId": {"Ref": "AMI"},
+                "SecurityGroups": [
+                    {"Ref": "CMSSG"}
+                ],
+                "InstanceType": "t2.micro",
+                "IamInstanceProfile" : { "Ref" : "EC2IAMInstProf" },
+                "InstanceMonitoring": false
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Init": {
+                    "config": {
+                        "files": {
+                            "/etc/sysconfig/config-bucket": {
+                                "content": "${config_bucket}"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "BucketRead": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "BucketPolicy",
+                "PolicyDocument": {
+                    "Statement": [
+                        {
+                            "Resource": [
+                                "arn:aws:s3:::${config_bucket}",
+                                "arn:aws:s3:::${config_bucket}/*"
+                            ],
+                            "Action": [
+                                "s3:GetObject",
+                                "s3:GetObjectAcl",
+                                "s3:ListBucket"
+                            ],
+                            "Effect": "Allow"
+                        },
+                        {
+                            "Resource": [
+                                "arn:aws:s3:::${files_bucket}",
+                                "arn:aws:s3:::${files_bucket}/*",
+                                "arn:aws:s3:::${storage_bucket}",
+                                "arn:aws:s3:::${storage_bucket}/*"
+                            ],
+                            "Action": [
+                                "s3:Put*",
+                                "s3:Get*",
+                                "s3:List*"
+                            ],
+                            "Effect": "Allow"
+                        }
+                    ]
+                },
+                "Roles": [{"Ref": "EC2IAMRole"}]
+            }
+        },
+        % for zone in zone_names:
+            "SubNetCMSDB${zone}": {
+                "Type" : "AWS::EC2::Subnet",
+                "Properties" : {
+                    "AvailabilityZone": "${availability_zones[zone]}",
+                    "CidrBlock" : "${cidr_rds[zone]}",
+                    "VpcId" : "${stack_out['vpc']['VPCID']}"
+                }
+            },
+            "SubNetCMSDBAssoc${zone}" : {
+                "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+                "Properties" : {
+                    "SubnetId" : { "Ref" : "SubNetCMSDB${zone}" },
+                    "RouteTableId" : "${stack_out['vpc']['CMSRouteTable' + zone]}"
+                }
+            },
+        % endfor
+        "CMSDBSubnetGroup": {
+            "Type": "AWS::RDS::DBSubnetGroup",
+            "Properties": {
+                "DBSubnetGroupDescription": "DBSubnetGroup for CMS",
+                "SubnetIds": [
+                    { "Ref": "SubNetCMSDBAZ1" },
+                    { "Ref": "SubNetCMSDBAZ2" }
+                ]
+            }
+        },
+        "CMSDBSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Allow Database connections to CMS",
+                "VpcId": "${stack_out['vpc']['VPCID']}",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "5432",
+                        "ToPort": "5432",
+                        "SourceSecurityGroupId": {"Ref": "CMSSG"}
+                    }
+                ]
+            }
+        },
+        "CMSDB" : {
+            "Type" : "AWS::RDS::DBInstance",
+            "Properties" : {
+                "DBName" : "${rds['db_name']}",
+                "DBInstanceIdentifier": "${rds['instance_id']}",
+                "AllocatedStorage" : "5",
+                "DBInstanceClass" : "db.t2.micro",
+                "Engine" : "postgres",
+                "EngineVersion" : "9.3",
+                "MasterUsername" : "${rds['username']}",
+                "MasterUserPassword" : "${rds['password']}",
+                "MultiAZ": "False",
+                "DBSubnetGroupName": { "Ref": "CMSDBSubnetGroup" },
+                "VPCSecurityGroups": [ { "Ref": "CMSDBSecurityGroup" } ],
+                "PubliclyAccessible": "True"
+            }
+        }
+    },
+    "Outputs": {
+        "DBHost": {
+            "Value": {"Fn::GetAtt": ["CMSDB", "Endpoint.Address" ]}
+        },
+        "DBPort": {
+            "Value": {"Fn::GetAtt": ["CMSDB", "Endpoint.Port" ]}
+        }
+    }
+}
