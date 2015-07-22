@@ -25,8 +25,24 @@ while [ $# -gt 0 ]; do
     esac
 done
 
+finish () {
+    rv=$?
+    if [ ${rv} -ne 0 ]; then
+
+        for image_name in hermes_cloud hermes_cms; do
+            IMAGE_ID=$(aws ec2 describe-images --filters Name=name,Values=${image_name}_${VERSION} | jq -r '.Images[0].ImageId')
+            if [ "{$IMAGE_ID}" = "null" ]; then
+                aws ec2 deregister-image --image-id ${IMAGE_ID}
+            fi
+        done
+    fi
+}
+
+trap "finish" INT TERM EXIT
+
 ROOT_DIR=$(readlink -m $(dirname $0)/..)
 cd ${ROOT_DIR}/baking
 
-packer build -var version=${VERSION} -var base_ami=ami-f7740dcd -var image_name=hermes_cms one_role.json
-packer build -var version=${VERSION} -var base_ami=ami-f7740dcd -var image_name=hermes_cloud one_role.json
+for image_name in hermes_cms hermes_cloud; do
+    packer build -var version=${VERSION} -var base_ami=ami-f7740dcd -var image_name=${image_name} one_role.json
+done
