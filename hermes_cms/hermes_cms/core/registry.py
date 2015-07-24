@@ -4,7 +4,7 @@ import os
 import json
 import logging
 # todo aws stuff should be moved into hermes_aws package
-from boto.s3.connection import S3Connection
+import boto
 from boto.s3.key import Key
 
 
@@ -98,7 +98,8 @@ class Registry(object):
         :param resource: The name of the resource to retrieve
         :return: No return value
         """
-        conn = S3Connection()
+        print '_get_s3'
+        conn = boto.connect_s3()
         bucket = conn.get_bucket(self._bucket_name)
         key = Key(bucket)
         key.name = resource

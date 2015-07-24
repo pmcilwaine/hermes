@@ -1,6 +1,6 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
-import boto
+import boto.sqs
 import pytest
 from hermes_cms.service.sqs_service import SQSService, SQSNotExistError
 from mock import patch, MagicMock
@@ -12,12 +12,12 @@ def basic_config():
     return {
         'jobs': {
             'job_name': {
-                'module_name': 'hermes_cms',
+                'module_name': 'hermes_cms.service.sqs.service',
                 'class_name': 'SQSService',
                 'service': {
                     'service_module': 'hermes_cms',
                     'service_class': 'TestJob',
-                    'topic': '',
+                    'topic': 'config://topics.multipage',
                     'queue': 'test-queue',
                     'messages': 1
                 }
@@ -29,7 +29,7 @@ def basic_config():
 @mock_sqs
 @patch('hermes_cms.service.service.import_handler')
 def test_initialise_service(mock_import_handler, basic_config):
-    conn = boto.connect_sqs()
+    conn = boto.sqs.connect_to_region('ap-southeast-2')
     conn.create_queue('test-queue')
 
     mock_import_handler.return_value = MagicMock()

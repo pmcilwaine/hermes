@@ -1,9 +1,10 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
+from hermes_cms.core.registry_resolver import RegistryResolver
 
 
 def import_handler(module_name, class_name):
-    mod = __import__(module_name, fromlist=[class_name])
+    mod = __import__(module_name, fromlist=[str(class_name)])
     return getattr(mod, class_name)
 
 class Service(object):
@@ -23,6 +24,8 @@ class Service(object):
         """
         job_config = config['jobs'][name]
         self.service_config = job_config.get('service', {})
+        self._resolve = RegistryResolver()
+        self.region = region
 
         service_module = self.service_config.get('service_module')
         service_class = self.service_config.get('service_class')

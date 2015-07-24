@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
-import time
 import boto.s3
 import boto.rds2
-from boto.rds2.exceptions import DBInstanceNotFound
 from boto.exception import S3ResponseError
 from hermes_aws import StackManager
 import argparse

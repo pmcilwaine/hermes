@@ -20,10 +20,12 @@ class SQSService(Service):
         :raise: SQSNotExistError
         """
         super(SQSService, self).__init__(name, region, config)
-        conn = boto.connect_sqs()
-        self.queue = conn.get_queue(self.service_config['queue'])
+        self._sqs_conn = boto.sqs.connect_to_region(self.region)
+
+        queue_name = self._resolve.resolver(self.service_config['queue'])
+        self.queue = self._sqs_conn.get_queue(queue_name)
         if not self.queue:
-            raise SQSNotExistError('Queue does not exist')
+            raise SQSNotExistError('Queue "{0}" does not exist'.format(queue_name))
 
     def do_action(self):
         """

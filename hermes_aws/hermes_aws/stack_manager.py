@@ -108,7 +108,8 @@ class StackManager(object):
                 if update_stack:
                     pass
                 else:
-                    self.conn.create_stack(stack_names[stack], template_body=response, parameters=self.params.get(stack),
+                    self.conn.create_stack(stack_names[stack], template_body=response,
+                                           parameters=self.params.get(stack),
                                            capabilities=['CAPABILITY_IAM'])
             except Exception as e:
                 print 'Template Failed'

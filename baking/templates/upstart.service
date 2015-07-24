@@ -1,0 +1,11 @@
+[Unit]
+Description=Hermes {{ item.name }} service
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+ExecStart=hermes_service -j {{ item.name }} -c {{ item.config }} start
+ExecReload=hermes_service -j {{ item.name }} -c {{ item.config }} restart
+ExecStop=hermes_service -j {{ item.name }} -c {{ item.config }} stop
+
+[Install]
+WantedBy=multi-user.target
