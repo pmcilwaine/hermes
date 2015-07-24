@@ -98,7 +98,6 @@ class Registry(object):
         :param resource: The name of the resource to retrieve
         :return: No return value
         """
-        print '_get_s3'
         conn = boto.connect_s3()
         bucket = conn.get_bucket(self._bucket_name)
         key = Key(bucket)
