@@ -29,6 +29,11 @@ setup(
     author='Paul Mcilwaine',
     url='https://github.com/pmcilwaine/hermes',
     packages=find_packages(exclude='tests'),
+    entry_points={
+        'console_scripts': [
+            'hermes_service = hermes_cms.service.cmdline.runner:main'
+        ]
+    },
     include_package_data=True,
     install_requires=install_requires
 )

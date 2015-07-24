@@ -1,7 +1,6 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
 import boto.rds2
-from boto.rds2.exceptions import DBInstanceNotFound
 
 
 class RDS(object):

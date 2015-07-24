@@ -21,5 +21,8 @@
 - name: Automatically Start Apache
   service: name=httpd enabled=yes state=started
 
+#- name: Install service scripts
+#  template: src=templates/upstart.service dest=/usr/lib/systemd/system/{{ item.name }}.service
+
 - name: Ensure permissions are setup
   command: setsebool -P httpd_can_network_connect=On
