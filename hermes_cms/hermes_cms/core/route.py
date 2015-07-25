@@ -13,7 +13,8 @@ log = logging.getLogger('hermes_cms.core.route')
 REGISTRY = {
     'type': [
         'Page',
-        'File'
+        'File',
+        'Multipage'
     ],
     'Page': {
         'templates': {
