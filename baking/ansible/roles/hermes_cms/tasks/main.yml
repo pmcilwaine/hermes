@@ -1,4 +1,7 @@
 ---
+- name: Install PIP Dependencies
+  pip: name=APScheduler version=3.0.3
+
 - name: Install Packages
   yum: name={{ item }} enablerepo=hermes-ci,epel
   with_items:
