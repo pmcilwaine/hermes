@@ -70,6 +70,19 @@
                 }
             });
 
+            $stateProvider.state('document.multipage', {
+                'url': '/multipage/:id',
+                templateUrl: 'templates/views/multipage-form.html',
+                controller: 'MultipageFormController',
+                resolve: {
+                    document: ['Documents', 'DocumentResource', '$stateParams',
+                        function (Documents, DocumentResource, stateParams) {
+                            console.log(stateParams);
+                            return Documents.getNewDocument();
+                        }]
+                }
+            });
+
             $stateProvider.state('users', {
                 abstract: true,
                 url: '/user',

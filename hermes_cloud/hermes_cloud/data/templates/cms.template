@@ -276,7 +276,8 @@
                 "VPCSecurityGroups": [ { "Ref": "CMSDBSecurityGroup" } ],
                 "PubliclyAccessible": "True"
             }
-        }
+        },
+        <%include file="sqs.template" args="queue_name='multipage', cloud_name=name"/>
     },
     "Outputs": {
         "DBHost": {
@@ -284,6 +285,12 @@
         },
         "DBPort": {
             "Value": {"Fn::GetAtt": ["CMSDB", "Endpoint.Port" ]}
+        },
+        "MultipageSQS": {
+            "Value": {"Fn::GetAtt": ["SQSmultipage", "QueueName" ]}
+        },
+        "MultipageSNS": {
+            "Value": {"Ref": "SNSmultipage"}
         }
     }
 }

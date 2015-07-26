@@ -1,0 +1,40 @@
+{
+    "type": [
+        "Page",
+        "File",
+        "Multipage"
+    ],
+    "Page": {
+        "templates": {
+            "Homepage": "index.html",
+            "Standard": "standard-page.html"
+        },
+        "template_modules": [
+            "hermes_cms.templates.public"
+        ],
+        "public": {
+            "document_module": "hermes_cms.controller",
+            "document_class": "Page"
+        }
+    },
+    "File": {
+        "public": {
+            "document_module": "hermes_cms.controller",
+            "document_class": "File"
+        }
+    },
+    "Multipage": {
+        "public": {
+            "document_module": "hermes_cms.controller",
+            "document_class": "Multipage"
+        },
+        "admin_helper": {
+            "document_module": "hermes_cms.helpers",
+            "document_class": "Multipage"
+        }
+    },
+    "Error": {
+        "document_module": "hermes_cms.controller",
+        "document_class": "Error"
+    }
+}

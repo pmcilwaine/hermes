@@ -35,7 +35,6 @@ class HermesCreateCloud(object):
         parser.add_argument('-n', '--name', required=True, help='Please enter the name of the cloud')
         parser.add_argument('-m', '--manifest', required=True, help='The manifest of Images')
         parser.add_argument('-k', '--key', required=True, help='The key to assign to this cloud for SSH access')
-        parser.add_argument('-v', '--version', required=True, help='The Cloud Version')
         parser.add_argument('-r', '--region', required=True, help='AWS Region to use')
         parser.add_argument('--min', required=False, default=1, type=int,
                             help='The minimum number of instances in the auto-scaling group')
@@ -97,6 +96,16 @@ class HermesCreateCloud(object):
             print 'Creating bucket %s' % (bucket_name, )
             conn.create_bucket(bucket_name, location=self.args.region)
 
+    def _generate_http_upload_policy(self, buckets):
+        conn = boto.s3.connect_to_region(self.args.region)
+        for bucket in buckets:
+            _bucket = conn.get_bucket(bucket)
+            _bucket.set_cors_xml('<?xml version="1.0" encoding="UTF-8"?><CORSConfiguration xmlns="http://s3.amazonaws.'
+                                 'com/doc/2006-03-01/"><CORSRule><AllowedOrigin>*</AllowedOrigin><AllowedMethod>GET</Al'
+                                 'lowedMethod><AllowedMethod>PUT</AllowedMethod><AllowedMethod>POST</AllowedMethod><Max'
+                                 'AgeSeconds>3000</MaxAgeSeconds><AllowedHeader>*</AllowedHeader></CORSRule></CORSConfi'
+                                 'guration>')
+
     def _build_rds(self):
         self.tmpl_args['rds'] = {
             'username': self._format_name('system_database').replace('-', '_'),
@@ -106,7 +115,7 @@ class HermesCreateCloud(object):
         }
 
     def _upload_config_registry(self):
-        for filename in ['blueprint']:
+        for filename in ['blueprint', 'document', 'jobs']:
             data = json.loads(open(resource_filename('hermes_cloud',
                                                      'data/config_registry/{0}'.format(filename))).read())
             S3.upload_string(self._format_name('config'), filename, json.dumps(data), partition=False)
@@ -174,6 +183,20 @@ class HermesCreateCloud(object):
 
         security_group.revoke(ip_protocol='tcp', from_port='5432', to_port='5432', cidr_ip='0.0.0.0/0')
 
+    def _create_queues_config(self):
+        queues = {"queue": {}}
+        for queue, queue_arn_label in (('multipage', 'MultipageSQS'), ):
+            queues['queue'].update({queue: self.stack_mgr.stack_data['cms'][queue_arn_label]})
+
+        S3.upload_string(self._format_name('config'), 'queues', json.dumps(queues), partition=False)
+
+    def _create_topics_config(self):
+        topics = {"topic": {}}
+        for topic, topic_arn_label in (('multipage', 'MultipageSNS'), ):
+            topics['topics'].update({topic: self.stack_mgr.stack_data['cms'][topic_arn_label]})
+
+        S3.upload_string(self._format_name('config'), 'topics', json.dumps(topics), partition=False)
+
     def deploy(self):
         for name, ami in self._find_amis().iteritems():
             self.params.update({name: [
@@ -208,7 +231,11 @@ class HermesCreateCloud(object):
         print 'created bucket configs'
         self._load_database()
         print 'loaded database'
-
+        self._create_queues_config()
+        print 'created queues config'
+        self._create_topics_config()
+        print 'created topics config'
+        self._generate_http_upload_policy(['storage'])
 
 def main():
     cloud = HermesCreateCloud()

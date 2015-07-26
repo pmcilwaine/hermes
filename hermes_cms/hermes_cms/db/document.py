@@ -54,6 +54,11 @@ class Document(SQLObject):
         return document
 
     @staticmethod
+    def _write(filename, contents):
+        with open(filename, 'w+') as f:
+            f.write(contents)
+
+    @staticmethod
     def get_document(record):
         """
 
@@ -61,8 +66,9 @@ class Document(SQLObject):
         :param record:
         :return:
         """
-        if os.path.exists('/tmp/data/%s' % (record.uuid, )):
-            with open('/tmp/data/%s' % (record.uuid, ), 'r') as f:
+        filename = '/tmp/data/{0}'.format(record.uuid)
+        if os.path.exists(filename):
+            with open(filename, 'r') as f:
                 contents = f.read().strip()
         else:
             key_name = "%s/%s/%s/%s" % (record.created.day, record.created.month,
@@ -72,8 +78,7 @@ class Document(SQLObject):
             if not os.path.exists('/tmp/data'):
                 os.makedirs('/tmp/data')
 
-            with open('/tmp/data/%s' % (record.uuid, ), 'w+') as f:
-                f.write(contents)
+            Document._write(filename, contents)
 
         return json.loads(contents)
 
@@ -86,7 +91,6 @@ class Document(SQLObject):
             raise Exception('Cannot find document')
 
         update = Update(Document.sqlmeta.table, values={'archived': 1}, where=Document.q.url == record.url)
-        print Document._connection.sqlrepr(update)
         Document._connection.query(Document._connection.sqlrepr(update))
 
     @staticmethod
@@ -110,7 +114,6 @@ class Document(SQLObject):
         kwargs['items'] = fields
         query = connection.sqlrepr(Select(**kwargs))
         num_columns = len(fields)
-        print query
 
         items = []
         for result in connection.queryAll(query):

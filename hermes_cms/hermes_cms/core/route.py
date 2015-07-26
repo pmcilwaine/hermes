@@ -13,7 +13,8 @@ log = logging.getLogger('hermes_cms.core.route')
 REGISTRY = {
     'type': [
         'Page',
-        'File'
+        'File',
+        'Multipage'
     ],
     'Page': {
         'templates': {
@@ -25,6 +26,16 @@ REGISTRY = {
         ],
         'document_module': 'hermes_cms.controller',
         'document_class': 'Page'
+    },
+    "MultiPage": {
+        "public": {
+            "document_module": "hermes_cms.controller.public",
+            "document_class": "Multipage"
+        },
+        "admin_helper": {
+            "document_module": "hermes_cms.helpers",
+            "document_class": "Multipage"
+        }
     },
     'File': {
         'document_module': 'hermes_cms.controller',
@@ -61,7 +72,7 @@ def route(path):
 
     document = Document.get_document(record)
 
-    registry_type = REGISTRY[record.type]
+    registry_type = REGISTRY[record.type]['public']
     controller = getattr(__import__(registry_type['document_module'], fromlist=registry_type['document_class']),
                          registry_type['document_class'])
 

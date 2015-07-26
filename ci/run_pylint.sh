@@ -16,7 +16,7 @@ for i in hermes_aws hermes_cms; do
     pip install -r ${i}/requirements.txt
 done
 
-pylint --rcfile=${ROOT_DIR}/ci/pylintrc `git ls-tree --full-tree --name-only -r HEAD | egrep '\.py$' | egrep -v '/?tests/|/setup\.py|/local\.py'` 2>&1 | tee pylint.log
+pylint --rcfile=${ROOT_DIR}/ci/pylintrc `git ls-tree --full-tree --name-only -r HEAD | egrep '\.py$' | egrep -v '/?tests/|/setup\.py|/local\.py|/hermes_cloud'` 2>&1 | tee pylint.log
 
 if [ ${HAS_VIRTUAL_ENV} -eq 0 ]; then
     deactivate

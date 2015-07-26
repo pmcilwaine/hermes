@@ -6,10 +6,35 @@ import uuid
 from boto.s3.key import Key
 
 
+class S3Error(Exception):
+    pass
+
+
 class S3(object):
 
+    def __init__(self):
+        self.conn = boto.connect_s3()
+
+    def metadata(self, bucket_name, key_name):
+        """
+
+        :type bucket_name: basestring
+        :param bucket_name: The name of the bucket
+        :type key_name: basestring
+        :param key_name: The name of the key in the bucket
+        :return: dict
+        """
+        bucket = self.conn.get_bucket(bucket_name)
+        key = bucket.get_key(key_name)
+        if not key:
+            raise S3Error('Key does not exist')
+
+        return {
+            'Content-Type': key.content_type
+        }
+
     @staticmethod
-    def upload_string(bucket_name, key_name, contents, partition=True):
+    def upload_string(bucket_name, key_name, contents, partition=True, bucket=None):
         """
 
         :param bucket_name:
@@ -17,8 +42,10 @@ class S3(object):
         :param contents:
         :return:
         """
-        connection = boto.connect_s3()
-        bucket = connection.get_bucket(bucket_name)
+        if not bucket:
+            connection = boto.connect_s3()
+            bucket = connection.get_bucket(bucket_name)
+
         if partition:
             date = arrow.utcnow().date()
             key_name = '%s/%s/%s/%s' % (date.day, date.month, date.year, key_name)
@@ -66,6 +93,12 @@ class S3(object):
                                                    fields=fields, http_method='https', conditions=conditions)
 
         return response
+
+    @staticmethod
+    def get_content_type(bucket_name, key_name):
+        connection = boto.connect_s3()
+        bucket = connection.get_bucket(bucket_name)
+        return bucket.get_key(key_name).content_type
 
     @staticmethod
     def stream_file(bucket_name, key_name):

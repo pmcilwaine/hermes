@@ -33,4 +33,9 @@ class SQSService(Service):
         :return:
         """
         messages = self.queue.get_messages(num_messages=self.service_config['messages'])
-        self.job_class.do_work(messages)
+        for message in messages:
+            try:
+                self.job_class.do_work(message)
+                self._sqs_conn.delete_message(self.queue, message)
+            except Exception as e:
+                print e
