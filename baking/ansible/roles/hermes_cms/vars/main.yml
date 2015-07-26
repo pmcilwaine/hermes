@@ -1,0 +1,4 @@
+---
+services:
+  - name: multipage
+    config: jobs

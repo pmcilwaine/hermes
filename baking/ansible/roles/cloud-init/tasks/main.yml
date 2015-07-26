@@ -1,0 +1,28 @@
+---
+- name: Install Cloud pip work
+  pip: name={{ item }} state=latest
+  with_items:
+    - pystache
+    - python-daemon
+    - requests
+
+- name: Download CFN Bootstrap
+  shell: curl -O https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz chdir=/opt
+
+- name: Unarchive file
+  shell: tar -xvpf aws-cfn-bootstrap-latest.tar.gz chdir=/opt
+
+- name: Build CFN Installation
+  shell: python setup.py build chdir=/opt/aws-cfn-bootstrap-1.4
+
+- name: Install CFN
+  shell: python setup.py install chdir=/opt/aws-cfn-bootstrap-1.4
+
+- name: Symlink CFN-HUP
+  file: src=/usr/init/redhat/cfn-hup dest=/etc/init.d/cfn-hup state=link
+
+- name: Create Directory
+  file: path=/opt/aws/bin mode=0755
+
+- name: Symlink CFN-HUP
+  shell: ln -s /usr/bin/cfn-hup /opt/aws/bin/cfn-hup

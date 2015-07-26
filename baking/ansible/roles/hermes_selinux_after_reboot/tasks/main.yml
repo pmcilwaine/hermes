@@ -1,4 +1,0 @@
----
-- name: Check SELinux
-  fail: msg="SE Linux is not configured properly"
-  when: ansible_selinux.mode != 'enforcing' or ansible_selinux.config_mode != 'enforcing'

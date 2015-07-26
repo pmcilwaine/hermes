@@ -1,0 +1,6 @@
+---
+- name: Install Packages
+  yum: name={{ item }} enablerepo=hermes-ci,epel
+  with_items:
+    - hermes_aws-*-{{ hermes_image_version }}
+    - hermes_cloud-*-{{ hermes_image_version }}

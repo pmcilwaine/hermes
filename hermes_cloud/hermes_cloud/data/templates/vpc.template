@@ -1,0 +1,78 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Template to create VPC",
+    "Resources": {
+        "VPC": {
+            "Type": "AWS::EC2::VPC",
+            "Properties": {
+                "CidrBlock": "10.0.0.0/16",
+                "EnableDnsHostnames": "true"
+            }
+        },
+        "InternetGateway": {
+            "Type": "AWS::EC2::InternetGateway"
+        },
+        "InternetGatewayAttachment": {
+            "Type": "AWS::EC2::VPCGatewayAttachment",
+            "Properties": {
+                "InternetGatewayId": {"Ref": "InternetGateway"},
+                "VpcId": {"Ref": "VPC"}
+            }
+        },
+        % for zone_name in zone_names:
+            "CMSRouteTable${zone_name}": {
+                "Type" : "AWS::EC2::RouteTable",
+                "Properties" : {
+                    "VpcId" : { "Ref" : "VPC" }
+                }
+            },
+            "PrivateRouteTable${zone_name}" : {
+                "Type" : "AWS::EC2::RouteTable",
+                "Properties" : {
+                    "VpcId" : { "Ref" : "VPC" },
+                    "Tags" : [
+                        { "Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+                        { "Key" : "Network", "Value" : "Private${zone_name}" }
+                    ]
+                }
+            },
+            "InternetRoute${zone_name}": {
+                "Type": "AWS::EC2::Route",
+                "Properties": {
+                    "DestinationCidrBlock": "0.0.0.0/0",
+                    "RouteTableId": {"Ref": "CMSRouteTable${zone_name}"},
+                    "GatewayId": {"Ref": "InternetGateway"}
+                }
+            },
+        % endfor
+        "ConfigurationRegistryBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+                "AccessControl": "Private",
+                "BucketName": "${config_bucket}",
+                "Tags": [
+                    {
+                        "Key": "Stack",
+                        "Value": {"Ref": "AWS::StackId"}
+                    }
+                ]
+            }
+        }
+    },
+    "Outputs": {
+        "VPCID" : {
+            "Value" : { "Ref" : "VPC" }
+        },
+        % for zone_name in zone_names:
+            "CMSRouteTable${zone_name}" : {
+                "Value" : { "Ref" : "CMSRouteTable${zone_name}" }
+            },
+            "PrivateRouteTable${zone_name}" : {
+                "Value" : { "Ref" : "PrivateRouteTable${zone_name}" }
+            },
+        % endfor
+        "ConfigRegistryBucket" : {
+            "Value" : { "Ref" : "ConfigurationRegistryBucket" }
+        }
+    }
+}

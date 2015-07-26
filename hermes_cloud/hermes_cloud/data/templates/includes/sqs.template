@@ -1,0 +1,43 @@
+<%page args="queue_name, cloud_name"/>
+"SQS${queue_name}": {
+    "Type": "AWS::SQS::Queue",
+    "Properties": {
+        "QueueName": {"Fn::Join": ["-", [ "${queue_name}", "${cloud_name}" ] ] }
+    }
+},
+"SQSPolicy${queue_name}": {
+    "Type" : "AWS::SQS::QueuePolicy",
+    "Properties" : {
+        "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Id": {"Fn::Join": ["/", [ { "Fn::GetAtt" : [ "SQS${queue_name}", "Arn" ] }, "SQSDefaultPolicy" ] ] },
+            "Statement": [
+                {
+                    "Sid": "Sid1437388803659",
+                    "Effect": "Allow",
+                    "Principal": {
+                        "AWS": "*"
+                    },
+                    "Action": "SQS:SendMessage",
+                    "Resource": { "Fn::GetAtt" : [ "SQS${queue_name}", "Arn" ] },
+                    "Condition": {
+                    "StringEquals": {
+                        "aws:SourceArn": { "Fn::GetAtt" : [ "SQS${queue_name}", "Arn" ] }
+                    }
+                }
+            }]
+        },
+        "Queues": [
+            {"Ref": "SQS${queue_name}"}
+        ]
+    }
+},
+"SNS${queue_name}": {
+    "Type" : "AWS::SNS::Topic",
+    "Properties" : {
+        "Subscription": [
+            { "Endpoint" : { "Fn::GetAtt" : [ "SQS${queue_name}", "Arn" ] }, "Protocol" : "sqs" }
+        ],
+        "TopicName": {"Fn::Join": ["-", [ "${queue_name}", "${cloud_name}" ] ] }
+    }
+}

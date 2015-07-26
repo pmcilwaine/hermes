@@ -13,7 +13,7 @@ log = logging.getLogger('hermes_cms.app')
 def db_connect():
     database_url = current_app.config.get('DATABASE')
     if not database_url:
-        database_url = Registry().get('database').get('database')
+        database_url = str(Registry().get('database').get('database'))
     sqlhub.threadConnection = connectionForURI(database_url)
 
 
@@ -49,7 +49,7 @@ def create_app(app_name='hermes_cms', config_obj=None, blueprints=None):
         app.register_blueprint(route, **blueprint.get('kwargs', {}))
 
     def error_handler(error):
-        log.exception('Catching exception', error)
+        log.exception(str(error))
         return Response(status=500)
 
     app.register_error_handler(Exception, error_handler)

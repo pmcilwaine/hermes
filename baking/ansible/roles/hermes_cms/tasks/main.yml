@@ -1,4 +1,7 @@
 ---
+- name: Install PIP Dependencies
+  pip: name=APScheduler version=3.0.3
+
 - name: Install Packages
   yum: name={{ item }} enablerepo=hermes-ci,epel
   with_items:
@@ -20,6 +23,10 @@
 
 - name: Automatically Start Apache
   service: name=httpd enabled=yes state=started
+
+- name: Install service scripts
+  template: src=templates/upstart.service dest=/usr/lib/systemd/system/{{ item.name }}.service
+  with_items: services
 
 - name: Ensure permissions are setup
   command: setsebool -P httpd_can_network_connect=On

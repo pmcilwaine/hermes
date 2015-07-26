@@ -44,7 +44,7 @@ cd ${ROOT_DIR}
 rm -f ${ROOT_DIR}/dist/*.rpm
 mkdir -p ${ROOT_DIR}/dist
 
-for i in hermes_cms hermes_aws; do
+for i in hermes_cloud hermes_cms hermes_aws; do
     python ${i}/setup.py bdist_rpm --release=${RELEASE}
     mv ${i}/dist/*.rpm ${ROOT_DIR}/dist/
 done

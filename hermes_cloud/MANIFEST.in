@@ -1,0 +1,2 @@
+recursive-include hermes_cloud/data *
+include requirements.txt README.md

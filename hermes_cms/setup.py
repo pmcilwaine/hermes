@@ -23,12 +23,17 @@ with open('requirements.txt') as f:
 
 setup(
     name='hermes_cms',
-    version='0.2.0',
+    version='0.4.0',
     description='Hermes CMS',
     long_description=read('README.md'),
     author='Paul Mcilwaine',
     url='https://github.com/pmcilwaine/hermes',
     packages=find_packages(exclude='tests'),
+    entry_points={
+        'console_scripts': [
+            'hermes_service = hermes_cms.service.cmdline.runner:main'
+        ]
+    },
     include_package_data=True,
     install_requires=install_requires
 )
