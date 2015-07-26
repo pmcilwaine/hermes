@@ -24,8 +24,10 @@ REGISTRY = {
         'template_modules': [
             'hermes_cms.templates.public'
         ],
-        'document_module': 'hermes_cms.controller',
-        'document_class': 'Page'
+        "public": {
+            'document_module': 'hermes_cms.controller',
+            'document_class': 'Page'
+        }
     },
     "MultiPage": {
         "public": {
@@ -38,8 +40,10 @@ REGISTRY = {
         }
     },
     'File': {
-        'document_module': 'hermes_cms.controller',
-        'document_class': 'File'
+        "public": {
+            'document_module': 'hermes_cms.controller',
+            'document_class': 'File'
+        }
     },
     'Error': {
         'document_module': 'hermes_cms.controller',
@@ -72,9 +76,10 @@ def route(path):
 
     document = Document.get_document(record)
 
-    registry_type = REGISTRY[record.type]['public']
-    controller = getattr(__import__(registry_type['document_module'], fromlist=registry_type['document_class']),
-                         registry_type['document_class'])
+    registry_type = REGISTRY[record.type]
+    page = registry_type['public']
+    controller = getattr(__import__(page['document_module'], fromlist=page['document_class']),
+                         page['document_class'])
 
     record_controller = controller(document, registry_type)
     return getattr(record_controller, str(request.method).lower())()
