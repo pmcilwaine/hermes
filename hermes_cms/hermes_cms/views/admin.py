@@ -13,6 +13,8 @@ from pkg_resources import resource_filename
 from werkzeug.datastructures import MultiDict
 from hermes_aws.s3 import S3
 from hermes_cms.core.registry import Registry
+from hermes_cms.helpers import common
+
 
 log = logging.getLogger('hermes_cms.views.admin')
 route = Blueprint('admin', __name__, url_prefix='/admin')
@@ -141,13 +143,22 @@ def document_add():
     # todo we should use Auth class to get this
     document_data['document']['user'] = session['auth_user'].get('id', -1)
     document = Document.save(document_data)
+
+    helper_class = Registry().get('document').get(document.type, {}).get('admin_helper', {})
+    if helper_class:
+        common.load_class(
+            helper_class.get('document_module'),
+            helper_class.get('document_class'),
+            document
+        ).do_work()
+
     return Response(response=json.dumps({}), status=200, content_type='application/json')
 
 
 @route.route('/upload_url', methods=['POST'])
 def sign_upload_url():
 
-    bucket = Registry().get('files')['bucket_name']
+    bucket = Registry().get('storage')['bucket_name']
     signed_form = S3.generate_form(bucket)
     signed_form['file'] = {
         'bucket': bucket,

@@ -28,9 +28,8 @@ CREATE TABLE document (
 
 CREATE TABLE job (
     uuid char(60) PRIMARY KEY,
-    job char(255),
-    status char(8),
-    type char(255),
+    name char(255),
+    status char(10),
     message text
 );
 

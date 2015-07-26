@@ -51,7 +51,7 @@ def logout():
     return Response(status=400)
 
 
-@route.route('/', methods=['GET'])
+@route.route('/', methods=['GET'], defaults={'path': 'index'})
 @route.route('/<path:path>', methods=['GET', 'POST', 'PUT'])
 def main_site(path=None):
-    return route_handler(path or 'index')
+    return route_handler(path)

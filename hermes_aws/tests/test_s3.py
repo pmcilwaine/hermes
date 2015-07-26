@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 import boto
 import arrow
+import pytest
 from mock import patch
 from moto import mock_s3
 from boto.s3.key import Key
-from hermes_aws.s3 import S3
+from hermes_aws import S3, S3Error
 
 
 @mock_s3
@@ -60,3 +61,36 @@ def test_generate_form(arrow_mock, uuid_mock):
     response = S3.generate_form('source-bucket')
     assert response['action'] == 'https://source-bucket.s3.amazonaws.com/'
     assert [item for item in response['fields'] if item['name'] == 'key'][0]['value'] == expected_keyname
+
+
+@mock_s3
+def test_s3_content_type():
+    conn = boto.connect_s3()
+    bucket = conn.create_bucket('source-bucket')
+    key = Key(bucket, 'test-file')
+    key.content_type = 'text/plain'
+    key.set_contents_from_string('Hello World')
+
+    assert 'text/plain; charset=utf-8' == S3.get_content_type('source-bucket', 'test-file')
+
+
+@mock_s3
+def test_s3_object_metadata():
+    conn = boto.connect_s3()
+    bucket = conn.create_bucket('source-bucket')
+    key = Key(bucket, 'test-file')
+    key.content_type = 'text/plain'
+    key.set_contents_from_string('Hello World')
+
+    s3 = S3()
+    assert {'Content-Type': 'text/plain; charset=utf-8'} == s3.metadata('source-bucket', 'test-file')
+
+
+@mock_s3
+def test_s3_object_metadata_invalid_key():
+    conn = boto.connect_s3()
+    bucket = conn.create_bucket('source-bucket')
+
+    s3 = S3()
+    with pytest.raises(S3Error):
+        s3.metadata('source-bucket', 'invalid-file')
