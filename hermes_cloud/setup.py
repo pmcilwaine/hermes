@@ -24,7 +24,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='hermes_cloud',
-    version='0.3.0',
+    version='0.4.0',
     description='Hermes CMS',
     long_description=read('README.md'),
     author='Paul Mcilwaine',
