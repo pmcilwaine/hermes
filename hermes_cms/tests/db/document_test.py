@@ -69,8 +69,7 @@ def test_get_document(registry_mock, os_mock):
 
     os_mock.path.exists = MagicMock(side_effect=side_effect)
 
-    open_call = mock_open()
-    with patch('__main__.open', open_call, create=True):
+    with patch.object(Document, '_write'):
         contents = Document.get_document(MagicMock(**{
             'uuid': 'some-id',
             'created': datetime(2015, 7, 25)

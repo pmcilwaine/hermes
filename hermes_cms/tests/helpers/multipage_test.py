@@ -4,7 +4,7 @@
 import boto.sns
 from mock import MagicMock, patch, call
 from moto import mock_sns
-from hermes_cms.helpers import Multipage
+from hermes_cms.helpers.multipage import Multipage
 
 
 @mock_sns

@@ -14,10 +14,7 @@ class Multipage(Document):
         if '/' == key_name:
             key_name = '/index.html'  # todo must have a default start page for multipage
 
-        print key_name
-
         key_name = '{0}{1}'.format(self._document['document']['uuid'], key_name)
-        print key_name
         generator = S3.stream_file(registry.get('files').get('bucket_name'), key_name)
 
         # todo we need to get the mimetype of the actual key some how.

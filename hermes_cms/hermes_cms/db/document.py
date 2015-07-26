@@ -54,6 +54,11 @@ class Document(SQLObject):
         return document
 
     @staticmethod
+    def _write(filename, contents):
+        with open(filename, 'w+') as f:
+            f.write(contents)
+
+    @staticmethod
     def get_document(record):
         """
 
@@ -73,8 +78,7 @@ class Document(SQLObject):
             if not os.path.exists('/tmp/data'):
                 os.makedirs('/tmp/data')
 
-            with open(filename, 'w+') as f:
-                f.write(contents)
+            Document._write(filename, contents)
 
         return json.loads(contents)
 
