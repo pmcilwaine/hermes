@@ -193,7 +193,7 @@ class HermesCreateCloud(object):
     def _create_topics_config(self):
         topics = {"topic": {}}
         for topic, topic_arn_label in (('multipage', 'MultipageSNS'), ):
-            topics['topics'].update({topic: self.stack_mgr.stack_data['cms'][topic_arn_label]})
+            topics['topic'].update({topic: self.stack_mgr.stack_data['cms'][topic_arn_label]})
 
         S3.upload_string(self._format_name('config'), 'topics', json.dumps(topics), partition=False)
 
