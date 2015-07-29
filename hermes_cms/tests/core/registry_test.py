@@ -31,7 +31,7 @@ def test_registry_region():
 
 
 def test_registry_region_cached(caplog):
-    expected = 'my region'
+    expected = 'test-region'
     caplog.setLevel(logging.DEBUG)
     with patch('hermes_cms.core.registry.open', mock_open(read_data='{"region": "%s"}' % (expected, )), create=True):
         registry = Registry()

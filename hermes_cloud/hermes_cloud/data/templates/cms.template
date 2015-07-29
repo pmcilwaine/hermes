@@ -305,6 +305,7 @@
             }
         },
         <%include file="sqs.template" args="queue_name='multipage', cloud_name=name"/>
+        <%include file="sqs.template" args="queue_name='migration_download', cloud_name=name"/>
     },
     "Outputs": {
         "DBHost": {
@@ -318,6 +319,12 @@
         },
         "MultipageSNS": {
             "Value": {"Ref": "SNSmultipage"}
+        },
+        "MigrationDownloadSQS": {
+            "Value": {"Fn::GetAtt": ["SQSmigration_download", "QueueName" ]}
+        },
+        "MigrationDownloadSNS": {
+            "Value": {"Ref": "SNSmigration_download"}
         }
     }
 }

@@ -16,11 +16,17 @@ from hermes_cms.core.registry import Registry
 from hermes_cms.helpers import common
 
 
+from hermes_cms.controller.admin.migration_download import MigrationDownload
+
 log = logging.getLogger('hermes_cms.views.admin')
 route = Blueprint('admin', __name__, url_prefix='/admin')
 lookup = TemplateLookup(directories=[
     resource_filename('hermes_cms.templates.admin', '')
 ])
+
+# todo create a helper and checkout blueprint for this.
+migration_view = MigrationDownload.as_view('migration')
+route.add_url_rule('/migration', view_func=migration_view, methods=['POST', 'GET'])
 
 
 @route.route('/', methods=['GET'])

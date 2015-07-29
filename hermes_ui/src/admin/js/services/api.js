@@ -22,6 +22,11 @@
             return resource('/admin/upload_url', {}, {
                 post: {method: 'POST'}
             });
+        }])
+        .factory('MigrationDownloadResource', ['$resource', function (resource) {
+            return resource('/admin/migration', {}, {
+                newJob: {method: 'post'}
+            });
         }]);
 
 })();
