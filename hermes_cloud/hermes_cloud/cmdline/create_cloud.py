@@ -99,12 +99,8 @@ class HermesCreateCloud(object):
     def _generate_http_upload_policy(self, buckets):
         conn = boto.s3.connect_to_region(self.args.region)
         for bucket in buckets:
-            _bucket = conn.get_bucket(bucket)
-            _bucket.set_cors_xml('<?xml version="1.0" encoding="UTF-8"?><CORSConfiguration xmlns="http://s3.amazonaws.'
-                                 'com/doc/2006-03-01/"><CORSRule><AllowedOrigin>*</AllowedOrigin><AllowedMethod>GET</Al'
-                                 'lowedMethod><AllowedMethod>PUT</AllowedMethod><AllowedMethod>POST</AllowedMethod><Max'
-                                 'AgeSeconds>3000</MaxAgeSeconds><AllowedHeader>*</AllowedHeader></CORSRule></CORSConfi'
-                                 'guration>')
+            _bucket = conn.get_bucket(self._format_name(bucket))
+            _bucket.set_cors_xml('<?xml version="1.0" encoding="UTF-8"?><CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><CORSRule><AllowedOrigin>*</AllowedOrigin><AllowedMethod>GET</AllowedMethod><AllowedMethod>PUT</AllowedMethod><AllowedMethod>POST</AllowedMethod><MaxAgeSeconds>3000</MaxAgeSeconds><AllowedHeader>*</AllowedHeader></CORSRule></CORSConfiguration>')
 
     def _build_rds(self):
         self.tmpl_args['rds'] = {
@@ -211,9 +207,9 @@ class HermesCreateCloud(object):
 
         self.stack_mgr.add_stacks([
             'vpc',
-            'cms',
+            'jumpbox',
+            'cms'
             # 'logservice',
-            'jumpbox'
         ])
 
         self._create_buckets([

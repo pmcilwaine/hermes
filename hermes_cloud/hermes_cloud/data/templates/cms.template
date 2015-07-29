@@ -138,7 +138,7 @@
                     "${availability_zones['AZ1']}",
                     "${availability_zones['AZ2']}"
                 ],
-                "LaunchConfigurationName": {"Ref": "CMSLC"},
+                "LaunchConfigurationName": {"Ref": "CMSLaunchConfig"},
                 "MinSize": {"Ref": "MinInstances"},
                 "MaxSize": {"Ref": "MaxInstances"},
                 "LoadBalancerNames": [
@@ -155,9 +155,23 @@
                         "PropagateAtLaunch": true
                     }
                 ]
+            },
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Count": { "Ref" : "MinInstances" },
+                    "Timeout": "PT15M"
+                }
+            },
+            "UpdatePolicy": {
+                 "AutoScalingRollingUpdate" : {
+                    "MaxBatchSize" : "1",
+                    "MinInstancesInService" : { "Ref" : "MinInstancesInService" },
+                    "PauseTime" : "PT15M",
+                    "WaitOnResourceSignals" : true
+                }
             }
         },
-        "CMSLC": {
+        "CMSLaunchConfig": {
             "Type": "AWS::AutoScaling::LaunchConfiguration",
             "Properties": {
                 "KeyName": "${ssh_key}",
@@ -167,7 +181,20 @@
                 ],
                 "InstanceType": "t2.micro",
                 "IamInstanceProfile" : { "Ref" : "EC2IAMInstProf" },
-                "InstanceMonitoring": false
+                "InstanceMonitoring": false,
+                "UserData": { "Fn::Base64" : { "Fn::Join" : ["", [
+                    "#!/bin/bash -lvx\n",
+                    "/usr/bin/cfn-init -v ",
+                    "  --stack ", { "Ref" : "AWS::StackId" },
+                    "  --resource CMSLaunchConfig",
+                    "  --region ", { "Ref" : "AWS::Region" },
+                    "\n",
+                    "/usr/bin/cfn-signal -e 0 ",
+                    "  --stack ", { "Ref": "AWS::StackName" },
+                    "  --resource CMSASG",
+                    "  --region ", { "Ref" : "AWS::Region" },
+                    "\n"
+                ] ] } }
             },
             "Metadata": {
                 "AWS::CloudFormation::Init": {

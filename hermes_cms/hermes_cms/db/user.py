@@ -10,6 +10,10 @@ __all__ = ['User']
 
 
 class User(SQLObject):
+
+    class sqlmeta(object):
+        table = "users"
+
     email = StringCol(length=255)
     password = StringCol(length=64)
     first_name = StringCol(length=255)
