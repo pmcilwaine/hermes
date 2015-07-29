@@ -21,6 +21,8 @@ from hermes_cms.controller.admin.migration_upload import MigrationUpload
 
 from hermes_cms.controller.admin.migration_download import MigrationDownload
 
+from hermes_cms.controller.admin.migration_download import MigrationDownload
+
 log = logging.getLogger('hermes_cms.views.admin')
 route = Blueprint('admin', __name__, url_prefix='/admin')
 lookup = TemplateLookup(directories=[
