@@ -19,6 +19,8 @@ from hermes_cms.controller.admin.job import Job as JobController
 from hermes_cms.controller.admin.migration_upload import MigrationUpload
 
 
+from hermes_cms.controller.admin.migration_download import MigrationDownload
+
 log = logging.getLogger('hermes_cms.views.admin')
 route = Blueprint('admin', __name__, url_prefix='/admin')
 lookup = TemplateLookup(directories=[
@@ -30,6 +32,10 @@ route.add_url_rule('/migration_upload', view_func=migration_uoload_view, methods
 
 job_view = JobController.as_view('job')
 route.add_url_rule('/job', view_func=job_view, methods=['GET'])
+
+# todo create a helper and checkout blueprint for this.
+migration_view = MigrationDownload.as_view('migration')
+route.add_url_rule('/migration', view_func=migration_view, methods=['POST', 'GET'])
 
 
 @route.route('/', methods=['GET'])

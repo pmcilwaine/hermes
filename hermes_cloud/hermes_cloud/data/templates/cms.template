@@ -331,6 +331,12 @@
         },
         "MultipageSNS": {
             "Value": {"Ref": "SNSmultipage"}
+        },
+        "MigrationDownloadSQS": {
+            "Value": {"Fn::GetAtt": ["SQSmigration_download", "QueueName" ]}
+        },
+        "MigrationDownloadSNS": {
+            "Value": {"Ref": "SNSmigration_download"}
         }
     }
 }
