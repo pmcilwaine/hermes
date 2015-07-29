@@ -25,7 +25,10 @@ class MigrationDownloadJob(Job):
         sqlhub.processConnection = connectionForURI(database_url)
 
         conn = boto.connect_s3()
+        file_conn = boto.connect_s3()
+
         self.bucket = conn.get_bucket(self.registry.get('storage').get('bucket_name'))
+        self.files_bucket = file_conn.get_bucket(self.registry.get('files').get('bucket_name'))
 
     def _get_document_query(self, documents):
         uuids = []
@@ -55,6 +58,10 @@ class MigrationDownloadJob(Job):
         if 'file' in json_content:
             file_contents = self.bucket.get_key(json_content['file']['key']).get_contents_as_string()
             zip_handle.writestr(json_content['file']['key'], file_contents)
+
+        if 'MultiPage' == document.type:
+            for item in self.files_bucket.list(document.uuid):
+                zip_handle.writestr('files/{0}'.format(item.name), item.get_contents_as_string())
 
     def _get_document_parent_url(self, parent):
         document = Document.selectBy(id=parent).getOne(None)
@@ -107,6 +114,8 @@ class MigrationDownloadJob(Job):
             self.log.error('Cannot find job %s', job_id)
             raise InvalidJobError('Invalid Job ID: {0}'.format(job_id))
 
+        job.set(status='running')
+
         and_ops = [Document.q.archived == False, Document.q.published == True]
         if not job.message.get('all_documents'):
             and_ops.append(self._get_document_query(job.message.get('documents')))
@@ -131,6 +140,4 @@ class MigrationDownloadJob(Job):
         zip_key.set_contents_from_string(zip_contents.getvalue())
         self.log.info("Created ZIP for Job '%s'", str(job_id))
 
-        job.set(**{
-            'status': 'complete'
-        })
+        job.set(status='complete')

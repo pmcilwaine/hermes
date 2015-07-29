@@ -31,6 +31,8 @@
         .factory('MigrationUploadResource', ['$resource', function (resource) {
             return resource('/admin/migration_upload', {}, {
                 post: {method: 'POST'}
+            });
+        }])
         .factory('MigrationDownloadResource', ['$resource', function (resource) {
             return resource('/admin/migration', {}, {
                 newJob: {method: 'post'}

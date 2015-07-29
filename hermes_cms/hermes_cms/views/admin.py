@@ -21,16 +21,14 @@ from hermes_cms.controller.admin.migration_upload import MigrationUpload
 
 from hermes_cms.controller.admin.migration_download import MigrationDownload
 
-from hermes_cms.controller.admin.migration_download import MigrationDownload
-
 log = logging.getLogger('hermes_cms.views.admin')
 route = Blueprint('admin', __name__, url_prefix='/admin')
 lookup = TemplateLookup(directories=[
     resource_filename('hermes_cms.templates.admin', '')
 ])
 
-migration_uoload_view = MigrationUpload.as_view('migration_upload')
-route.add_url_rule('/migration_upload', view_func=migration_uoload_view, methods=['POST'])
+migration_upload_view = MigrationUpload.as_view('migration_upload')
+route.add_url_rule('/migration_upload', view_func=migration_upload_view, methods=['POST'])
 
 job_view = JobController.as_view('job')
 route.add_url_rule('/job', view_func=job_view, methods=['GET'])
