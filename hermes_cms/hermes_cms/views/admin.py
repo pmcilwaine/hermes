@@ -15,12 +15,18 @@ from hermes_aws.s3 import S3
 from hermes_cms.core.registry import Registry
 from hermes_cms.helpers import common
 
+from hermes_cms.controller.admin.job import Job as JobController
+
 
 log = logging.getLogger('hermes_cms.views.admin')
 route = Blueprint('admin', __name__, url_prefix='/admin')
 lookup = TemplateLookup(directories=[
     resource_filename('hermes_cms.templates.admin', '')
 ])
+
+
+job_view = JobController.as_view('job')
+route.add_url_rule('/job', view_func=job_view, methods=['GET'])
 
 
 @route.route('/', methods=['GET'])

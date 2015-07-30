@@ -14,7 +14,6 @@ from boto.s3.key import Key
 from hermes_aws import S3
 
 
-
 class MultipageJob(Job):
 
     def __init__(self):

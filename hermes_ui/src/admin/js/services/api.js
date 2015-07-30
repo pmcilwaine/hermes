@@ -22,6 +22,11 @@
             return resource('/admin/upload_url', {}, {
                 post: {method: 'POST'}
             });
+        }])
+        .factory('JobResource', ['$resource', function (resource) {
+            return resource('/admin/job', {}, {
+                get: {method: 'GET'}
+            })
         }]);
 
 })();
