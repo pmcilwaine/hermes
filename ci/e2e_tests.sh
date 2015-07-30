@@ -98,21 +98,5 @@ done
 
 echo "Ok"
 
-exit 1
-if [ -n  "${VERSION}" ]; then
-    export BASE_URL="http://$(aws ec2 describe-instances --filter Name=tag:Name,Values=hermes_cms_${VERSION} | jq -r '.Reservations[0].Instances[0].PublicIpAddress')"
-fi
-
-attempts=1
-until $(curl --output /dev/null --silent --get --fail ${BASE_URL}); do
-    echo "Waiting for website to respond: ${BASE_URL}"
-    if [ ${attempts} -gt 15 ]; then
-        echo "Failed to contact website - make sure you are specifying the correct BASE_URL for the cloud"
-        exit 1
-    fi
-    attempts=$((attempts+1))
-    sleep 5
-done
-
 npm test
 status=$?

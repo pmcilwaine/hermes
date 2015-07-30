@@ -3,7 +3,7 @@
 
 from datetime import datetime
 from sqlobject import SQLObject
-from sqlobject.col import StringCol, PickleCol, DateTimeCol, BoolCol
+from sqlobject.col import StringCol, DateTimeCol, BoolCol
 import hashlib
 
 __all__ = ['User']
@@ -21,11 +21,21 @@ class User(SQLObject):
     created = DateTimeCol(default=datetime.now())
     modified = DateTimeCol(default=datetime.now())
     archived = BoolCol(default=False)
-    permissions = PickleCol(default=set())
+    permissions = StringCol(default='')
 
     def _set_password(self, value):
         # pylint: disable=no-member
         self._SO_set_password(User.hash_password(value))
+
+    def _get_permissions(self):
+        # pylint: disable=no-member
+        return self._SO_get_permissions().split(',')
+
+    def _set_permissions(self, value):
+        if isinstance(value, (tuple, list)):
+            value = ','.join(value)
+
+        self._SO_set_permissions(value)
 
     @staticmethod
     def hash_password(password):
@@ -65,4 +75,4 @@ class User(SQLObject):
 
         :return: dict
         """
-        return {'id': self.id, 'email': self.email, 'permissions': list(self.permissions)}
+        return {'id': self.id, 'email': self.email, 'permissions': self.permissions}

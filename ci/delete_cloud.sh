@@ -72,7 +72,7 @@ INSTANCE_ID=$(aws ec2 run-instances \
     --iam-instance-profile Name=create-cloud | jq -r '.Instances[0].InstanceId')
 
 echo "Waiting for instance..."
-until [ `aws ec2 describe-instances --instance-ids ${INSTANCE_ID} | jq -r '.Reservations[0].Instances[0].State.Name'` == "running" ]; do
+until [ `aws ec2 describe-instance-status --instance-ids ${INSTANCE_ID} | jq -r '.InstanceStatuses[0].SystemStatus.Status'` == "ok" ]; do
     sleep 10
 done
 

@@ -90,7 +90,11 @@ def document_list():
     limit = int(request.args.get('limit', 100))
 
     documents = []
-    for document in Document.query(Document.all(), where=Document.q.archived == False, groupBy=Document.q.url,
+    for document in Document.query(Document.all(), where=Document.q.archived == False, 
+                                   groupBy=(Document.q.id, Document.q.uuid, Document.q.created, Document.q.published, 
+                                            Document.q.type, Document.q.name, Document.q.archived, 
+                                            Document.q.menutitle, Document.q.show_in_menu, Document.q.parent, 
+                                            Document.q.path, Document.q.user_id),
                                    orderBy=DESC(Document.q.created), start=offset, end=offset + limit):
 
         documents.append({
@@ -141,7 +145,7 @@ def document_add():
         return Response(response=json.dumps(document_data), status=200, content_type='application/json')
 
     # todo we should use Auth class to get this
-    document_data['document']['user'] = session['auth_user'].get('id', -1)
+    document_data['document']['user_id'] = session['auth_user'].get('id', -1)
     document = Document.save(document_data)
 
     helper_class = Registry().get('document').get(document.type, {}).get('admin_helper', {})

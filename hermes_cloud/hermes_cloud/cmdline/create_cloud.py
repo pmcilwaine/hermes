@@ -193,6 +193,10 @@ class HermesCreateCloud(object):
 
         S3.upload_string(self._format_name('config'), 'topics', json.dumps(topics), partition=False)
 
+    def _create_region_config(self):
+        S3.upload_string(self._format_name('config'), 'region', json.dumps({'region': self.args.region}),
+                         partition=False)
+
     def deploy(self):
         for name, ami in self._find_amis().iteritems():
             self.params.update({name: [
@@ -227,6 +231,8 @@ class HermesCreateCloud(object):
         print 'created bucket configs'
         self._load_database()
         print 'loaded database'
+        self._create_region_config()
+        print 'created region config'
         self._create_queues_config()
         print 'created queues config'
         self._create_topics_config()
