@@ -82,7 +82,7 @@ if [ -z "${BASE_URL}" ]; then
         attempts=$((attempts+1))
     done
 
-    BASE_URL=$(aws elb describe-load-balancers --load-balancer-names ${ELB_NAME} | jq -r '.LoadBalancerDescriptions[0].DNSName')
+    BASE_URL=$(aws elb describe-load-balancers --load-balancer-names ${ELB_NAME} | jq -r '.LoadBalancerDescriptions[0].DNSName' | tr '[:upper:]' '[:lower:]')
     export BASE_URL="http://${BASE_URL}"
 fi
 
