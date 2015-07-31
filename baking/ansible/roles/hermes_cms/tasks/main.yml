@@ -9,9 +9,6 @@
     - hermes_aws-*-{{ hermes_image_version }}
     - hermes_cms-*-{{ hermes_image_version }}
 
-- name: Install Config Bucket
-  copy: src=config-bucket dest=/etc/sysconfig/config-bucket owner=root group=root mode=0644
-
 - name: Install apache config
   copy: src=hermes_cms.conf dest=/etc/httpd/conf.d/ owner=root group=root mode=0644
 
@@ -26,6 +23,14 @@
 
 - name: Install service scripts
   template: src=templates/upstart.service dest=/usr/lib/systemd/system/{{ item.name }}.service
+  with_items: services
+
+- name: Register services
+  shell: systemctl enable /usr/lib/systemd/system/{{ item.name }}.service
+  with_items: services
+
+- name: Automatically Start Services
+  service: name={{ item.name }}.service enabled=yes state=started
   with_items: services
 
 - name: Ensure permissions are setup

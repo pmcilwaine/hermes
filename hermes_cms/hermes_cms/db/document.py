@@ -24,7 +24,7 @@ class Document(SQLObject):
     show_in_menu = BoolCol(default=False)
     parent = IntCol()
     path = StringCol()  # Uses the gid as parentGID/currentGID etc.
-    user = IntCol()
+    user_id = IntCol()
 
     @staticmethod
     def save(record):

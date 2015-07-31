@@ -22,7 +22,7 @@
   file: src=/usr/init/redhat/cfn-hup dest=/etc/init.d/cfn-hup state=link
 
 - name: Create Directory
-  file: path=/opt/aws/bin mode=0755
+  file: path=/opt/aws/bin mode=0755 state=directory
 
 - name: Symlink CFN-HUP
   shell: ln -s /usr/bin/cfn-hup /opt/aws/bin/cfn-hup

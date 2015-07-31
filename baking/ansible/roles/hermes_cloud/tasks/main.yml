@@ -1,4 +1,11 @@
 ---
+- name: Install PIP Dependencies
+  pip: name=jq
+
+- name: put manifest
+  sudo: no
+  template: src=manifest.yml dest=~/
+
 - name: Install Packages
   yum: name={{ item }} enablerepo=hermes-ci,epel
   with_items:
