@@ -67,22 +67,24 @@ cd ${ROOT_DIR}/tests
 export CONFIGURATION="${CONFIGURATION-ci}"
 export TEST="e2e"
 
-ELB_NAME=$(aws elb describe-load-balancers | grep -B 9 "hermes-ci" | grep "LoadBalancerName")
-ELB_NAME=${ELB_NAME:33:$((${#ELB_NAME} - 36))}
+if [ -z "${BASE_URL}" ]; then
+    ELB_NAME=$(aws elb describe-load-balancers | grep -B 9 "hermes-ci" | grep "LoadBalancerName")
+    ELB_NAME=${ELB_NAME:33:$((${#ELB_NAME} - 36))}
 
-attempts=1
-until aws elb describe-instance-health --load-balancer-name ${ELB_NAME} | grep InService; do
-    echo "Waiting for ${ELB_NAME} to respond"
-    sleep 30
-    if [ $attempts -gt 10 ]; then
-        echo "${ELB_NAME} Failed health check"
-        exit 1
-    fi
-    attempts=$((attempts+1))
-done
+    attempts=1
+    until aws elb describe-instance-health --load-balancer-name ${ELB_NAME} | grep InService; do
+        echo "Waiting for ${ELB_NAME} to respond"
+        sleep 30
+        if [ $attempts -gt 10 ]; then
+            echo "${ELB_NAME} Failed health check"
+            exit 1
+        fi
+        attempts=$((attempts+1))
+    done
 
-BASE_URL=$(aws elb describe-load-balancers --load-balancer-names ${ELB_NAME} | jq -r '.LoadBalancerDescriptions[0].DNSName')
-BASE_URL="http://${BASE_URL}"
+    BASE_URL=$(aws elb describe-load-balancers --load-balancer-names ${ELB_NAME} | jq -r '.LoadBalancerDescriptions[0].DNSName')
+    export BASE_URL="http://${BASE_URL}"
+fi
 
 attempts=1
 until $(curl --output /dev/null --silent --head --fail --insecure ${BASE_URL}/login); do
@@ -95,8 +97,6 @@ until $(curl --output /dev/null --silent --head --fail --insecure ${BASE_URL}/lo
         attempts=$((attempts+1))
     fi
 done
-
-echo "Ok"
 
 npm test
 status=$?
