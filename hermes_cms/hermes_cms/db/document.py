@@ -13,7 +13,7 @@ from hermes_aws.s3 import S3
 
 
 class Document(SQLObject):
-    uuid = StringCol()  # this is the version record to be found in S3
+    uuid = StringCol(length=36)  # this is the version record to be found in S3
     url = StringCol()  # this is unique for URL for each GID.
     created = DateTimeCol()
     published = BoolCol(default=False)
@@ -25,6 +25,9 @@ class Document(SQLObject):
     parent = IntCol()
     path = StringCol()  # Uses the gid as parentGID/currentGID etc.
     user_id = IntCol()
+
+    def _get_type(self):
+        return str(self._SO_get_type()).strip()
 
     @staticmethod
     def save(record):

@@ -141,7 +141,7 @@ class HermesCreateCloud(object):
     def _create_bucket_configs(self):
         for bucket in ['files', 'storage']:
             S3.upload_string(self._format_name('config'), bucket,
-                             json.dumps({"bucket": self._format_name(bucket)}), partition=False)
+                             json.dumps({"bucket_name": self._format_name(bucket)}), partition=False)
 
     def _load_database(self):
         conn = boto.rds2.connect_to_region(self.args.region)

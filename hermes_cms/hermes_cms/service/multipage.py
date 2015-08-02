@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 import json
 import zipfile
-import logging
 import mimetypes
+import logging
 from hermes_cms.service.job import Job, InvalidJobError, FatalJobError
 from hermes_cms.db import Job as JobDB, Document
 from hermes_cms.core.registry import Registry
@@ -12,9 +12,7 @@ from cStringIO import StringIO
 import boto
 from boto.s3.key import Key
 from hermes_aws import S3
-from hermes_cms.core.log import setup_logging
 
-setup_logging()
 
 
 class MultipageJob(Job):
@@ -60,3 +58,7 @@ class MultipageJob(Job):
                 key.content_type = mimetypes.guess_type(name)[0]
                 key.set_contents_from_string(zip_handle.read(name))
                 self.log.info('Uploaded %s', key_name)
+
+        job.set(status='complete')
+        if job.message.get('on_complete', {}).get('alter'):
+            document.set(**job.message['on_complete']['alter'])
