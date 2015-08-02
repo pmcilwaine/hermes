@@ -95,7 +95,7 @@
                     }
                 ],
                 "HealthCheck": {
-                    "Target": "HTTP:80/assets/public/css/app.css",
+                    "Target": "HTTP:80/health",
                     "HealthyThreshold": "2",
                     "UnhealthyThreshold": "2",
                     "Interval": "15",
@@ -180,6 +180,12 @@
                     {"Ref": "CMSSG"}
                 ],
                 "InstanceType": "t2.micro",
+                "BlockDeviceMappings": [
+                    {
+                        "DeviceName": "/dev/sda1",
+                        "Ebs": { "VolumeSize" : "8", "DeleteOnTermination" : "true", "VolumeType": "gp2"}
+                    }
+                ],
                 "IamInstanceProfile" : { "Ref" : "EC2IAMInstProf" },
                 "InstanceMonitoring": false,
                 "UserData": { "Fn::Base64" : { "Fn::Join" : ["", [
@@ -307,6 +313,12 @@
         <%include file="sqs.template" args="queue_name='multipage', cloud_name=name"/>
     },
     "Outputs": {
+        "CMSFQDN": {
+            "Value": {"Fn::GetAtt": ["CMSLoadBalancer", "DNSName" ]}
+        },
+        "CMSLoadBalancerName": {
+            "Value": {"Ref": "CMSLoadBalancer"}
+        },
         "DBHost": {
             "Value": {"Fn::GetAtt": ["CMSDB", "Endpoint.Address" ]}
         },

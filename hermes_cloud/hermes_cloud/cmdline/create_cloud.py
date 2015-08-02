@@ -186,6 +186,12 @@ class HermesCreateCloud(object):
 
         S3.upload_string(self._format_name('config'), 'queues', json.dumps(queues), partition=False)
 
+    def _create_cms_config(self):
+        S3.upload_string(self._format_name('config'), 'cms', json.dumps({
+            'dns': self.stack_mgr.stack_data['cms']['CMSFQDN'],
+            'name': self.stack_mgr.stack_data['cms']['CMSLoadBalancerName']
+        }), partition=False)
+
     def _create_topics_config(self):
         topics = {"topic": {}}
         for topic, topic_arn_label in (('multipage', 'MultipageSNS'), ):
@@ -212,8 +218,8 @@ class HermesCreateCloud(object):
         self.stack_mgr.add_stacks([
             'vpc',
             'jumpbox',
-            'cms'
-            # 'logservice',
+            'cms',
+            'log'
         ])
 
         self._create_buckets([
@@ -231,6 +237,8 @@ class HermesCreateCloud(object):
         print 'created bucket configs'
         self._load_database()
         print 'loaded database'
+        self._create_cms_config()
+        print 'created cms config'
         self._create_region_config()
         print 'created region config'
         self._create_queues_config()

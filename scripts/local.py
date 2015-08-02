@@ -45,4 +45,10 @@ app = create_app(config_obj=LocalConfig, blueprints=[
 def public_static(filename):
     return send_from_directory(os.path.abspath('../hermes_ui/dist'), filename)
 
+
+@app.route('/admin/analytics/')
+def analytics_static():
+    return 'Analytics page'
+
+
 app.run(debug=True)
