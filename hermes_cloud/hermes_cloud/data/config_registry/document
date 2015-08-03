@@ -2,7 +2,7 @@
     "type": [
         "Page",
         "File",
-        "Multipage"
+        "MultiPage"
     ],
     "Page": {
         "templates": {
@@ -23,7 +23,7 @@
             "document_class": "File"
         }
     },
-    "Multipage": {
+    "MultiPage": {
         "public": {
             "document_module": "hermes_cms.controller",
             "document_class": "Multipage"

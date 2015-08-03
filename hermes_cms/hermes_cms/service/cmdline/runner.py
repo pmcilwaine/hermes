@@ -1,49 +1,63 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
 import argparse
-import logging
 import sys
+import time
 import daemon.runner
-
+from hermes_cms.core.log import setup_logging
 from hermes_cms.core.registry import Registry
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 
-logger = logging.getLogger("DaemonLog")
-logger.setLevel(logging.INFO)
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-handler = logging.FileHandler("testdaemon.log")
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-
-class ServiceRunner(object):
+class DaemonApplication:
 
     def __init__(self, name, region, config_file):
         self.stdin_path = '/dev/null'
         self.stdout_path = '/dev/null'
         self.stderr_path = '/dev/null'
-        self.pidfile_path = '/var/run/{0}.pid'.format(name)
-        self.pidfile_timeout = 10
+        self.pidfile_path = '/tmp/{0}.pid'.format(name)
+        self.pidfile_timeout = 5
 
         self.name = name
         self.region = region
-        self.config = Registry().get(config_file)
+        self.config_file = config_file
 
     def run(self):
-        module_name = self.config['jobs'][self.name]['module_name']
-        class_name = self.config['jobs'][self.name]['class_name']
+        setup_logging()
 
-        mod = __import__(module_name, fromlist=[class_name])
-        service_class = getattr(mod, class_name)
-        job_class = service_class(self.name, self.region, self.config)
+        while True:
+            config = Registry().get(self.config_file)
 
-        seconds = int(self.config['jobs'][self.name]['frequency'])
+            module_name = config['jobs'][self.name]['module_name']
+            class_name = config['jobs'][self.name]['class_name']
 
-        scheduler = BlockingScheduler()
-        scheduler.add_job(job_class.do_action, IntervalTrigger(seconds=seconds))
-        scheduler.start()
+            mod = __import__(module_name, fromlist=[class_name])
+            service_class = getattr(mod, class_name)
 
-        logger.warn('Daemon seemed to stop???')
+            job_class = service_class(self.name, self.region, config)
+
+            seconds = int(config['jobs'][self.name]['frequency'])
+
+            scheduler = BlockingScheduler()
+            scheduler.add_job(job_class.do_action, IntervalTrigger(seconds=seconds))
+            scheduler.start()
+
+
+class ServiceRunner(daemon.runner.DaemonRunner):
+
+    def __init__(self, app):
+        self.app_save = app
+        self.detach_process = True
+        daemon.runner.DaemonRunner.__init__(self, app)
+
+    def parse_args(self, argv=None):
+        self.action = sys.argv[1]
+
+        print 'starting action', self.action
+
+        if not self.action:
+            print 'Killing Service Runner'
+            sys.exit(1)
 
 
 def main():
@@ -55,16 +69,20 @@ def main():
 
     sys.argv = (sys.argv[0], args.action)
 
-    service = ServiceRunner(args.job, Registry().get('region').get('region'), args.config)
-    daemon_runner = daemon.runner.DaemonRunner(service)
-    daemon_runner.daemon_context.detach_process = False
-    daemon_runner.daemon_context.files_preserve = [handler.stream]
+    region = None
+    while not region:
+        try:
+            region = Registry().get('region').get('region')
+            print 'got region', region
+        except Exception as e:
+            print 'Cannot get region', str(e)
+            time.sleep(5)
 
-    try:
-        daemon_runner.do_action()
-    except Exception as e:
-        print 'error', e
+    app = DaemonApplication(args.job, region, args.config)
+    daemon_runner = ServiceRunner(app)
+    daemon_runner.do_action()
 
+    return 0
 
 if __name__ == '__main__':
-    sys.exit(main())
+    main()

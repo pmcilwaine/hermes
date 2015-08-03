@@ -12,7 +12,7 @@ CREATE TABLE users (
 
 CREATE TABLE document (
     id SERIAL PRIMARY KEY,
-    uuid char(60) UNIQUE,
+    uuid char(36) UNIQUE,
     url char(255),
     created TIMESTAMP without time zone,
     published BOOL,
@@ -28,9 +28,11 @@ CREATE TABLE document (
 
 CREATE TABLE job (
     id SERIAL PRIMARY KEY,
-    uuid char(60) UNIQUE,
+    uuid char(36) UNIQUE,
     name char(255),
     status char(10),
+    created TIMESTAMP without time zone,
+    modified TIMESTAMP without time zone,
     message text
 );
 

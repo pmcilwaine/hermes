@@ -63,7 +63,7 @@ class S3(object):
         return key.get_contents_as_string()
 
     @staticmethod
-    def generate_form(bucket_name, expires_in=None, key_name=None, acl='private'):
+    def generate_form(bucket_name, expires_in=None, key_name=None, region=None, acl='private'):
         """
         Generates what is required for a form to post directly to S3 bucket.
 
@@ -88,7 +88,11 @@ class S3(object):
 
         conditions = ["{'success_action_status': '201'}"]
 
-        connection = boto.connect_s3()
+        if region:
+            connection = boto.s3.connect_to_region(region)
+        else:
+            connection = boto.connect_s3()
+
         response = connection.build_post_form_args(bucket_name, key_name, expires_in=expires_in, acl=acl,
                                                    fields=fields, http_method='https', conditions=conditions)
 

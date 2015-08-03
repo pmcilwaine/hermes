@@ -148,7 +148,8 @@ def document_add():
     document_data['document']['user_id'] = session['auth_user'].get('id', -1)
     document = Document.save(document_data)
 
-    helper_class = Registry().get('document').get(document.type, {}).get('admin_helper', {})
+    document_type = document_data['document']['type']
+    helper_class = Registry().get('document').get(document_type, {}).get('admin_helper', {})
     if helper_class:
         common.load_class(
             helper_class.get('document_module'),
@@ -161,9 +162,10 @@ def document_add():
 
 @route.route('/upload_url', methods=['POST'])
 def sign_upload_url():
+    registry = Registry()
 
-    bucket = Registry().get('storage')['bucket_name']
-    signed_form = S3.generate_form(bucket)
+    bucket = registry.get('storage')['bucket_name']
+    signed_form = S3.generate_form(bucket, region=registry.get('region').get('region'))
     signed_form['file'] = {
         'bucket': bucket,
         'key': [item['value'] for item in signed_form['fields'] if item['name'] == 'key'].pop()
