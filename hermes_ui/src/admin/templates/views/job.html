@@ -1,1 +1,27 @@
 <h1>Jobs</h1>
+
+
+<div class="row padding">
+    <div class="col-lg-12">
+
+        <table class="table table-bordered table-striped" ng-show="jobs.length !== 0">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="job in jobs">
+                    <td>{{ ::job.name }}</td>
+                    <td>{{ ::job.status }}</td>
+                    <td>{{ ::job.created }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p ng-show="jobs.length === 0">There are currently no jobs to list.</p>
+
+    </div>
+</div>

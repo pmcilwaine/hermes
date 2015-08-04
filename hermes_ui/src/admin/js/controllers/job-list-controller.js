@@ -2,11 +2,17 @@
 
     var dependencies, jobController;
 
-    jobController = function () {
+    jobController = function (scope, JobResource) {
+        scope.jobs = [];
 
+        JobResource.get(function (response) {
+            scope.jobs = response.jobs;
+        });
     };
 
     dependencies = [
+        '$scope',
+        'JobResource',
         jobController
     ];
 
