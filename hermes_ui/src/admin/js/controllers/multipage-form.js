@@ -16,11 +16,9 @@
                 deferred.resolve(formUpload);
             } else {
                 GenerateUrl.newUploadUrl().then(function ok (msg) {
-                    console.log('got new url, resolved');
                     formUpload = msg;
                     deferred.resolve(msg);
                 }, function fail (msg) {
-                    console.log('failed to get new url');
                     deferred.reject(msg);
                 });
             }

@@ -4,7 +4,7 @@ import logging
 import boto.sns
 from boto.exception import BotoServerError
 from hermes_cms.core.registry import Registry
-from hermes_cms.helpers import DocumentHelper
+from hermes_cms.helpers.document import DocumentHelper
 from hermes_cms.db import Job
 
 

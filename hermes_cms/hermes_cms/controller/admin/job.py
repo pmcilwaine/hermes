@@ -9,6 +9,7 @@ from sqlobject.sqlbuilder import DESC
 
 class Job(MethodView):
 
+    # pylint: disable=no-self-use
     def get(self):
         """
 
@@ -36,6 +37,7 @@ class Job(MethodView):
 
         items = []
         count = JobDB.select().count()
+        # pylint: disable=no-member
         for job in JobDB.select(orderBy=DESC(JobDB.q.created))[offset:limit]:
             items.append({
                 'uuid': job.uuid,

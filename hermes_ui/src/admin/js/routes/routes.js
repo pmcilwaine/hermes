@@ -83,6 +83,12 @@
                 }
             });
 
+            $stateProvider.state('document.migration', {
+                url: '/migration',
+                templateUrl: 'templates/views/migration-upload.html',
+                controller: 'MigrationUploadController'
+            });
+
             $stateProvider.state('users', {
                 abstract: true,
                 url: '/user',

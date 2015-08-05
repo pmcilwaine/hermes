@@ -16,6 +16,7 @@ from hermes_cms.core.registry import Registry
 from hermes_cms.helpers import common
 
 from hermes_cms.controller.admin.job import Job as JobController
+from hermes_cms.controller.admin.migration_upload import MigrationUpload
 
 
 log = logging.getLogger('hermes_cms.views.admin')
@@ -24,6 +25,8 @@ lookup = TemplateLookup(directories=[
     resource_filename('hermes_cms.templates.admin', '')
 ])
 
+migration_uoload_view = MigrationUpload.as_view('migration_upload')
+route.add_url_rule('/migration_upload', view_func=migration_uoload_view, methods=['POST'])
 
 job_view = JobController.as_view('job')
 route.add_url_rule('/job', view_func=job_view, methods=['GET'])
@@ -96,10 +99,10 @@ def document_list():
     limit = int(request.args.get('limit', 100))
 
     documents = []
-    for document in Document.query(Document.all(), where=Document.q.archived == False, 
-                                   groupBy=(Document.q.id, Document.q.uuid, Document.q.created, Document.q.published, 
-                                            Document.q.type, Document.q.name, Document.q.archived, 
-                                            Document.q.menutitle, Document.q.show_in_menu, Document.q.parent, 
+    for document in Document.query(Document.all(), where=Document.q.archived == False,
+                                   groupBy=(Document.q.id, Document.q.uuid, Document.q.created, Document.q.published,
+                                            Document.q.type, Document.q.name, Document.q.archived,
+                                            Document.q.menutitle, Document.q.show_in_menu, Document.q.parent,
                                             Document.q.path, Document.q.user_id),
                                    orderBy=DESC(Document.q.created), start=offset, end=offset + limit):
 

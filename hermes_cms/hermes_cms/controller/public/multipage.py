@@ -1,12 +1,14 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
-from hermes_cms.controller.public import Document
+from hermes_cms.controller.public.document import Document
 from hermes_cms.core.registry import Registry
 from hermes_aws import S3
 from flask import request, Response
 
 
+# pylint: disable=abstract-method
 class Multipage(Document):
+
     def get(self):
         registry = Registry()
 

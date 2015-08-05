@@ -1,16 +1,28 @@
 {
-   "jobs":{
-      "multipage":{
-         "frequency":"300",
-         "class_name":"SQSService",
-         "module_name":"hermes_cms.service.sqs_service",
-         "service":{
-            "topic":"config:///topics.topic.multipage",
-            "service_class":"MultipageJob",
-            "service_module":"hermes_cms",
-            "messages":1,
-            "queue":"config:///queues.queue.multipage"
-         }
-      }
-   }
+    "jobs": {
+        "multipage": {
+            "frequency": "300",
+            "class_name": "SQSService",
+            "module_name": "hermes_cms.service.sqs_service",
+            "service": {
+                "topic": "config:///topics.topic.multipage",
+                "service_class": "MultipageJob",
+                "service_module": "hermes_cms",
+                "messages": 1,
+                "queue": "config:///queues.queue.multipage"
+            }
+        },
+        "migration_upload": {
+            "frequency": "300",
+            "class_name": "SQSService",
+            "module_name": "hermes_cms.service.sqs_service",
+            "service": {
+                "topic": "config:///topics.topic.migration_upload",
+                "service_class": "MigrationUploadJob",
+                "service_module": "hermes_cms",
+                "messages": 1,
+                "queue": "config:///queues.queue.migration_upload"
+            }
+        }
+    }
 }
