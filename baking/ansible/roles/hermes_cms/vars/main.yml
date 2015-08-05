@@ -2,3 +2,5 @@
 services:
   - name: multipage
     config: jobs
+  - name: migrationupload
+    config: jobs
