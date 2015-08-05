@@ -310,7 +310,7 @@
                 "PubliclyAccessible": "True"
             }
         },
-        <%include file="sqs.template" args="queue_name='multipage', cloud_name=name"/>
+        <%include file="sqs.template" args="queue_name='multipage', cloud_name=name"/>,
         <%include file="sqs.template" args="queue_name='migration_upload', cloud_name=name"/>
     },
     "Outputs": {
