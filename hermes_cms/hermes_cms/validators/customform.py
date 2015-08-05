@@ -13,6 +13,7 @@ class CustomForm(Form):
         :rtype: dict
         """
         _errors = {}
+        # pylint: disable=no-member
         for name, field in self._fields.items():
             if field.errors:
                 _errors[name] = field.errors.pop()

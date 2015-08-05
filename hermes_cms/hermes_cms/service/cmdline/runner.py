@@ -9,7 +9,7 @@ from hermes_cms.core.registry import Registry
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 
-class DaemonApplication:
+class DaemonApplication(object):
 
     def __init__(self, name, region, config_file):
         self.stdin_path = '/dev/null'
@@ -73,9 +73,7 @@ def main():
     while not region:
         try:
             region = Registry().get('region').get('region')
-            print 'got region', region
-        except Exception as e:
-            print 'Cannot get region', str(e)
+        except KeyError:
             time.sleep(5)
 
     app = DaemonApplication(args.job, region, args.config)

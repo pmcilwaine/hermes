@@ -17,6 +17,7 @@ class Job(SQLObject):
     message = StringCol()
 
     def _get_name(self):
+        # pylint: disable=no-member
         return str(self._SO_get_name()).strip()
 
     def _get_message(self):
@@ -24,6 +25,7 @@ class Job(SQLObject):
         return json.loads(self._SO_get_message())
 
     def _set_message(self, value):
+        # pylint: disable=no-member
         self._SO_set_message(json.dumps(value))
 
     @staticmethod

@@ -13,6 +13,8 @@ from hermes_cms.service.job import Job, InvalidJobError
 from sqlobject import sqlhub, connectionForURI
 from sqlobject.sqlbuilder import DESC
 from hermes_cms.core.log import setup_logging
+import mimetypes
+
 setup_logging()
 
 
@@ -25,9 +27,13 @@ class MigrationUploadJob(Job):
         sqlhub.processConnection = connectionForURI(database_url)
 
         conn = boto.connect_s3()
-        self.bucket = conn.get_bucket(self.registry.get('storage').get('bucket_name'))
+        file_conn = boto.connect_s3()
 
-    def _get_manifest(self, handle):
+        self.bucket = conn.get_bucket(self.registry.get('storage').get('bucket_name'))
+        self.files_bucket = file_conn.get_bucket(self.registry.get('files').get('bucket_name'))
+
+    @staticmethod
+    def _get_manifest(handle):
         """
 
         :type handle: zipfile.ZipFile
@@ -37,7 +43,8 @@ class MigrationUploadJob(Job):
         """
         return json.loads(handle.read('manifest'))
 
-    def _validate_manifest(self, documents):
+    @staticmethod
+    def _validate_manifest(documents):
         lookup = {}
 
         for document in documents:
@@ -54,7 +61,8 @@ class MigrationUploadJob(Job):
 
         return True
 
-    def _get_document_from_archive(self, uuid, handle):
+    @staticmethod
+    def _get_document_from_archive(uuid, handle):
         """
 
         :param uuid:
@@ -64,12 +72,21 @@ class MigrationUploadJob(Job):
         """
         return json.loads(handle.read(uuid))
 
+    # pylint: disable=no-self-use
     def _update_from_parent(self, contents, parent_url):
         document = Document.selectBy(url=parent_url, orderBy=DESC(Document.q.created), limit=1).getOne(None)
         contents['document']['parent'] = document.id
         contents['document']['path'] = document.path
 
+    # pylint: disable=no-self-use
     def _save_document(self, user_id, contents):
+        """
+
+        :param user_id:
+        :param contents:
+        :return:
+        :rtype: arrow.Arrow
+        """
         created = arrow.get(contents['document']['created'])
         contents['document']['created'] = created.datetime
         contents['document']['user'] = user_id
@@ -79,9 +96,39 @@ class MigrationUploadJob(Job):
         contents['document']['created'] = str(created)
         contents['document']['path'] = path
 
-        key_name = '{0}/{1}/{2}/{3}'.format(created.day, created.month, created.year, contents['document']['uuid'])
-        key = Key(self.bucket, key_name)
-        key.set_contents_from_string(json.dumps(contents))
+        return created
+
+    def _upload_file(self, contents, handle):
+        """
+
+        :param contents:
+        :type handle: zipfile.ZipFile
+        :param handle:
+        :return:
+        """
+        bucket_name = self.registry.get('storage').get('bucket_name')
+        filename = contents['file']['key']
+        contents['bucket'] = bucket_name
+
+        key = Key(self.bucket, filename)
+        key.set_contents_from_string(handle.read('file/{0}'.format(filename)))
+
+    def _upload_multipage(self, contents, handle):
+        """
+
+        :type contents: dict
+        :param contents:
+        :type handle: zipfile.ZipFile
+        :param handle:
+        :return:
+        """
+        for item in handle.namelist():
+            part = 'files/{0}/'.format(contents['document']['uuid'])
+            if item.startswith(part):
+                filename = item.split(part).pop()
+                key = Key(self.files_bucket, filename)
+                key.set_contents_from_string(handle.read(item))
+                key.content_type = mimetypes.guess_type(item)[0]
 
     def do_work(self, message=None):
         """
@@ -119,31 +166,43 @@ class MigrationUploadJob(Job):
         job_id = str(contents['Message'])
         job = JobDB.selectBy(uuid=job_id).getOne(None)
         if not job:
-            print 'invalid job'
             self.log.error('Cannot find job %s', job_id)
             raise InvalidJobError('Invalid Job ID: {0}'.format(job_id))
 
+        job.set(status='running')
+
         # get archive file
-        archive_key = self.bucket.get_key(job.message['archive'])
+        archive_key = self.bucket.get_key(job.message['file']['key'])
         if not archive_key:
+            job.set(status='failed')
             raise InvalidJobError('Cannot find archive in S3 bucket.')
 
         fp = StringIO(archive_key.get_contents_as_string())
 
         handle = zipfile.ZipFile(fp, mode='r', compression=zipfile.ZIP_DEFLATED)
         try:
-            manifest_content = self._get_manifest(handle)
+            manifest_content = MigrationUploadJob._get_manifest(handle)
         except Exception:
+            job.set(status='failed')
             raise InvalidJobError('Some error occurred')  # todo probably need to push some exception stuff elsewhere
 
-        #if not self._validate_manifest(manifest_content['documents']):
-        #    raise Exception('Invalid manifest')
+        if not MigrationUploadJob._validate_manifest(manifest_content['documents']):
+            job.set(status='failed')
+            raise InvalidJobError('Manifest is not valid')
 
         for document in manifest_content['documents']:
-            contents = self._get_document_from_archive(document['uuid'], handle)
+            contents = MigrationUploadJob._get_document_from_archive(document['uuid'], handle)
             if document.get('parent_uuid') and document.get('parent_url'):
                 self._update_from_parent(contents, document['parent_url'])
 
-            self._save_document(job.message['user_id'], contents)
-            if contents.get('file'):
-                pass
+            created = self._save_document(job.message['user_id'], contents)
+            if contents.get('file') and contents['document']['type'] == 'File':
+                self._upload_file(contents, handle)
+            elif contents.get('file') and contents['document']['type'] == 'MultiPage':
+                self._upload_multipage(contents, handle)
+
+            key_name = '{0}/{1}/{2}/{3}'.format(created.day, created.month, created.year, contents['document']['uuid'])
+            key = Key(self.bucket, key_name)
+            key.set_contents_from_string(json.dumps(contents))
+
+        job.set(status='complete')
