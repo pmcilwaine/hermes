@@ -12,16 +12,16 @@
                 "queue": "config:///queues.queue.multipage"
             }
         },
-        "migration_upload": {
+        "migrationupload": {
             "frequency": "300",
             "class_name": "SQSService",
             "module_name": "hermes_cms.service.sqs_service",
             "service": {
-                "topic": "config:///topics.topic.migration_upload",
+                "topic": "config:///topics.topic.migrationupload",
                 "service_class": "MigrationUploadJob",
                 "service_module": "hermes_cms",
                 "messages": 1,
-                "queue": "config:///queues.queue.migration_upload"
+                "queue": "config:///queues.queue.migrationupload"
             }
         }
     }
