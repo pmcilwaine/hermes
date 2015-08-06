@@ -368,7 +368,3 @@ def test_document_with_file(document_mock, job_mock, registry_mock, connection_m
     assert Key(storage, '1/6/2015/98f0d33d-2c71-4169-a44f-a4050c4854fb').exists()
     assert Key(storage, '3/6/2015/c1ad1745-d3b8-40b7-a945-4f365e84f054').exists()
     assert job.set.call_args_list == [call(status='running'), call(status='complete')]
-
-"""
-{"document": {"archived": false, "user_id": 1, "name": "multipage", "parent": 0, "created": "2015-08-05T10:07:35.514833+00:00", "url": "multipage", "menutitle": "multipage", "show_in_menu": true, "published": true, "path": "4/", "type": "MultiPage", "uuid": "a047c1b9-91eb-4e0d-b2c0-6627c6a5e3c9"}, "file": {"type": "application/zip", "bucket": "storage-paulmcilwaine-com", "name": "multipage.zip", "key": "5/8/2015/085be9fc-918d-4b5b-8d40-bf0a1567f201"}}
-"""

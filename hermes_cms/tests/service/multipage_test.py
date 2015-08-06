@@ -5,7 +5,7 @@ import boto
 import pytest
 import base64
 from datetime import datetime
-from mock import patch, MagicMock, call
+from mock import patch, MagicMock
 from moto import mock_s3
 from boto.s3.key import Key
 from boto.sqs.message import Message
