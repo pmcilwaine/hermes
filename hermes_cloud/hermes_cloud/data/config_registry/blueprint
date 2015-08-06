@@ -27,7 +27,7 @@
         },
         {
             "url": "/migration",
-            "module": "hermes_cms.controller.admin.migration"
+            "module": "hermes_cms.controller.admin.migration",
             "view_class": "Migration",
             "methods": ["POST", "GET"]
         }
