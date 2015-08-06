@@ -17,8 +17,6 @@ from hermes_cms.helpers import common
 
 from hermes_cms.controller.admin.job import Job as JobController
 from hermes_cms.controller.admin.migration_upload import MigrationUpload
-
-
 from hermes_cms.controller.admin.migration_download import MigrationDownload
 
 log = logging.getLogger('hermes_cms.views.admin')
