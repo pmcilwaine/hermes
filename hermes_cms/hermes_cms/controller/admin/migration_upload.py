@@ -14,6 +14,7 @@ log = logging.getLogger('hermes_cms.controller.admin.multipage_upload')
 
 class MigrationUpload(MethodView):
 
+    # pylint: disable=no-self-use
     def post(self):
         data = request.json
         if not data or not data.get('file'):
@@ -29,7 +30,7 @@ class MigrationUpload(MethodView):
         })
 
         registry = Registry()
-        topic_arn = registry.get('topics').get('topic').get('migration_upload')
+        topic_arn = registry.get('topics').get('topic').get('migrationupload')
         conn = boto.sns.connect_to_region(registry.get('region').get('region'))
 
         try:

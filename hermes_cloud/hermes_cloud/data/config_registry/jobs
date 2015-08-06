@@ -1,7 +1,7 @@
 {
     "jobs": {
         "multipage": {
-            "frequency": "300",
+            "frequency": "30",
             "class_name": "SQSService",
             "module_name": "hermes_cms.service.sqs_service",
             "service": {
@@ -13,7 +13,7 @@
             }
         },
         "migrationupload": {
-            "frequency": "300",
+            "frequency": "30",
             "class_name": "SQSService",
             "module_name": "hermes_cms.service.sqs_service",
             "service": {
@@ -25,7 +25,7 @@
             }
         },
         "migrationdownload": {
-            "frequency": "300",
+            "frequency": "30",
             "class_name": "SQSService",
             "module_name": "hermes_cms.service.sqs_service",
             "service": {

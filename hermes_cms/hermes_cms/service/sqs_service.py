@@ -1,7 +1,10 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
 import boto.sqs
+import logging
 from hermes_cms.service.service import Service
+
+log = logging.getLogger('hermes_cms.service.sqs_service')
 
 
 class SQSNotExistError(Exception):
@@ -34,8 +37,9 @@ class SQSService(Service):
         """
         messages = self.queue.get_messages(num_messages=self.service_config['messages'])
         for message in messages:
+            log.info('Got message for job %s', self.name)
             try:
                 self.job_class.do_work(message)
                 self._sqs_conn.delete_message(self.queue, message)
             except Exception as e:
-                print e
+                log.exception(e)

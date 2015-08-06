@@ -338,6 +338,12 @@
         },
         "MigrationDownloadSNS": {
             "Value": {"Ref": "SNSmigrationdownload"}
+        },
+        "MigrationUploadSQS": {
+            "Value": {"Fn::GetAtt": ["SQSmigrationupload", "QueueName" ]}
+        },
+        "MigrationUploadSNS": {
+            "Value": {"Ref": "SNSmigrationupload"}
         }
     }
 }

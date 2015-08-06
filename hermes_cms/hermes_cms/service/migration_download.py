@@ -11,9 +11,8 @@ from hermes_cms.db import Job as JobDB, Document
 from sqlobject import sqlhub, connectionForURI
 from sqlobject.sqlbuilder import LIKE, IN, AND
 from hermes_cms.service.job import Job, InvalidJobError
-from hermes_cms.core.log import setup_logging
 
-setup_logging()
+log = logging.getLogger('hermes_cms.service.migration_download')
 
 
 class MigrationDownloadJob(Job):
@@ -30,6 +29,7 @@ class MigrationDownloadJob(Job):
         self.bucket = conn.get_bucket(self.registry.get('storage').get('bucket_name'))
         self.files_bucket = file_conn.get_bucket(self.registry.get('files').get('bucket_name'))
 
+    # pylint: disable=no-self-use
     def _get_document_query(self, documents):
         uuids = []
         for item in documents:
@@ -55,7 +55,7 @@ class MigrationDownloadJob(Job):
         json_content = json.loads(contents)
         zip_handle.writestr(document.uuid, contents)
 
-        if 'file' in json_content:
+        if 'file' in json_content and document.type == 'File':
             file_contents = self.bucket.get_key(json_content['file']['key']).get_contents_as_string()
             zip_handle.writestr(json_content['file']['key'], file_contents)
 
@@ -63,12 +63,18 @@ class MigrationDownloadJob(Job):
             for item in self.files_bucket.list(document.uuid):
                 zip_handle.writestr('files/{0}'.format(item.name), item.get_contents_as_string())
 
+    # pylint: disable=no-self-use
     def _get_document_parent_url(self, parent):
-        document = Document.selectBy(id=parent).getOne(None)
-        if not document:
-            return ''
+        """
 
-        return document.url
+        :param parent:
+        :return:
+        :rtype: hermes_cms.db.document.Document | None
+        """
+        if not parent:
+            return None
+
+        return Document.selectBy(id=parent).getOne(None)
 
     def do_work(self, message=None):
         """
@@ -93,9 +99,18 @@ class MigrationDownloadJob(Job):
 
         full key name for file
 
-        Manifest
+        Manifest file structure
         {
-            "uuid": "/parent/url"
+            'documents': [
+                {
+                    'uuid': 'some-uuid',
+                    'url': 'some-url',
+                    'parent_url': 'some-parent-url',
+                    'parent_uuid': 'some-parent-uuid'
+                },
+                ...
+            ],
+            'full': bool
         }
 
         :type message: boto.sqs.message.Message | None
@@ -118,17 +133,24 @@ class MigrationDownloadJob(Job):
 
         and_ops = [Document.q.archived == False, Document.q.published == True]
         if not job.message.get('all_documents'):
-            and_ops.append(self._get_document_query(job.message.get('documents')))
+            and_ops.append(self._get_document_query(job.message.get('document')))
 
         manifest = {
-            'documents': {},
-            'full_list': job.message.get('all_documents', False)
+            'documents': [],
+            'full': job.message.get('all_documents', False)
         }
 
         zip_contents = StringIO()
         zip_handle = zipfile.ZipFile(zip_contents, 'w', compression=zipfile.ZIP_DEFLATED)
         for document in Document.query(Document.all(), where=AND(*and_ops)):
-            manifest['documents'].update({document.uuid: self._get_document_parent_url(document.parent)})
+            parent_document = self._get_document_parent_url(document.parent)
+            manifest['documents'].append({
+                'uuid': document.uuid,
+                'url': document.url,
+                'parent_url': None if not parent_document else parent_document.url,
+                'parent_uuid': None if not parent_document else parent_document.uuid
+            })
+
             self._handle_document(document, zip_handle)
             self.log.info('Adding document uuid=%s to zip archive', str(document.uuid))
 
@@ -140,4 +162,10 @@ class MigrationDownloadJob(Job):
         zip_key.set_contents_from_string(zip_contents.getvalue())
         self.log.info("Created ZIP for Job '%s'", str(job_id))
 
-        job.set(status='complete')
+        message = job.message
+        message['download'] = {
+            'bucket': self.bucket.name,
+            'key': job_id
+        }
+        job.set(status='complete', message=message)
+        log.info('Setting job=%s to complete', job_id)

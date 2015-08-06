@@ -104,7 +104,11 @@ def test_single_document_has_get_doc_call(registry_mock, connection_mock, docume
         service.do_work(message)
         assert method_mock.called
 
-    assert job.set.call_args_list == [call(status='running'), call(status='complete')]
+    assert job.set.call_args_list == [call(status='running'),
+                                      call(message={'documents': [
+                                          {'parent_id': '56d3c182-f72f-4216-9e94-1756bf67564d'}],
+                                          'download': {'key': '9bd96ca7-3d0a-4e74-b523-b3bd38e9862e',
+                                                       'bucket': 'storage-bucket'}}, status='complete')]
 
 
 @mock_s3
@@ -144,10 +148,13 @@ def test_single_path_document_zip(registry_mock, connection_mock, document_mock,
 
     document_mock.query.return_value = [MagicMock(**{
         'uuid': '56d3c182-f72f-4216-9e94-1756bf67564d',
-        'created': datetime(2015, 5, 17)
+        'created': datetime(2015, 5, 17),
+        'url': '/'
     }), MagicMock(**{
         'uuid': '79254d0b-0902-4697-89d1-4be8ff3acd69',
-        'created': datetime(2015, 5, 17)
+        'created': datetime(2015, 5, 17),
+        'url': 'test',
+        'type': 'File'
     })]
 
     key1 = Key(bucket, '17/5/2015/56d3c182-f72f-4216-9e94-1756bf67564d')
@@ -158,7 +165,7 @@ def test_single_path_document_zip(registry_mock, connection_mock, document_mock,
             'created': str(datetime(2015, 5, 17)),
             'url': '/',
             'parent': 0,
-            'path': '1/'
+            'path': '1/',
         }
     }))
 
@@ -170,7 +177,8 @@ def test_single_path_document_zip(registry_mock, connection_mock, document_mock,
             'created': str(datetime(2015, 5, 17)),
             'url': 'test',
             'parent': 1,
-            'path': '1/2'
+            'path': '1/2',
+            'type': 'File'
         },
         'file': {
             "bucket": "storage-bucket",
@@ -191,7 +199,7 @@ def test_single_path_document_zip(registry_mock, connection_mock, document_mock,
     ])
 
     def parent_side_effects(parent_id):
-        return '/' if parent_id else ''
+        return MagicMock(url='/', uuid='56d3c182-f72f-4216-9e94-1756bf67564d') if parent_id else None
 
     parent_url_mock.side_effect = parent_side_effects
 
@@ -203,4 +211,8 @@ def test_single_path_document_zip(registry_mock, connection_mock, document_mock,
     assert key.exists()
     assert handle.namelist() == ['56d3c182-f72f-4216-9e94-1756bf67564d', '79254d0b-0902-4697-89d1-4be8ff3acd69',
                                  '17/5/2015/a984dea7-8140-44cb-80a0-7e832ff1ff19', 'manifest']
-    assert job.set.call_args_list == [call(status='running'), call(status='complete')]
+    assert job.set.call_args_list == [call(status='running'),
+                                      call(message={'documents': [
+                                          {'parent_id': '56d3c182-f72f-4216-9e94-1756bf67564d'}],
+                                          'download': {'key': '9bd96ca7-3d0a-4e74-b523-b3bd38e9862e',
+                                                       'bucket': 'storage-bucket'}}, status='complete')]

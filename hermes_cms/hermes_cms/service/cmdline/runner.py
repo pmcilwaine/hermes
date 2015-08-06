@@ -4,10 +4,13 @@ import argparse
 import sys
 import time
 import daemon.runner
+import logging
+from boto.exception import S3ResponseError
 from hermes_cms.core.log import setup_logging
 from hermes_cms.core.registry import Registry
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.interval import IntervalTrigger
+
 
 class DaemonApplication(object):
 
@@ -24,9 +27,13 @@ class DaemonApplication(object):
 
     def run(self):
         setup_logging()
+        log = logging.getLogger('hermes_cms.service.runner')
 
         while True:
-            config = Registry().get(self.config_file)
+            try:
+                config = Registry().get(self.config_file)
+            except Exception as e:
+                log.exception(e)
 
             module_name = config['jobs'][self.name]['module_name']
             class_name = config['jobs'][self.name]['class_name']
@@ -40,6 +47,7 @@ class DaemonApplication(object):
 
             scheduler = BlockingScheduler()
             scheduler.add_job(job_class.do_action, IntervalTrigger(seconds=seconds))
+            log.info('Starting Scheduled job %s', self.name)
             scheduler.start()
 
 
@@ -47,13 +55,11 @@ class ServiceRunner(daemon.runner.DaemonRunner):
 
     def __init__(self, app):
         self.app_save = app
-        self.detach_process = True
         daemon.runner.DaemonRunner.__init__(self, app)
+        self.daemon_context.detach_process = False
 
     def parse_args(self, argv=None):
         self.action = sys.argv[1]
-
-        print 'starting action', self.action
 
         if not self.action:
             print 'Killing Service Runner'
@@ -73,12 +79,15 @@ def main():
     while not region:
         try:
             region = Registry().get('region').get('region')
-        except KeyError:
+        except (TypeError, KeyError, S3ResponseError):
             time.sleep(5)
 
     app = DaemonApplication(args.job, region, args.config)
     daemon_runner = ServiceRunner(app)
-    daemon_runner.do_action()
+    try:
+        daemon_runner.do_action()
+    except (daemon.runner.DaemonRunnerStartFailureError, daemon.runner.DaemonRunnerStopFailureError):
+        pass
 
     return 0
 

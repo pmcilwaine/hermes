@@ -43,8 +43,11 @@ class MultipageJob(Job):
             self.log.error('Cannot find job %s', job_id)
             raise InvalidJobError('Invalid Job ID: {0}'.format(job_id))
 
+        job.set(status='running')
+
         document = Document.selectBy(uuid=job.message['document']).getOne(None)
         if not document:
+            job.set(status='failed')
             raise FatalJobError('No Document Exists')
 
         record = Document.get_document(document)
@@ -52,6 +55,8 @@ class MultipageJob(Job):
         fp = StringIO(S3.get_string(self.registry.get('storage').get('bucket_name'), record['file']['key']))
         with zipfile.ZipFile(fp, 'r') as zip_handle:
             for name in zip_handle.namelist():
+                if name.endswith('/'):
+                    continue
                 key_name = '{0}/{1}'.format(document.uuid, name)
                 key = Key(bucket=bucket, name=key_name)
                 key.content_type = mimetypes.guess_type(name)[0]
@@ -61,3 +66,5 @@ class MultipageJob(Job):
         job.set(status='complete')
         if job.message.get('on_complete', {}).get('alter'):
             document.set(**job.message['on_complete']['alter'])
+
+        self.log.info('Setting job=%s to complete', job_id)

@@ -24,8 +24,8 @@ describe('Documents', function () {
     it('Record contains values', function () {
         var row = element.all(by.repeater('document in documents')).get(0);
         var columns = row.all(by.css('td'));
-        expect(columns.get(0).getText()).to.eventually.equal("Homepage");
-        expect(columns.get(1).getText()).to.eventually.equal("index");
+        expect(columns.get(1).getText()).to.eventually.equal("Homepage");
+        expect(columns.get(2).getText()).to.eventually.equal("index");
     });
 
     it('Create Page Type Document', function () {
