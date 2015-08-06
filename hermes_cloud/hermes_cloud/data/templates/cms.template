@@ -334,10 +334,10 @@
             "Value": {"Ref": "SNSmultipage"}
         },
         "MigrationDownloadSQS": {
-            "Value": {"Fn::GetAtt": ["SQSmigration_download", "QueueName" ]}
+            "Value": {"Fn::GetAtt": ["SQSmigrationdownload", "QueueName" ]}
         },
         "MigrationDownloadSNS": {
-            "Value": {"Ref": "SNSmigration_download"}
+            "Value": {"Ref": "SNSmigrationdownload"}
         }
     }
 }
