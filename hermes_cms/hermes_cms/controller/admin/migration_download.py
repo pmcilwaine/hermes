@@ -14,6 +14,7 @@ log = logging.getLogger('hermes_cms.controller.admin.multipage_download')
 
 class MigrationDownload(MethodView):
 
+    # pylint: disable=no-self-use
     def get(self):
         """
 
@@ -22,6 +23,7 @@ class MigrationDownload(MethodView):
         """
         return ''
 
+    # pylint: disable=no-self-use
     def post(self):
         """
 
@@ -58,7 +60,7 @@ class MigrationDownload(MethodView):
             'message': data
         })
 
-        topic_arn = Registry().get('topics').get('topic').get('migration_download')
+        topic_arn = Registry().get('topics').get('topic').get('migrationdownload')
         conn = boto.sns.connect_to_region(Registry().get('region').get('region'))
 
         try:

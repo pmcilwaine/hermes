@@ -3,6 +3,7 @@
 import boto
 import arrow
 import uuid
+from boto.exception import S3ResponseError
 from boto.s3.key import Key
 
 
@@ -97,6 +98,32 @@ class S3(object):
                                                    fields=fields, http_method='https', conditions=conditions)
 
         return response
+
+    @staticmethod
+    def generate_download_url(bucket, key_name, region='ap-southeast-2'):
+        """
+
+        :param bucket:
+        :param key_name:
+        :param region:
+        :return:
+        :rtype: str
+        """
+        if region:
+            connection = boto.s3.connect_to_region(region)
+        else:
+            connection = boto.connect_s3()
+
+        try:
+            bucket = connection.get_bucket(bucket)
+        except S3ResponseError:
+            raise KeyError('Invalid Bucket Name')
+
+        key = bucket.get_key(key_name)
+        if not key:
+            raise KeyError('Invalid Key name for bucket')
+
+        return key.generate_url(expires_in=300, method='GET')
 
     @staticmethod
     def get_content_type(bucket_name, key_name):

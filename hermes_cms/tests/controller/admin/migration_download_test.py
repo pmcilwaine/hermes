@@ -82,7 +82,7 @@ def test_post_specific_documents(app_registry, db_connect_mock, job_mock, regist
 
     def side_effect(value):
         return {
-            'topics': {'topic': {'migration_download': topic['CreateTopicResponse']['CreateTopicResult']['TopicArn']}},
+            'topics': {'topic': {'migrationdownload': topic['CreateTopicResponse']['CreateTopicResult']['TopicArn']}},
             'region': {'region': 'ap-southeast-2'}
         }.get(value)
 
@@ -122,7 +122,7 @@ def test_post_specific_documents_2(app_registry, db_connect_mock, job_mock, regi
 
     def side_effect(value):
         return {
-            'topics': {'topic': {'migration_download': topic['CreateTopicResponse']['CreateTopicResult']['TopicArn']}},
+            'topics': {'topic': {'migrationdownload': topic['CreateTopicResponse']['CreateTopicResult']['TopicArn']}},
             'region': {'region': 'ap-southeast-2'}
         }.get(value)
 

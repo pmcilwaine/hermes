@@ -12,10 +12,9 @@ from hermes_cms.db import Job as JobDB, Document
 from hermes_cms.service.job import Job, InvalidJobError
 from sqlobject import sqlhub, connectionForURI
 from sqlobject.sqlbuilder import DESC
-from hermes_cms.core.log import setup_logging
 import mimetypes
 
-setup_logging()
+log = logging.getLogger('hermes_cms.service.migration_upload')
 
 
 class MigrationUploadJob(Job):
@@ -89,7 +88,7 @@ class MigrationUploadJob(Job):
         """
         created = arrow.get(contents['document']['created'])
         contents['document']['created'] = created.datetime
-        contents['document']['user'] = user_id
+        contents['document']['user_id'] = user_id
         document = Document(**contents['document'])
 
         path = '{0}{1}/'.format(document.path, document.id)
@@ -126,9 +125,9 @@ class MigrationUploadJob(Job):
             part = 'files/{0}/'.format(contents['document']['uuid'])
             if item.startswith(part):
                 filename = item.split(part).pop()
-                key = Key(self.files_bucket, filename)
-                key.set_contents_from_string(handle.read(item))
+                key = Key(self.files_bucket, '{0}/{1}'.format(contents['document']['uuid'], filename))
                 key.content_type = mimetypes.guess_type(item)[0]
+                key.set_contents_from_string(handle.read(item))
 
     def do_work(self, message=None):
         """
@@ -184,7 +183,7 @@ class MigrationUploadJob(Job):
             manifest_content = MigrationUploadJob._get_manifest(handle)
         except Exception:
             job.set(status='failed')
-            raise InvalidJobError('Some error occurred')  # todo probably need to push some exception stuff elsewhere
+            raise InvalidJobError('Unable to retrieve manifest')
 
         if not MigrationUploadJob._validate_manifest(manifest_content['documents']):
             job.set(status='failed')
@@ -206,3 +205,4 @@ class MigrationUploadJob(Job):
             key.set_contents_from_string(json.dumps(contents))
 
         job.set(status='complete')
+        log.info('Setting job=%s to complete', job_id)

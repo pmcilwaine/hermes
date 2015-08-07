@@ -26,6 +26,7 @@ class Service(object):
         self.service_config = job_config.get('service', {})
         self._resolve = RegistryResolver()
         self.region = region
+        self.name = name
 
         service_module = self.service_config.get('service_module')
         service_class = self.service_config.get('service_class')

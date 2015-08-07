@@ -185,3 +185,14 @@ def sign_upload_url():
     }
 
     return Response(response=json.dumps(signed_form), content_type='application/json', status=201)
+
+
+@route.route('/download_url', methods=['POST'])
+def sign_download_url():
+    data = request.json
+
+    try:
+        url = S3.generate_download_url(data.get('bucket'), data.get('key'))
+        return Response(response=json.dumps({'url': url}), content_type='application/json', status=201)
+    except (AttributeError, KeyError):
+        return Response(response=json.dumps({}), content_type='application/json', status=400)

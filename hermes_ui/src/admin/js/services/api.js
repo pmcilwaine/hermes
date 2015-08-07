@@ -23,6 +23,11 @@
                 post: {method: 'POST'}
             });
         }])
+        .factory('DownloadUrlResource', ['$resource', function (resource) {
+            return resource('/admin/download_url', {}, {
+                post: {method: 'POST'}
+            });
+        }])
         .factory('JobResource', ['$resource', function (resource) {
             return resource('/admin/job', {}, {
                 get: {method: 'GET'}
