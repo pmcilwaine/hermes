@@ -74,7 +74,7 @@ describe('Documents', function () {
         //browser.setFileDetector(new remote.FileDetector);
 
         //browser.driver.setFileDetector(new browser.driver.remote.FileDetector);
-        file.sendKeys('https://s3-ap-southeast-2.amazonaws.com/tests-paulmcilwaine-com/systemwide_req_spec.dot');
+        //file.sendKeys('https://s3-ap-southeast-2.amazonaws.com/tests-paulmcilwaine-com/systemwide_req_spec.dot');
         element.all(by.css('button')).get(0).click();
         /*browser.manage().logs().get('browser').then(function(browserLog) {
             console.log('\n log: ' + require('util').inspect(browserLog));
@@ -100,7 +100,11 @@ describe('Documents', function () {
     });
 
     after(function() {
-        browser.takeScreenshot()
+        try {
+            browser.takeScreenshot();
+        } catch (e) {
+
+        }
     });
 
 });

@@ -23,12 +23,9 @@ module.exports = {
                     users: users
                 });
 
-                $httpBackend.whenPUT('/admin/user/1', {
-                    id: 1,
-                    email: 'test@example.org',
-                    first_name: 'My First Name',
-                    last_name: 'User'
-                }).respond(function (method, url, data) {
+                $httpBackend.whenGET('/admin/user/1').respond(users[0]);
+
+                $httpBackend.whenPUT('/admin/user/1').respond(function (method, url, data) {
                     data = angular.fromJson(data);
                     users.forEach(function (item) {
                         if (item.email === data.email) {
