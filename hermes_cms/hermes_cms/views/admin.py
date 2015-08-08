@@ -22,8 +22,8 @@ def url_rules():
     rules = Registry().get('admin_rules').get('rules')
 
     for admin_rule in rules:
-        module = common.load_class(admin_rule['module_name'], admin_rule['class_name'])
-        view = module.as_view(admin_rule['name'])
+        module = common.load_module_class(admin_rule['module_name'], admin_rule['class_name'])
+        view = module.as_view(str(admin_rule['name']))
 
         _url_rules = admin_rule.get('urls')
         if not _url_rules:
