@@ -25,7 +25,7 @@ class LocalConfig(object):
 sqlhub.threadConnection = connectionForURI(LocalConfig.DATABASE)
 User.createTable(ifNotExists=True)
 if not User.select().count():
-    User(email='test@example.org', password='password', first_name='', last_name='')
+    User(email='test@example.org', password='password', first_name='', last_name='', permissions='add_document,modify_document,delete_document,restore_deleted_document,restore_version_document,add_user,modify_user,delete_user,restore_user')
 
 Document.createTable(ifNotExists=True)
 Job.createTable(ifNotExists=True)

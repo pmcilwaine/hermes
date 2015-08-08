@@ -5,6 +5,7 @@ import json
 from mock import patch, MagicMock
 from utils import mocks
 mocks.mock_modules()
+from hermes_cms.core.auth import Auth
 from hermes_cms.app import create_app
 
 
@@ -14,6 +15,54 @@ def app():
     :return: flask.Flask
     """
     return create_app().test_client()
+
+
+@pytest.fixture
+def admin_rules_config():
+    instance = MagicMock(name='Registry')
+    instance.get.return_value = {
+        'rules': [
+            {
+                "name": "job",
+                "url": "/job",
+                "module_name": "hermes_cms.controller.admin.job",
+                "class_name": "Job",
+                "methods": ["GET"]
+            },
+            {
+                "name": "user",
+                "module_name": "hermes_cms.controller.admin.user",
+                "class_name": "User",
+                "urls": [
+                    {
+                        "url": "/user",
+                        "methods": ["GET", "POST"]
+                    },
+                    {
+                        "url": "/user/<int:user_id>",
+                        "methods": ["GET", "PUT", "DELETE"]
+                    }
+                ]
+            },
+            {
+                "name": "document",
+                "module_name": "hermes_cms.controller.admin.document",
+                "class_name": "Document",
+                "urls": [
+                    {
+                        "url": "/document",
+                        "methods": ["GET", "POST"]
+                    },
+                    {
+                        "url": "/document/<document_id>",
+                        "methods": ["GET", "PUT", "DELETE"]
+                    }
+                ]
+            }
+        ]
+    }
+
+    return instance
 
 
 @pytest.fixture
@@ -31,11 +80,13 @@ def blueprint_config():
     return instance
 
 
+@patch('hermes_cms.views.admin.Registry')
 @patch('hermes_cms.core.auth.session')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_index(config, db_connect_mock, session_mock, blueprint_config):
+def test_index(config, db_connect_mock, session_mock, registry_mock, blueprint_config, admin_rules_config):
     config.return_value = blueprint_config
+    registry_mock.return_value = admin_rules_config
     db_connect_mock.return_value = None
     session_mock.get.return_value = True
 
@@ -43,14 +94,18 @@ def test_index(config, db_connect_mock, session_mock, blueprint_config):
     assert response.status_code == 200
 
 
-@patch('hermes_cms.views.admin.User')
-@patch('hermes_cms.views.admin.UserValidation')
+@patch('hermes_cms.views.admin.Registry')
+@patch.object(Auth, 'has_permission')
+@patch('hermes_cms.controller.admin.user.UserDB')
+@patch('hermes_cms.controller.admin.user.UserValidation')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_user_save(config, db_connect_mock, validation_mock, user_mock, blueprint_config):
+def test_user_save(config, db_connect_mock, validation_mock, user_mock, permission_mock, _mock, blueprint_config):
     config.return_value = blueprint_config
     db_connect_mock.return_value = None
     validation_mock.validate.return_value = True
+    permission_mock.return_value = True
+
     user_mock.save.return_value = MagicMock(
         id=1,
         email='test@example.org',
@@ -74,13 +129,16 @@ def test_user_save(config, db_connect_mock, validation_mock, user_mock, blueprin
     assert response.status_code == 200
 
 
-@patch('hermes_cms.views.admin.UserValidation')
+@patch('hermes_cms.views.admin.Registry')
+@patch.object(Auth, 'has_permission')
+@patch('hermes_cms.controller.admin.user.UserValidation')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_user_save_invalid_form(config, db_connect_mock, validation_mock, blueprint_config):
+def test_user_save_invalid_form(config, db_connect_mock, validation_mock, permission_mock, _mock, blueprint_config):
     config.return_value = blueprint_config
     db_connect_mock.return_value = None
     validation = validation_mock.return_value
+    permission_mock.return_value = True
 
     validation.validate.return_value = False
     validation.errors.return_value = {
@@ -106,11 +164,14 @@ def test_user_save_invalid_form(config, db_connect_mock, validation_mock, bluepr
     assert response.status_code == 400
 
 
+@patch('hermes_cms.views.admin.Registry')
+@patch.object(Auth, 'has_permission')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_user_save_invalid_request(config, db_connect_mock, blueprint_config):
+def test_user_save_invalid_request(config, db_connect_mock, permission_mock, _mock, blueprint_config):
     config.return_value = blueprint_config
     db_connect_mock.return_value = None
+    permission_mock.return_value = True
 
     expected = {
         'title': 'Invalid Request',
@@ -118,18 +179,22 @@ def test_user_save_invalid_request(config, db_connect_mock, blueprint_config):
     }
 
     response = app().post('/admin/user', data=None)
+    print response
     assert json.loads(response.data) == expected
     assert response.status_code == 400
 
 
-@patch('hermes_cms.views.admin.User')
-@patch('hermes_cms.views.admin.UserValidation')
+@patch('hermes_cms.views.admin.Registry')
+@patch.object(Auth, 'has_permission')
+@patch('hermes_cms.controller.admin.user.UserDB')
+@patch('hermes_cms.controller.admin.user.UserValidation')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_user_update(config, db_connect_mock, validation_mock, user_mock, blueprint_config):
+def test_user_update(config, db_connect_mock, validation_mock, user_mock, permission_mock, _mock, blueprint_config):
     config.return_value = blueprint_config
     db_connect_mock.return_value = None
     validation_mock.validate.return_value = True
+    permission_mock.return_value = True
 
     user_mock.save.return_value = MagicMock(
         id=2,
@@ -156,10 +221,11 @@ def test_user_update(config, db_connect_mock, validation_mock, user_mock, bluepr
     assert response.status_code == 200
 
 
-@patch('hermes_cms.views.admin.User')
+@patch('hermes_cms.views.admin.Registry')
+@patch('hermes_cms.controller.admin.user.UserDB')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_user_get_list(config, db_connect_mock, user_mock, blueprint_config):
+def test_user_get_list(config, db_connect_mock, user_mock, _mock, blueprint_config):
     config.return_value = blueprint_config
     db_connect_mock.return_value = None
     user_mock.selectBy.return_value = [
@@ -195,12 +261,16 @@ def documents():
     return [d1, d2]
 
 
-@patch('hermes_cms.views.admin.Document')
+@patch('hermes_cms.views.admin.Registry')
+@patch.object(Auth, 'has_permission')
+@patch('hermes_cms.controller.admin.document.DocumentDB')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_document_list_first_page_no_children(config, db_connect_mock, document_mock, documents, blueprint_config):
+def test_document_list_first_page_no_children(config, db_connect_mock, document_mock, permission_mock, _mock,
+                                              documents, blueprint_config):
     config.return_value = blueprint_config
     db_connect_mock.return_value = None
+    permission_mock.return_value = True
 
     document_mock.query.return_value = documents
 
@@ -232,13 +302,16 @@ def test_document_list_first_page_no_children(config, db_connect_mock, document_
     assert json.loads(response.data) == expected
 
 
-@patch('hermes_cms.views.admin.DocumentValidation')
+@patch('hermes_cms.views.admin.Registry')
+@patch.object(Auth, 'has_permission')
+@patch('hermes_cms.controller.admin.document.DocumentValidation')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_document_validate_fail(config, db_connect_mock, validation_mock, blueprint_config):
+def test_document_validate_fail(config, db_connect_mock, validation_mock, permission_mock, _mock, blueprint_config):
     config.return_value = blueprint_config
     db_connect_mock.return_value = None
     validation_instance = validation_mock.return_value
+    permission_mock.return_value = True
 
     validation_instance.validate.return_value = False
     validation_instance.errors.return_value = {
@@ -260,17 +333,21 @@ def test_document_validate_fail(config, db_connect_mock, validation_mock, bluepr
         }
     }
 
+    print response
     assert json.loads(response.data) == expected
     assert response.status_code == 400
 
 
-@patch('hermes_cms.views.admin.DocumentValidation')
+@patch('hermes_cms.views.admin.Registry')
+@patch.object(Auth, 'has_permission')
+@patch('hermes_cms.controller.admin.document.DocumentValidation')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_document_validate_success(config, db_connect_mock, validation_mock, blueprint_config):
+def test_document_validate_success(config, db_connect_mock, validation_mock, permission_mock, _mock, blueprint_config):
     config.return_value = blueprint_config
     db_connect_mock.return_value = None
     validation_mock.validate.return_value = True
+    permission_mock.return_value = True
 
     response = app().post('/admin/document?validate=true', data=json.dumps({
         'document': {

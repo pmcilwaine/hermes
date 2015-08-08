@@ -45,7 +45,11 @@ def create_app(app_name='hermes_cms', config_obj=None, blueprints=None):
     blueprints = blueprints or Registry().get('blueprint').get('blueprint')
 
     for blueprint in blueprints:
-        route = getattr(__import__(blueprint['name'], fromlist=blueprint['from']), blueprint['from'])
+        module = __import__(blueprint['name'], fromlist=blueprint['from'])
+        route = getattr(module, blueprint['from'])
+        if hasattr(module, 'url_rules'):
+            module.url_rules()
+
         app.register_blueprint(route, **blueprint.get('kwargs', {}))
 
     def error_handler(error):

@@ -111,7 +111,7 @@ class HermesCreateCloud(object):
         }
 
     def _upload_config_registry(self):
-        for filename in ['blueprint', 'document', 'jobs']:
+        for filename in ['blueprint', 'document', 'jobs', 'admin_rules']:
             data = json.loads(open(resource_filename('hermes_cloud',
                                                      'data/config_registry/{0}'.format(filename))).read())
             S3.upload_string(self._format_name('config'), filename, json.dumps(data), partition=False)
