@@ -8,28 +8,5 @@
             "name": "hermes_cms.views.admin",
             "from": "route"
         }
-    ],
-    "admin_rules": [
-        {
-            "url": "/documents"
-        },
-        {
-            "url": "/versions"
-        },
-        {
-            "url": "/restore"
-        },
-        {
-            "url": "/users"
-        },
-        {
-            "url": "/jobs"
-        },
-        {
-            "url": "/migration",
-            "module": "hermes_cms.controller.admin.migration",
-            "view_class": "Migration",
-            "methods": ["POST", "GET"]
-        }
     ]
 }

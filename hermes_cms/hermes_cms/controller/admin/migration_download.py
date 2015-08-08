@@ -15,15 +15,6 @@ log = logging.getLogger('hermes_cms.controller.admin.multipage_download')
 class MigrationDownload(MethodView):
 
     # pylint: disable=no-self-use
-    def get(self):
-        """
-
-        :rtype: flask.Response
-        :return: A flask Response object
-        """
-        return ''
-
-    # pylint: disable=no-self-use
     def post(self):
         """
 

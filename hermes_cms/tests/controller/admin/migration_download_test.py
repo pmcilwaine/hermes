@@ -18,6 +18,24 @@ def app():
 
 
 @pytest.fixture()
+def admin_rules_config():
+    instance = MagicMock(name='Registry')
+    instance.get.return_value = {
+        'rules': [
+            {
+                "name": "migration_download",
+                "url": "/migration",
+                "module_name": "hermes_cms.controller.admin.migration_download",
+                "class_name": "MigrationDownload",
+                "methods": ["POST"]
+            }
+        ]
+    }
+
+    return instance
+
+
+@pytest.fixture()
 def blueprint_config():
     instance = MagicMock(name='Registry')
     instance.get.return_value = {
@@ -32,18 +50,21 @@ def blueprint_config():
     return instance
 
 
+@patch('hermes_cms.views.admin.Registry')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_invalid_post(config_mock, db_connect_mock, blueprint_config):
+def test_invalid_post(config_mock, db_connect_mock, registry_mock, blueprint_config, admin_rules_config):
     config_mock.return_value = blueprint_config
     db_connect_mock.return_value = None
+    registry_mock.return_value = admin_rules_config
     response = app().post('/admin/migration')
     assert response.status_code == 400
 
 
+@patch('hermes_cms.views.admin.Registry')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_post_invalid_data(config_mock, db_connect_mock, blueprint_config):
+def test_post_invalid_data(config_mock, db_connect_mock, registry_mock, blueprint_config):
     config_mock.return_value = blueprint_config
     db_connect_mock.return_value = None
     response = app().post('/admin/migration', data=json.dumps({
@@ -53,9 +74,10 @@ def test_post_invalid_data(config_mock, db_connect_mock, blueprint_config):
     assert response.status_code == 400
 
 
+@patch('hermes_cms.views.admin.Registry')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_post_invalid_data_2(config_mock, db_connect_mock, blueprint_config):
+def test_post_invalid_data_2(config_mock, db_connect_mock, registry_mock, blueprint_config):
     config_mock.return_value = blueprint_config
     db_connect_mock.return_value = None
     response = app().post('/admin/migration', data=json.dumps({
@@ -66,17 +88,19 @@ def test_post_invalid_data_2(config_mock, db_connect_mock, blueprint_config):
 
 
 @mock_sns
+@patch('hermes_cms.views.admin.Registry')
 @patch('hermes_cms.controller.admin.migration_download.arrow')
 @patch('hermes_cms.controller.admin.migration_download.Registry')
 @patch('hermes_cms.controller.admin.migration_download.Job')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_post_specific_documents(app_registry, db_connect_mock, job_mock, registry_mock, arrow_mock, blueprint_config):
+def test_post_specific_documents(app_registry, db_connect_mock, job_mock, registry_mock, arrow_mock, _mock,
+                                 blueprint_config):
 
     arrow_mock.now.return_value = arrow.get(2015, 7, 1, 20, 0, 0)
 
     conn = boto.sns.connect_to_region('ap-southeast-2')
-    topic = conn.create_topic('migration_download')
+    topic = conn.create_topic('migrationdownload')
 
     app_registry.return_value = blueprint_config
 
@@ -106,17 +130,19 @@ def test_post_specific_documents(app_registry, db_connect_mock, job_mock, regist
 
 
 @mock_sns
+@patch('hermes_cms.views.admin.Registry')
 @patch('hermes_cms.controller.admin.migration_download.arrow')
 @patch('hermes_cms.controller.admin.migration_download.Registry')
 @patch('hermes_cms.controller.admin.migration_download.Job')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_post_specific_documents_2(app_registry, db_connect_mock, job_mock, registry_mock, arrow_mock, blueprint_config):
+def test_post_specific_documents_2(app_registry, db_connect_mock, job_mock, registry_mock, arrow_mock,
+                                   _mock, blueprint_config):
 
     arrow_mock.now.return_value = arrow.get(2015, 7, 1, 20, 0, 0)
 
     conn = boto.sns.connect_to_region('ap-southeast-2')
-    topic = conn.create_topic('migration_download')
+    topic = conn.create_topic('migrationdownload')
 
     app_registry.return_value = blueprint_config
 

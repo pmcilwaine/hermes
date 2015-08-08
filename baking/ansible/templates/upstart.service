@@ -6,6 +6,8 @@ After=network.target remote-fs.target nss-lookup.target
 ExecStart=/bin/hermes_service -j {{ item.name }} -c {{ item.config }} start
 ExecReload=/bin/hermes_service -j {{ item.name }} -c {{ item.config }} restart
 ExecStop=/bin/hermes_service -j {{ item.name }} -c {{ item.config }} stop
+StandardOutput=syslog
+StandardError=syslog
 
 [Install]
 WantedBy=multi-user.target

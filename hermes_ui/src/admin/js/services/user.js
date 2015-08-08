@@ -30,8 +30,16 @@
         };
 
         user.getById = function (user_id) {
-            var t = _.findWhere(data, {id: user_id});
-            return t;
+            console.log('get by id');
+            var deferred = $q.defer();
+            UserResource.get({id: user_id}, function ok (response) {
+                deferred.resolve(response);
+            }, function fail (response) {
+                console.log('rejected getting user');
+                deferred.reject(response);
+            });
+
+            return deferred.promise;
         };
 
         user.deleteById = function (user_id) {

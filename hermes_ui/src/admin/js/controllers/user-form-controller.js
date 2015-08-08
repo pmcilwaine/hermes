@@ -6,8 +6,43 @@
         scope.record = user;
         scope.action = user.is_new !== undefined ? "Add User" : "Modify User";
         scope.errors = {};
+        scope.user_permissions = {};
+
+        scope.permissions = [
+            {value: 'add_document', title: 'Add Document'},
+            {value: 'modify_document', title: 'Modify Document'},
+            {value: 'delete_document', title: 'Delete Document'},
+            {value: 'restore_deleted_document', title: 'Restore Deleted Document'},
+            {value: 'restore_version_document', title: 'Restore Version Document'},
+            {value: 'add_user', title: 'Add User'},
+            {value: 'modify_user', title: 'Modify User'},
+            {value: 'delete_user', title: 'Delete User'},
+            {value: 'restore_user', title: 'Restore User'}
+        ];
+
+        _.each(scope.permissions, function (permission) {
+            scope.user_permissions[permission.value] = !!_.find(scope.record.permissions, function (item) {
+                return item === permission.value;
+            });
+        });
+
+        scope.is_administrator = _.all(scope.user_permissions);
+
+        scope.$watch('is_administrator', function (is_administrator) {
+            _.each(scope.user_permissions, function (value, key) {
+                scope.user_permissions[key] = is_administrator;
+            });
+        });
 
         scope.submit = function () {
+            // update scope.record
+            scope.record.permissions = [];
+            _.each(scope.user_permissions, function (value, key) {
+                if (value) {
+                    scope.record.permissions.push(key);
+                }
+            });
+
             Users.save(scope.record).then(function save () {
                 state.go('users.list');
             }, function failed(msg) {
