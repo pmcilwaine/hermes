@@ -50,11 +50,11 @@ describe('Users', function () {
         first_name.clear().then(function () {
             first_name.sendKeys("My First Name");
 
-            element.all(by.css('button')).get(0).click();
-
-            var row = element.all(by.repeater('user in users')).get(0);
-            var columns = row.all(by.css('td'));
-            expect(columns.get(1).getText()).to.eventually.equal("My First Name");
+            helpers.waitUntilDisplayed(by.css('button[type=submit]')).click().then(function () {
+                var row = element.all(by.repeater('user in users')).get(0);
+                var columns = row.all(by.css('td'));
+                expect(columns.get(1).getText()).to.eventually.equal("My First Name");
+            });
         });
     });
 
@@ -85,7 +85,11 @@ describe('Users', function () {
     });
 
     after(function() {
-        browser.takeScreenshot()
+        try {
+            browser.takeScreenshot();
+        } catch (e) {
+
+        }
     });
 
 });
