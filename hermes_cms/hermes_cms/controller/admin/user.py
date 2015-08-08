@@ -12,10 +12,12 @@ from hermes_cms.views.exceptions import HermesRequestException, HermesNotSavedEx
 
 class User(MethodView):
 
+    # pylint: disable=no-self-use
     @requires_permission('add_user')
     def post(self):
         return User._handle_submission()
 
+    # pylint: disable=no-self-use
     @requires_permission('modify_user')
     def put(self, user_id):
         return User._handle_submission(user_id)
@@ -55,6 +57,7 @@ class User(MethodView):
         except (HermesRequestException, HermesNotSavedException) as e:
             return Response(response=e.as_json(), status=400, content_type='application/json')
 
+    # pylint: disable=no-self-use
     def get(self, user_id=None):
         def _get_all_users():
             users = []
@@ -87,6 +90,7 @@ class User(MethodView):
         else:
             return _get_single_user()
 
+    # pylint: disable=no-self-use
     @requires_permission('delete_user')
     def delete(self, user_id):
         return Response(status=200)

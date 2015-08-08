@@ -13,6 +13,7 @@ from hermes_cms.validators import Document as DocumentValidation
 
 class Document(MethodView):
 
+    # pylint: disable=no-self-use
     @requires_permission('add_document')
     def post(self):
         document_data = request.json
@@ -40,10 +41,12 @@ class Document(MethodView):
 
         return Response(response=json.dumps({}), status=200, content_type='application/json')
 
+    # pylint: disable=no-self-use
     @requires_permission('modify_document')
     def put(self):
         pass
 
+    # pylint: disable=no-self-use
     def get(self, document_id=None):
         def document_list():
 
@@ -90,6 +93,7 @@ class Document(MethodView):
         else:
             return document_get()
 
+    # pylint: disable=no-self-use
     @requires_permission('delete_document')
     def delete(self, document_id):
         DocumentDB.delete_document(doc_uuid=document_id)
