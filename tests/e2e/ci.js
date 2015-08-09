@@ -30,7 +30,7 @@ multiCapabilities.push({
 });
 
 multiCapabilities.forEach(function (item) {
-    item.name = 'End-to-End' || 'local Integration';
+    item.name = 'End-to-End ' + (process.env.VERSION || 'local') || 'local Integration';
     item.build = process.env.VERSION || 'local';
     item.count = 1;
 });
