@@ -12,15 +12,15 @@ describe('View Document', function () {
         isAngularSite(false);
     });
 
-    it('Can View Document', function () {
+    it.skip('Can View Document', function () {
 
     });
 
-    it('404 Page Displayed', function () {
+    it.skip('404 Page Displayed', function () {
 
     });
 
-    it('Can download a File Type Document', function () {
+    it.skip('Can download a File Type Document', function () {
 
     });
 

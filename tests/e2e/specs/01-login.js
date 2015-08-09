@@ -45,14 +45,18 @@ describe('Login', function () {
         });
 
         it('Test redirected to login', function () {
-            expect(browser.getCurrentUrl()).to.eventually.equal(process.env.BASE_URL + '/login?next_page=');
+            expect(browser.getCurrentUrl()).to.eventually.equal(process.env.BASE_URL + '/login?next_page=%2Fadmin%2F%3F');
         });
 
         it('Not logged Administrator with redirection', function () {
             element.all(by.css('#email')).get(0).sendKeys("test@example.org");
             element.all(by.css('#password')).get(0).sendKeys("password");
             element.all(by.css('form button[type=submit]')).click();
-            expect(browser.getCurrentUrl()).to.eventually.equal(process.env.BASE_URL + '/admin/');
+            expect(browser.getCurrentUrl()).to.eventually.equal(process.env.BASE_URL + '/admin/#/document/list');
+        });
+
+        afterEach(function () {
+            browser.get('/logout');
         });
 
     });

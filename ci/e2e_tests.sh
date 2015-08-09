@@ -86,6 +86,8 @@ if [ -z "${BASE_URL}" ]; then
     export BASE_URL="http://${BASE_URL}"
 fi
 
+export BASE_URL=$(echo ${BASE_URL} | awk '{print tolower($0)}')
+
 attempts=1
 until $(curl --output /dev/null --silent --head --fail --insecure ${BASE_URL}/login); do
     echo "Waiting for website to respond: ${BASE_URL}"

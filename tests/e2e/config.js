@@ -17,5 +17,10 @@ exports.config = {
         global.isAngularSite = function (flag) {
             browser.ignoreSynchronization = !flag;
         }
+
+        browser.getCapabilities().then(function (cap) {
+            browser.params = require('./profile/' + cap.caps_.platform.split(' ')[0].toLowerCase() +
+            '/' + cap.caps_.browserName.split(' ')[0].toLowerCase() + '/data.js').data;
+        });
     }
 };
