@@ -8,10 +8,6 @@ var helpers = require('../../helpers/helpers.js');
 
 describe('Login', function () {
 
-    before(function () {
-        isAngularSite(false);
-    });
-
     describe('Login to Site', function () {
 
         beforeEach(function () {
