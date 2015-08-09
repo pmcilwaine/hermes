@@ -2,18 +2,31 @@
 # -*- coding: utf-8 -*-
 
 import uuid
+import json
 from datetime import datetime
 from sqlobject import SQLObject
-from sqlobject.col import StringCol, DateTimeCol, PickleCol
+from sqlobject.col import StringCol, DateTimeCol
 
 
 class Job(SQLObject):
-    uuid = StringCol(length=64)
+    uuid = StringCol(length=36)
     name = StringCol(length=255)
     status = StringCol(length=8)
     created = DateTimeCol(default=datetime.now())
     modified = DateTimeCol(default=datetime.now())
-    message = PickleCol(default={})
+    message = StringCol()
+
+    def _get_name(self):
+        # pylint: disable=no-member
+        return str(self._SO_get_name()).strip()
+
+    def _get_message(self):
+        # pylint: disable=no-member
+        return json.loads(self._SO_get_message())
+
+    def _set_message(self, value):
+        # pylint: disable=no-member
+        self._SO_set_message(json.dumps(value))
 
     @staticmethod
     def save(record):

@@ -34,7 +34,7 @@ def main():
     # delete stacks
     stack_mgr = StackManager(args.region)
     print 'Deleting stacks'
-    stack_mgr.delete_stacks(['{0}-{1}'.format(args.name, stack) for stack in ['jumpbox', 'cms', 'vpc']])
+    stack_mgr.delete_stacks(['{0}-{1}'.format(args.name, stack) for stack in ['jumpbox', 'log', 'cms', 'vpc']])
 
     return 0
 

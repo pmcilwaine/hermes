@@ -1,7 +1,9 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
+import json
+import urllib
 from functools import wraps
-from flask import session, redirect
+from flask import session, redirect, request, Response
 from hermes_cms.db import User
 
 
@@ -46,7 +48,7 @@ class Auth(object):
             if session.get('auth_user', None):
                 return func(*args, **kwargs)
             else:
-                return redirect('/login')
+                return redirect('/login?next_page={0}'.format(urllib.quote_plus(request.full_path)))
 
         return _is_logged
 
@@ -73,3 +75,27 @@ class Auth(object):
 
         # if there is no difference than we have all required permissions
         return not permissions.difference(set(user.get('permissions', [])))
+
+    @staticmethod
+    def requires_permission(permissions):
+
+        def _decorator(func):
+            @wraps(func)
+            def _has_permission(*args, **kwargs):
+                user = session.get('auth_user', {})
+                if Auth.has_permission(user, permissions):
+                    return func(*args, **kwargs)
+                else:
+                    return Response(response=json.dumps({
+                        'notify_msg': {
+                            'title': 'No Permission',
+                            'message': 'You do not have permission to perform that action',
+                            'type': 'error'
+                        }
+                    }), status=403, content_type='application/json')
+
+            return _has_permission
+
+        return _decorator
+
+requires_permission = Auth.requires_permission

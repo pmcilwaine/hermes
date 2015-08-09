@@ -6,7 +6,9 @@
 </div>
 <div class="row">
     <div class="col-lg-4">
-        <button ui-sref="document.add" class="btn btn-sm">Add Document</button>
+        <button ui-sref="document.add" title="Add a document to the System." class="btn btn-sm">Add Document</button>
+        <button ui-sref="document.migration" class="btn btn-sm">Upload Migration</button>
+        <button class="btn btn-sm" ng-click="downloadMigration()" ng-disabled="!allItemsSelected && !hasItemSelected" title="Download a ZIP file. To migrate to another system">Download Archive</button>
     </div>
 </div>
 
@@ -16,6 +18,7 @@
         <table class="table table-bordered table-striped" ng-show="documents.length !== 0">
             <thead>
                 <tr>
+                    <th><input type="checkbox" ng-checked="allItemsSelected" ng-click="allItemsSelected = !allItemsSelected"></th>
                     <th>Name</th>
                     <th>Url</th>
                     <th></th>
@@ -23,6 +26,7 @@
             </thead>
             <tbody>
                 <tr ng-repeat="document in documents">
+                    <td><input type="checkbox" ng-checked="allItemsSelected || selectedItems[document.uuid]" ng-click="toggleItemSelect(document)"></td>
                     <td>{{ document.name }}</td>
                     <td>{{ document.url }}</td>
                     <td>

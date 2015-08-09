@@ -99,12 +99,8 @@ class HermesCreateCloud(object):
     def _generate_http_upload_policy(self, buckets):
         conn = boto.s3.connect_to_region(self.args.region)
         for bucket in buckets:
-            _bucket = conn.get_bucket(bucket)
-            _bucket.set_cors_xml('<?xml version="1.0" encoding="UTF-8"?><CORSConfiguration xmlns="http://s3.amazonaws.'
-                                 'com/doc/2006-03-01/"><CORSRule><AllowedOrigin>*</AllowedOrigin><AllowedMethod>GET</Al'
-                                 'lowedMethod><AllowedMethod>PUT</AllowedMethod><AllowedMethod>POST</AllowedMethod><Max'
-                                 'AgeSeconds>3000</MaxAgeSeconds><AllowedHeader>*</AllowedHeader></CORSRule></CORSConfi'
-                                 'guration>')
+            _bucket = conn.get_bucket(self._format_name(bucket))
+            _bucket.set_cors_xml('<?xml version="1.0" encoding="UTF-8"?><CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><CORSRule><AllowedOrigin>*</AllowedOrigin><AllowedMethod>GET</AllowedMethod><AllowedMethod>PUT</AllowedMethod><AllowedMethod>POST</AllowedMethod><MaxAgeSeconds>3000</MaxAgeSeconds><AllowedHeader>*</AllowedHeader></CORSRule></CORSConfiguration>')
 
     def _build_rds(self):
         self.tmpl_args['rds'] = {
@@ -115,7 +111,7 @@ class HermesCreateCloud(object):
         }
 
     def _upload_config_registry(self):
-        for filename in ['blueprint', 'document', 'jobs']:
+        for filename in ['blueprint', 'document', 'jobs', 'admin_rules']:
             data = json.loads(open(resource_filename('hermes_cloud',
                                                      'data/config_registry/{0}'.format(filename))).read())
             S3.upload_string(self._format_name('config'), filename, json.dumps(data), partition=False)
@@ -145,7 +141,7 @@ class HermesCreateCloud(object):
     def _create_bucket_configs(self):
         for bucket in ['files', 'storage']:
             S3.upload_string(self._format_name('config'), bucket,
-                             json.dumps({"bucket": self._format_name(bucket)}), partition=False)
+                             json.dumps({"bucket_name": self._format_name(bucket)}), partition=False)
 
     def _load_database(self):
         conn = boto.rds2.connect_to_region(self.args.region)
@@ -172,7 +168,6 @@ class HermesCreateCloud(object):
         for table in tables:
             try:
                 if table:
-                    print '{0};'.format(table)
                     cursor.execute('{0};'.format(table))
             except psycopg2.ProgrammingError:
                 pass
@@ -185,17 +180,29 @@ class HermesCreateCloud(object):
 
     def _create_queues_config(self):
         queues = {"queue": {}}
-        for queue, queue_arn_label in (('multipage', 'MultipageSQS'), ):
+        for queue, queue_arn_label in (('multipage', 'MultipageSQS'), ('migrationdownload', 'MigrationDownloadSQS'),
+                                       ('migrationupload', 'MigrationUploadSQS')):
             queues['queue'].update({queue: self.stack_mgr.stack_data['cms'][queue_arn_label]})
 
         S3.upload_string(self._format_name('config'), 'queues', json.dumps(queues), partition=False)
 
+    def _create_cms_config(self):
+        S3.upload_string(self._format_name('config'), 'cms', json.dumps({
+            'dns': self.stack_mgr.stack_data['cms']['CMSFQDN'],
+            'name': self.stack_mgr.stack_data['cms']['CMSLoadBalancerName']
+        }), partition=False)
+
     def _create_topics_config(self):
         topics = {"topic": {}}
-        for topic, topic_arn_label in (('multipage', 'MultipageSNS'), ):
-            topics['topics'].update({topic: self.stack_mgr.stack_data['cms'][topic_arn_label]})
+        for topic, topic_arn_label in (('multipage', 'MultipageSNS'), ('migrationdownload', 'MigrationDownloadSNS'),
+                                       ('migrationupload', 'MigrationUploadSNS')):
+            topics['topic'].update({topic: self.stack_mgr.stack_data['cms'][topic_arn_label]})
 
         S3.upload_string(self._format_name('config'), 'topics', json.dumps(topics), partition=False)
+
+    def _create_region_config(self):
+        S3.upload_string(self._format_name('config'), 'region', json.dumps({'region': self.args.region}),
+                         partition=False)
 
     def deploy(self):
         for name, ami in self._find_amis().iteritems():
@@ -211,9 +218,9 @@ class HermesCreateCloud(object):
 
         self.stack_mgr.add_stacks([
             'vpc',
+            'jumpbox',
             'cms',
-            # 'logservice',
-            'jumpbox'
+            'log'
         ])
 
         self._create_buckets([
@@ -231,6 +238,10 @@ class HermesCreateCloud(object):
         print 'created bucket configs'
         self._load_database()
         print 'loaded database'
+        self._create_cms_config()
+        print 'created cms config'
+        self._create_region_config()
+        print 'created region config'
         self._create_queues_config()
         print 'created queues config'
         self._create_topics_config()

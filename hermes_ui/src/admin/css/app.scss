@@ -7,4 +7,9 @@ textarea {
   resize: vertical;
 }
 
+.form-horizontal .form-group {
+  margin-left: 0;
+  margin-right: 0;
+}
+
 @import "../../share/css/nav";

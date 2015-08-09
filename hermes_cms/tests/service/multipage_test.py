@@ -91,6 +91,7 @@ def test_do_work_invalid_document(jobdb_mock, document_mock, registry_mock, conn
             }
         }
     })
+    job.set = MagicMock()
 
     jobdb_mock.selectBy.return_value.getOne.return_value = job
     document_mock.selectBy.return_value.getOne.return_value = None
@@ -98,6 +99,8 @@ def test_do_work_invalid_document(jobdb_mock, document_mock, registry_mock, conn
     service = MultipageJob()
     with pytest.raises(FatalJobError):
         service.do_work(message)
+
+    assert job.set.call_args_list == [call(status='running'), call(status='failed')]
 
 
 @mock_s3
@@ -137,6 +140,7 @@ def test_do_work_valid_job(jobdb_mock, document_mock, registry_mock, connection_
             }
         }
     })
+    job.set = MagicMock()
 
     document = MagicMock(**{
         'uuid': '56d3c182-f72f-4216-9e94-1756bf67564d'
@@ -155,3 +159,4 @@ def test_do_work_valid_job(jobdb_mock, document_mock, registry_mock, connection_
     service.do_work(message)
 
     assert Key(files, '56d3c182-f72f-4216-9e94-1756bf67564d/index.html').exists()
+    assert job.set.call_args_list == [call(status='running'), call(status='complete')]

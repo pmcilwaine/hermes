@@ -24,8 +24,8 @@ describe('Documents', function () {
     it('Record contains values', function () {
         var row = element.all(by.repeater('document in documents')).get(0);
         var columns = row.all(by.css('td'));
-        expect(columns.get(0).getText()).to.eventually.equal("Homepage");
-        expect(columns.get(1).getText()).to.eventually.equal("index");
+        expect(columns.get(1).getText()).to.eventually.equal("Homepage");
+        expect(columns.get(2).getText()).to.eventually.equal("index");
     });
 
     it('Create Page Type Document', function () {
@@ -74,7 +74,7 @@ describe('Documents', function () {
         //browser.setFileDetector(new remote.FileDetector);
 
         //browser.driver.setFileDetector(new browser.driver.remote.FileDetector);
-        file.sendKeys('https://s3-ap-southeast-2.amazonaws.com/tests-paulmcilwaine-com/systemwide_req_spec.dot');
+        //file.sendKeys('https://s3-ap-southeast-2.amazonaws.com/tests-paulmcilwaine-com/systemwide_req_spec.dot');
         element.all(by.css('button')).get(0).click();
         /*browser.manage().logs().get('browser').then(function(browserLog) {
             console.log('\n log: ' + require('util').inspect(browserLog));
@@ -100,7 +100,11 @@ describe('Documents', function () {
     });
 
     after(function() {
-        browser.takeScreenshot()
+        try {
+            browser.takeScreenshot();
+        } catch (e) {
+
+        }
     });
 
 });

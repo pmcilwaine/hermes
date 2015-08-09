@@ -1,0 +1,21 @@
+
+<div class="row">
+
+
+    <div class="col-lg-offset-2 col-lg-8">
+
+        <h1>Migration Upload</h1>
+
+        <form name="migrationForm" ng-submit="submit()" novalidate>
+
+            <div class="form-group">
+                <label>File</label>
+                <input type="file" name="file" accept="application/zip" ngf-select="" ng-model="file" hermes-file-field clear-file="clearFile">
+            </div>
+
+            <button type="submit" class="btn btn-primary" accesskey="s">Save</button>
+            <button type="button" ui-sref="document.list" class="btn btn-default">Cancel</button>
+
+        </form>
+    </div>
+</div>

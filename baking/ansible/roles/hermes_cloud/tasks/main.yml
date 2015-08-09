@@ -1,6 +1,11 @@
 ---
+- name: put manifest
+  sudo: no
+  template: src=manifest.yml dest=~/
+
 - name: Install Packages
   yum: name={{ item }} enablerepo=hermes-ci,epel
   with_items:
+    - jq
     - hermes_aws-*-{{ hermes_image_version }}
     - hermes_cloud-*-{{ hermes_image_version }}

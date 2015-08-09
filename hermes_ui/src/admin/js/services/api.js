@@ -22,6 +22,26 @@
             return resource('/admin/upload_url', {}, {
                 post: {method: 'POST'}
             });
+        }])
+        .factory('DownloadUrlResource', ['$resource', function (resource) {
+            return resource('/admin/download_url', {}, {
+                post: {method: 'POST'}
+            });
+        }])
+        .factory('JobResource', ['$resource', function (resource) {
+            return resource('/admin/job', {}, {
+                get: {method: 'GET'}
+            });
+        }])
+        .factory('MigrationUploadResource', ['$resource', function (resource) {
+            return resource('/admin/migration_upload', {}, {
+                post: {method: 'POST'}
+            });
+        }])
+        .factory('MigrationDownloadResource', ['$resource', function (resource) {
+            return resource('/admin/migration', {}, {
+                newJob: {method: 'post'}
+            });
         }]);
 
 })();

@@ -9,6 +9,7 @@ class RegistryResolver(object):
     def __init__(self):
         self.registry = Registry()
 
+    # pylint: disable=no-self-use
     def _get_dict(self, dict_src, path):
         """
 

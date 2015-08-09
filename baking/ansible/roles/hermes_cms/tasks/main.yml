@@ -9,9 +9,6 @@
     - hermes_aws-*-{{ hermes_image_version }}
     - hermes_cms-*-{{ hermes_image_version }}
 
-- name: Install Config Bucket
-  copy: src=config-bucket dest=/etc/sysconfig/config-bucket owner=root group=root mode=0644
-
 - name: Install apache config
   copy: src=hermes_cms.conf dest=/etc/httpd/conf.d/ owner=root group=root mode=0644
 
@@ -28,5 +25,29 @@
   template: src=templates/upstart.service dest=/usr/lib/systemd/system/{{ item.name }}.service
   with_items: services
 
+- name: Register services
+  shell: systemctl enable /usr/lib/systemd/system/{{ item.name }}.service
+  with_items: services
+
+- name: Automatically Start Services
+  service: name={{ item.name }}.service enabled=yes state=started
+  with_items: services
+
+- name: Copy Certificate
+  copy: src=logstash-forward.crt dest=/etc/pki/tls/certs/logstash-forwarder.crt
+
+- name: Copy Logstash Forwarder Repo
+  copy: src=logstash-forwarder.repo dest=/etc/yum.repos.d/logstash-forwarder.repo
+
+- name: Install Logstash Forwarder
+  yum: name=logstash-forwarder state=latest
+
+- name: Setup Logstash Forwarder Configuration
+  copy: src=logstash-forwarder.conf dest=/etc/logstash-forwarder.conf
+
+- name: Start Logstash Forwarder
+  service: name=logstash-forwarder enabled=yes state=started
+
 - name: Ensure permissions are setup
   command: setsebool -P httpd_can_network_connect=On
+

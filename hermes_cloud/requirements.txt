@@ -1,2 +1,2 @@
-arrow==0.5.4
+arrow>=0.4,<1.0.0
 psycopg2

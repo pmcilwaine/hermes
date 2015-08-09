@@ -36,7 +36,7 @@ def post_login():
     user = Auth.get_by_login(request.form.get('email'), request.form.get('password'))
     if user:
         Auth.create_session(user)
-        return redirect('/')
+        return redirect(request.args.get('next_page', '/'))
 
     return get_login(error={
         'message': 'Invalid email and/or password'

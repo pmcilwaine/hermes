@@ -95,7 +95,7 @@
                     }
                 ],
                 "HealthCheck": {
-                    "Target": "HTTP:80/assets/public/css/app.css",
+                    "Target": "HTTP:80/health",
                     "HealthyThreshold": "2",
                     "UnhealthyThreshold": "2",
                     "Interval": "15",
@@ -138,7 +138,7 @@
                     "${availability_zones['AZ1']}",
                     "${availability_zones['AZ2']}"
                 ],
-                "LaunchConfigurationName": {"Ref": "CMSLC"},
+                "LaunchConfigurationName": {"Ref": "CMSLaunchConfig"},
                 "MinSize": {"Ref": "MinInstances"},
                 "MaxSize": {"Ref": "MaxInstances"},
                 "LoadBalancerNames": [
@@ -155,9 +155,23 @@
                         "PropagateAtLaunch": true
                     }
                 ]
+            },
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Count": { "Ref" : "MinInstances" },
+                    "Timeout": "PT15M"
+                }
+            },
+            "UpdatePolicy": {
+                 "AutoScalingRollingUpdate" : {
+                    "MaxBatchSize" : "1",
+                    "MinInstancesInService" : { "Ref" : "MinInstancesInService" },
+                    "PauseTime" : "PT15M",
+                    "WaitOnResourceSignals" : true
+                }
             }
         },
-        "CMSLC": {
+        "CMSLaunchConfig": {
             "Type": "AWS::AutoScaling::LaunchConfiguration",
             "Properties": {
                 "KeyName": "${ssh_key}",
@@ -166,8 +180,27 @@
                     {"Ref": "CMSSG"}
                 ],
                 "InstanceType": "t2.micro",
+                "BlockDeviceMappings": [
+                    {
+                        "DeviceName": "/dev/sda1",
+                        "Ebs": { "VolumeSize" : "8", "DeleteOnTermination" : "true", "VolumeType": "gp2"}
+                    }
+                ],
                 "IamInstanceProfile" : { "Ref" : "EC2IAMInstProf" },
-                "InstanceMonitoring": false
+                "InstanceMonitoring": false,
+                "UserData": { "Fn::Base64" : { "Fn::Join" : ["", [
+                    "#!/bin/bash -lvx\n",
+                    "/usr/bin/cfn-init -v ",
+                    "  --stack ", { "Ref" : "AWS::StackId" },
+                    "  --resource CMSLaunchConfig",
+                    "  --region ", { "Ref" : "AWS::Region" },
+                    "\n",
+                    "/usr/bin/cfn-signal -e 0 ",
+                    "  --stack ", { "Ref": "AWS::StackName" },
+                    "  --resource CMSASG",
+                    "  --region ", { "Ref" : "AWS::Region" },
+                    "\n"
+                ] ] } }
             },
             "Metadata": {
                 "AWS::CloudFormation::Init": {
@@ -277,9 +310,17 @@
                 "PubliclyAccessible": "True"
             }
         },
-        <%include file="sqs.template" args="queue_name='multipage', cloud_name=name"/>
+        <%include file="sqs.template" args="queue_name='multipage', cloud_name=name"/>,
+        <%include file="sqs.template" args="queue_name='migrationupload', cloud_name=name"/>,
+        <%include file="sqs.template" args="queue_name='migrationdownload', cloud_name=name"/>
     },
     "Outputs": {
+        "CMSFQDN": {
+            "Value": {"Fn::GetAtt": ["CMSLoadBalancer", "DNSName" ]}
+        },
+        "CMSLoadBalancerName": {
+            "Value": {"Ref": "CMSLoadBalancer"}
+        },
         "DBHost": {
             "Value": {"Fn::GetAtt": ["CMSDB", "Endpoint.Address" ]}
         },
@@ -291,6 +332,18 @@
         },
         "MultipageSNS": {
             "Value": {"Ref": "SNSmultipage"}
+        },
+        "MigrationDownloadSQS": {
+            "Value": {"Fn::GetAtt": ["SQSmigrationdownload", "QueueName" ]}
+        },
+        "MigrationDownloadSNS": {
+            "Value": {"Ref": "SNSmigrationdownload"}
+        },
+        "MigrationUploadSQS": {
+            "Value": {"Fn::GetAtt": ["SQSmigrationupload", "QueueName" ]}
+        },
+        "MigrationUploadSNS": {
+            "Value": {"Ref": "SNSmigrationupload"}
         }
     }
 }

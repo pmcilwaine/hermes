@@ -5,33 +5,6 @@
         "QueueName": {"Fn::Join": ["-", [ "${queue_name}", "${cloud_name}" ] ] }
     }
 },
-"SQSPolicy${queue_name}": {
-    "Type" : "AWS::SQS::QueuePolicy",
-    "Properties" : {
-        "PolicyDocument": {
-            "Version": "2012-10-17",
-            "Id": {"Fn::Join": ["/", [ { "Fn::GetAtt" : [ "SQS${queue_name}", "Arn" ] }, "SQSDefaultPolicy" ] ] },
-            "Statement": [
-                {
-                    "Sid": "Sid1437388803659",
-                    "Effect": "Allow",
-                    "Principal": {
-                        "AWS": "*"
-                    },
-                    "Action": "SQS:SendMessage",
-                    "Resource": { "Fn::GetAtt" : [ "SQS${queue_name}", "Arn" ] },
-                    "Condition": {
-                    "StringEquals": {
-                        "aws:SourceArn": { "Fn::GetAtt" : [ "SQS${queue_name}", "Arn" ] }
-                    }
-                }
-            }]
-        },
-        "Queues": [
-            {"Ref": "SQS${queue_name}"}
-        ]
-    }
-},
 "SNS${queue_name}": {
     "Type" : "AWS::SNS::Topic",
     "Properties" : {
@@ -39,5 +12,67 @@
             { "Endpoint" : { "Fn::GetAtt" : [ "SQS${queue_name}", "Arn" ] }, "Protocol" : "sqs" }
         ],
         "TopicName": {"Fn::Join": ["-", [ "${queue_name}", "${cloud_name}" ] ] }
+    }
+},
+"SQSPolicy${queue_name}":{
+    "Type": "AWS::SQS::QueuePolicy",
+    "Properties": {
+        "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Id": {"Fn::Join": ["/", [{"Fn::GetAtt": ["SQS${queue_name}", "Arn"] }, "SQSDefaultPolicy"]] },
+            "Statement": [
+                {
+                    "Sid": "Sid1437388803659",
+                    "Effect": "Allow",
+                    "Principal": { "AWS": "*" },
+                    "Action": ["SQS:SendMessage", "SQS:DeleteMessage"],
+                    "Resource": "*"
+                }
+            ]
+        },
+        "Queues": [ {"Ref": "SQS${queue_name}"} ]
+    }
+},
+"SQS${queue_name}IAM": {
+    "Type": "AWS::IAM::Policy",
+    "Properties": {
+        "PolicyName": "SQS${queue_name}IAMPolicy",
+        "PolicyDocument": {
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "sqs:ReceiveMessage",
+                        "sqs:DeleteMessage",
+                        "sqs:ChangeMessageVisibility",
+                        "sqs:GetQueueAttributes",
+                        "sqs:GetQueueUrl"
+                    ],
+                    "Resource": [
+                        {"Fn::GetAtt": ["SQS${queue_name}", "Arn"]}
+                    ]
+                }
+            ]
+        },
+        "Roles": [{"Ref": "EC2IAMRole"}]
+    }
+},
+"SNS${queue_name}IAM" : {
+    "Type": "AWS::IAM::Policy",
+    "Properties": {
+        "PolicyName": "SNS${queue_name}TopicIAM",
+        "PolicyDocument": {
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "sns:Publish",
+                        "sns:GetTopicAttributes"
+                    ],
+                    "Resource": [{"Ref": "SNS${queue_name}"}]
+                }
+            ]
+        },
+        "Roles": [{"Ref": "EC2IAMRole"}]
     }
 }

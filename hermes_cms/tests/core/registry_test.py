@@ -23,15 +23,16 @@ def test_registry_region():
     key.set_contents_from_string('{"region": "%s"}' % (expected, ))
 
     with patch('hermes_cms.core.registry.Registry._bucket_name', new_callable=PropertyMock) as mock_bucket_name:
-        mock_bucket_name.return_value = bucket_name
-        with patch.object(Registry, '_read_cache') as mock_read_cache:
-            mock_read_cache.return_value = None
-            registry = Registry()
-            assert registry.get('region').get('region') == expected
+        with patch.object(Registry, '_write_key'):
+            mock_bucket_name.return_value = bucket_name
+            with patch.object(Registry, '_read_cache') as mock_read_cache:
+                mock_read_cache.return_value = None
+                registry = Registry()
+                assert registry.get('region').get('region') == expected
 
 
 def test_registry_region_cached(caplog):
-    expected = 'my region'
+    expected = 'test-region'
     caplog.setLevel(logging.DEBUG)
     with patch('hermes_cms.core.registry.open', mock_open(read_data='{"region": "%s"}' % (expected, )), create=True):
         registry = Registry()

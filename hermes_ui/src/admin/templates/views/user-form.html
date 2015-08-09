@@ -30,6 +30,38 @@
                 <p ng-show="userForm.last_name.$invalid" class="help-block">{{ errors.last_name }}</p>
             </div>
 
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <div class="row">
+                        <label class="col-md-2">Permissions</label>
+                        <div class="col-md-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="is_administrator"> Administrator User
+                                </label>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-md-offset-2">
+                            <div class="checkbox" ng-repeat="permission in permissions | limitTo: 5">
+                                <label>
+                                    <input type="checkbox" ng-model="user_permissions[permission.value]"> {{ ::permission.title }}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="checkbox" ng-repeat="permission in permissions | slice:5:10">
+                                <label>
+                                    <input type="checkbox" ng-model="user_permissions[permission.value]"> {{ ::permission.title }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <button type="submit" class="btn btn-primary" accesskey="s">{{ action }}</button>
             <button type="button" ui-sref="users.list" class="btn btn-default">Cancel</button>
 
