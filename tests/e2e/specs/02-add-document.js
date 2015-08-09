@@ -46,6 +46,11 @@ describe('Add Document', function () {
                 content.sendKeys(browser.params.add_page.content);
 
                 helpers.waitUntilDisplayed(by.css('button[type=submit]')).click().then(function () {
+                    browser.wait(function () {
+                        return browser.getLocationAbsUrl().then(function (url) {
+                            return url.match(/\/document\/list$/);
+                        });
+                    }, 30000);
 
                     var elements = element.all(by.css('tbody tr')).filter(function (elem) {
                         return elem.all(by.css('td')).get(1).getText().then(function (text) {
@@ -55,6 +60,7 @@ describe('Add Document', function () {
 
                     expect(elements.count()).to.eventually.equal(1);
                 });
+
 
             });
 

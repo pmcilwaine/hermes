@@ -3,6 +3,7 @@ exports.config = {
     mochaOpts: {
         reporter: 'spec',
         timeout: 600000,
+        allScriptsTimeout: 99999,
         reporter: "mocha-jenkins-reporter",
         reporterOptions: {
             junit_report_name: "End-to-End Tests",

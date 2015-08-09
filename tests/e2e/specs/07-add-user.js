@@ -29,8 +29,6 @@ describe('Add User', function () {
             last_name.sendKeys(browser.params.add_user.last_name);
 
             helpers.waitUntilDisplayed(by.css('button[type=submit]')).click().then(function () {
-                expect(browser.getLocationAbsUrl()).to.eventually.match(/\/user\/list/);
-
                 var elements = element.all(by.repeater('user in users')).filter(function (elem) {
                     return elem.all(by.css('td')).get(0).getText().then(function (text) {
                         return text === browser.params.add_user.email;
