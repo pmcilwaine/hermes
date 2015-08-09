@@ -1,7 +1,6 @@
 exports.config = {
     framework: 'mocha',
     mochaOpts: {
-        reporter: 'spec',
         timeout: 600000,
         allScriptsTimeout: 99999,
         reporter: "mocha-jenkins-reporter",
@@ -14,10 +13,9 @@ exports.config = {
     specs: 'specs/*.js',
     getPageTimeout:600000,
     allScriptsTimeout: 99999,
+    maxSessions: 2,
     onPrepare: function () {
-        global.isAngularSite = function (flag) {
-            browser.ignoreSynchronization = !flag;
-        }
+        browser.ignoreSynchronization = true;
 
         browser.getCapabilities().then(function (cap) {
             browser.params = require('./profile/' + cap.caps_.platform.split(' ')[0].toLowerCase() +
