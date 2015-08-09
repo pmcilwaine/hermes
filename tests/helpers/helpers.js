@@ -24,7 +24,13 @@ helpers.adminUserLogin = function () {
     browser.get('/admin/').then(function () {
         element.all(by.css('#email')).get(0).sendKeys("test@example.org");
         element.all(by.css('#password')).get(0).sendKeys("password");
-        element.all(by.css('form button[type=submit]')).click();
+        element.all(by.css('form button[type=submit]')).click().then(function () {
+            browser.wait(function () {
+                return browser.getLocationAbsUrl().then(function (url) {
+                    return url.match(/\/document\/list$/);
+                });
+            }, 30000);
+        })
     });
 };
 

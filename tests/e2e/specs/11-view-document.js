@@ -8,10 +8,6 @@ var helpers = require('../../helpers/helpers.js');
 
 describe('View Document', function () {
 
-    before(function () {
-        isAngularSite(false);
-    });
-
     it.skip('Can View Document', function () {
 
     });
