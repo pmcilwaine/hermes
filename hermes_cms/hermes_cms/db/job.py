@@ -3,7 +3,6 @@
 
 import uuid
 import json
-from datetime import datetime
 from sqlobject import SQLObject
 from sqlobject.col import StringCol, DateTimeCol
 
@@ -12,8 +11,8 @@ class Job(SQLObject):
     uuid = StringCol(length=36)
     name = StringCol(length=255)
     status = StringCol(length=8)
-    created = DateTimeCol(default=datetime.now())
-    modified = DateTimeCol(default=datetime.now())
+    created = DateTimeCol(default=DateTimeCol.now())
+    modified = DateTimeCol(default=DateTimeCol.now())
     message = StringCol()
 
     def _get_name(self):
