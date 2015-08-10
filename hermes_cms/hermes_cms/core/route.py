@@ -3,6 +3,7 @@
 
 import logging
 from hermes_cms.db import Document
+from hermes_cms.helpers import common
 from sqlobject.sqlbuilder import IN, DESC
 from flask import Response, request
 
@@ -46,8 +47,16 @@ REGISTRY = {
         }
     },
     'Error': {
-        'document_module': 'hermes_cms.controller',
-        'document_class': 'Error'
+        'templates': {
+            '404': '404.html'
+        },
+        'template_modules': [
+            'hermes_cms.templates.public'
+        ],
+        'public': {
+            'document_module': 'hermes_cms.controller.public',
+            'document_class': 'Error'
+        }
     }
 }
 
@@ -72,7 +81,12 @@ def route(path):
     record = Document.select(IN(Document.q.url, urls), orderBy=(DESC(Document.q.url), DESC(Document.q.created)),
                              limit=1).getOne(None)
     if not record:
-        return Response(status=404)
+        registry_type = REGISTRY['Error']
+        public = registry_type['public']
+
+        document = {'status': 404}
+        controller = common.load_class(public['document_module'], public['document_class'], document, registry_type)
+        return controller.get()
 
     document = Document.get_document(record)
 

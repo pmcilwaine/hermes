@@ -5,8 +5,9 @@ from mock import patch
 from hermes_cms.core.route import route
 
 
+@patch('hermes_cms.helpers.page.Document')
 @patch('hermes_cms.core.route.Document')
-def test_no_page_found(document_mock):
+def test_no_page_found(document_mock, nav_mock):
     document_mock.select.return_value.getOne.return_value = None
 
     response = route('abc-def')
