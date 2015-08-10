@@ -120,3 +120,15 @@ def test_logout_fail(config, db_connect_mock, auth_mock, blueprint_config):
 
     response = app().get('/logout')
     assert response.status_code == 400
+
+
+@patch('hermes_cms.app.db_connect')
+@patch('hermes_cms.app.Registry')
+def test_404_page(config, db_connect_mock, blueprint_config):
+    config.return_value = blueprint_config
+    db_connect_mock.return_value = None
+
+    response = app().get('/page-does-not-exist')
+
+    assert response.status_code == 404
+    assert 'Page not found' in response.data

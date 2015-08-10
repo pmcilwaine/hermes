@@ -12,8 +12,10 @@ describe('View Document', function () {
 
     });
 
-    it.skip('404 Page Displayed', function () {
-
+    it('404 Page Displayed', function () {
+        browser.get('/page-does-not-exist').then(function () {
+            expect(element.all(by.css('h1')).get(0).getText()).to.eventually.equal("Page not found")
+        });
     });
 
     it.skip('Can download a File Type Document', function () {
