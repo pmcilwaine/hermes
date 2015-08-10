@@ -14,7 +14,7 @@ describe('View Document', function () {
 
     it('404 Page Displayed', function () {
         browser.get('/page-does-not-exist').then(function () {
-            expect(element.all(by.css('h1')).get(0).getText()).to.eventually.equal("Page not found")
+            expect(helpers.waitUntilDisplayed(by.css('h1')).getText()).to.eventually.equal("Page not found");
         });
     });
 
