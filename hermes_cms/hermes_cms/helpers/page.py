@@ -3,6 +3,7 @@
 
 import logging
 from hermes_cms.db import Document
+from mako.runtime import Undefined
 
 log = logging.getLogger('hermes_cms.helpers.page')
 NAVIGATION_ALL = 'all'
@@ -42,7 +43,7 @@ def navigation(document, depth=None):
         record = {
             'url': '/' if page.url == 'index' else page.url,
             'menutitle': page.menutitle,
-            'current': document['document']['path'].startswith(page.path),
+            'current': document['document']['path'].startswith(page.path) if document is not Undefined else False,
             'children': []
         }
 
