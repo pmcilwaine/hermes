@@ -11,7 +11,9 @@ module.exports = {
                     last_name: 'User'
                 }], documents = [{
                     name: 'Homepage',
-                    url: 'index'
+                    url: 'index',
+                    path: '1/',
+                    id: 1
                 }], uuid = function () {
                     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                         var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
@@ -89,6 +91,7 @@ module.exports = {
                 }).respond(function (method, url, data) {
                     data = angular.fromJson(data);
                     data.document.id = documents.length;
+                    data.document.path = data.document.id + '/';
                     documents.push(data.document);
                     return [200, data.document, {}];
                 });
