@@ -42,6 +42,11 @@
             return resource('/admin/migration', {}, {
                 newJob: {method: 'post'}
             });
+        }])
+        .factory('RestoreUserResource', ['$resource', function (resource) {
+            return resource('/admin/restore_user/:id', {id: '@id'}, {
+                put: {method: 'PUT'}
+            });
         }]);
 
 })();

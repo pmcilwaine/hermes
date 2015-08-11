@@ -61,7 +61,7 @@ class User(MethodView):
     def get(self, user_id=None):
         def _get_all_users():
             users = []
-            for user in UserDB.selectBy(UserDB.q.archived is False):
+            for user in UserDB.selectBy(archived=False):
                 users.append({
                     'id': user.id,
                     'email': user.email,
@@ -93,4 +93,10 @@ class User(MethodView):
     # pylint: disable=no-self-use
     @requires_permission('delete_user')
     def delete(self, user_id):
+        user = UserDB.selectBy(id=user_id).getOne(None)
+        if not user:
+            return Response(status=404)
+
+        user.set(archived=True)
+
         return Response(status=200)

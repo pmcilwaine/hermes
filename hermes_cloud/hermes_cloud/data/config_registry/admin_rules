@@ -50,6 +50,21 @@
                     "methods": ["GET", "PUT", "DELETE"]
                 }
             ]
+        },
+        {
+            "name": "restore_user",
+            "module_name": "hermes_cms.controller.admin.restore_user",
+            "class_name": "RestoreUser",
+            "urls": [
+                {
+                    "url": "/restore_user",
+                    "methods": ["GET"]
+                },
+                {
+                    "url": "/restore_user/<user_id>",
+                    "methods": ["PUT"]
+                }
+            ]
         }
     ]
 }
