@@ -37,7 +37,10 @@
                 templateUrl: 'templates/views/document-form.html',
                 controller: 'DocumentFormController',
                 resolve: {
-                    document: function () { return {}; }
+                    document: function () { return {}; },
+                    document_list: ['Documents', function (Documents) {
+                        return Documents.getAllWithRepeat(String.fromCharCode(160));
+                    }]
                 }
             });
 
@@ -53,7 +56,10 @@
                             } else {
                                 return Documents.getNewDocument();
                             }
-                        }]
+                        }],
+                    document_list: ['Documents', function (Documents) {
+                        return Documents.getAllWithRepeat(String.fromCharCode(160));
+                    }]
                 }
             });
 
@@ -66,7 +72,10 @@
                         function (Documents, DocumentResource, stateParams) {
                             console.log(stateParams);
                             return Documents.getNewDocument();
-                        }]
+                        }],
+                    document_list: ['Documents', function (Documents) {
+                        return Documents.getAllWithRepeat(String.fromCharCode(160));
+                    }]
                 }
             });
 

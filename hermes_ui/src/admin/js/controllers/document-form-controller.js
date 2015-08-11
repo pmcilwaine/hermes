@@ -2,10 +2,13 @@
 
     var dependencies, documentController;
 
-    documentController = function (scope, $state, Documents) {
+    documentController = function (scope, document_list, $state, Documents) {
         scope.record = {
             document: {}
         };
+
+        scope.parent = 0;
+        scope.document_list = document_list;
 
         scope.errors = {};
 
@@ -26,6 +29,10 @@
             // TODO do document validation
             scope.errors = {};
 
+            if (scope.parent) {
+                scope.record.document.parent = scope.parent.id;
+            }
+
             _.each(['name', 'type', 'parent', 'url'], function (key) {
                 scope.documentForm[key].$dirty = false;
                 scope.documentForm[key].$setValidity(key, true);
@@ -42,10 +49,17 @@
                 });
             });
         };
+
+        scope.$watch('parent', function (item) {
+            if (!!item && scope.record.document.url === undefined) {
+                scope.record.document.url = item.url + '/';
+            }
+        });
     };
 
     dependencies = [
         '$scope',
+        'document_list',
         '$state',
         'Documents',
         documentController
