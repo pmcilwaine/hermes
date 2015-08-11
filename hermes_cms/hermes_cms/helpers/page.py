@@ -22,7 +22,7 @@ def navigation(document, depth=None):
     :rtype: dict
     """
 
-    log.debug('Document=%s', document)
+    log.debug('Document=%s, %s', document, str(isinstance(document, Undefined)))
 
     if depth not in [NAVIGATION_ALL, NAVIGATION_CURRENT_DEPTH]:
         pass
@@ -40,10 +40,14 @@ def navigation(document, depth=None):
                                         Document.q.show_in_menu, Document.q.parent, Document.q.path,
                                         Document.q.user_id)):
 
+        current = False
+        if document and not isinstance(document['document'], Undefined):
+            current = document['document']['path'].startswith(page.path)
+
         record = {
             'url': '/' if page.url == 'index' else page.url,
             'menutitle': page.menutitle,
-            'current': document['document']['path'].startswith(page.path) if document is not Undefined else False,
+            'current': current,
             'children': []
         }
 
