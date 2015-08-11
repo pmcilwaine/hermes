@@ -9,6 +9,16 @@
 
         };
 
+        document.getAllWithRepeat = function (repeat_str) {
+            return document.getAll().then(function (response) {
+                _.each(response.documents, function (document) {
+                    var repeat = document.path.split(/\//).length - 2;
+                    document.name = _.repeat(repeat_str, 3 * repeat) + document.name;
+                });
+                return response.documents;
+            });
+        };
+
         document.createNewDocument = function (record) {
             new_document = record;
         };

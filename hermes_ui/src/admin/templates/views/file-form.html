@@ -14,7 +14,7 @@
 
             <div class="form-group" ng-class="{'has-error': fileForm.parent.$invalid}">
                 <label>Parent</label>
-                <input type="text" class="form-control" name="parent" ng-model="record.document.parent">
+                <select class="form-control" name="parent" ng-model="parent" ng-options="document.name for document in document_list"></select>
                 <p ng-show="fileForm.parent.$invalid" class="help-block">{{ errors.parent }}</p>
             </div>
 

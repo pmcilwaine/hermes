@@ -2,9 +2,15 @@
 
     var dependencies, fileController;
 
-    fileController = function (scope, $state, $q, document, GenerateUrl, Documents, Upload) {
+    fileController = function (scope, document_list, $state, $q, document, GenerateUrl, Documents, Upload) {
         var formUpload = {};
         scope.record = document;
+
+        scope.parent = _.reduce(_.filter(document_list, function (item) {
+            return item.id === scope.record.document.parent;
+        }));
+        scope.document_list = document_list;
+
         scope.errors = {};
         scope.clearFile = false;
 
@@ -35,6 +41,10 @@
 
             console.log(scope.record);
             console.log(scope.file);
+
+            if (scope.parent) {
+                scope.record.document.parent = scope.parent.id;
+            }
 
             _.each(['name', 'parent', 'url'], function (key) {
                 scope.fileForm[key].$dirty = false;
@@ -119,6 +129,7 @@
 
     dependencies = [
         '$scope',
+        'document_list',
         '$state',
         '$q',
         'document',

@@ -54,4 +54,9 @@ def analytics_static():
     return 'Analytics page'
 
 
+@app.route('/favicon.ico')
+def favicon():
+    return ''
+
+
 app.run(debug=True)

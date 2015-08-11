@@ -60,14 +60,15 @@ class Document(MethodView):
                                                       DocumentDB.q.archived, DocumentDB.q.menutitle,
                                                       DocumentDB.q.show_in_menu, DocumentDB.q.parent,
                                                       DocumentDB.q.path, DocumentDB.q.user_id),
-                                             orderBy=DESC(DocumentDB.q.created), start=offset, end=offset + limit):
+                                             orderBy=DocumentDB.q.path, start=offset, end=offset + limit):
 
                 documents.append({
                     'id': document.id,
                     'uuid': document.uuid,
                     'name': document.name,
                     'url': document.url,
-                    'type': document.type
+                    'type': document.type,
+                    'path': document.path
                 })
 
             return Response(response=json.dumps({

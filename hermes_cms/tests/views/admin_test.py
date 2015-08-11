@@ -281,14 +281,16 @@ def test_document_list_first_page_no_children(config, db_connect_mock, document_
                 'uuid': 'some-id',
                 'name': 'Homepage',
                 'url': '/',
-                'type': 'Page'
+                'type': 'Page',
+                'path': '1/'
             },
             {
                 'id': 2,
                 'uuid': 'some-id-2',
                 'name': 'Second Page',
                 'url': '/second-page',
-                'type': 'Page'
+                'type': 'Page',
+                'path': '2/'
             }
         ],
         'meta': {
