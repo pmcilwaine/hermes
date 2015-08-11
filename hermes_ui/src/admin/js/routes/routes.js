@@ -127,6 +127,22 @@
                 }
             });
 
+            $stateProvider.state('users.restore', {
+                url: '/restore',
+                templateUrl: 'templates/views/restore-user-list.html',
+                controller: 'RestoreUserListController',
+                resolve: {
+                    UserList: ['RestoreUserResource', function (RestoreUserResource) {
+                        return RestoreUserResource.get().$promise.then(function (data) {
+                            return data.users;
+                        });
+                    }]
+                },
+                data: {
+                    tab: false
+                }
+            });
+
             $stateProvider.state('users.add', {
                 url: '/add',
                 templateUrl: 'templates/views/user-form.html',
