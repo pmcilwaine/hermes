@@ -18,7 +18,7 @@ exports.data = {
     add_page_parent: {
         name: 'Firefox Mac Page Parent',
         menutitle: 'Firefox Mac Page Parent',
-        url: 'child-page',
+        url: 'firefox-mac-page/child-page',
         parent: 'Firefox Mac Page',
         type: 'Page',
         published: true,

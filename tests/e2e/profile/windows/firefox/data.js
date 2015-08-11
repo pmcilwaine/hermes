@@ -18,7 +18,7 @@ exports.data = {
     add_page_parent: {
         name: 'Firefox Windows Page Parent',
         menutitle: 'Firefox Windows Page Parent',
-        url: 'child-page',
+        url: 'firefox-windows-page/child-page',
         parent: 'Firefox Windows Page',
         type: 'Page',
         published: true,

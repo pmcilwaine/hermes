@@ -18,7 +18,7 @@ exports.data = {
     add_page_parent: {
         name: 'Chrome Mac Page Parent',
         menutitle: 'Chrome Mac Page Parent',
-        url: 'child-page',
+        url: 'chrome-mac-page/child-page',
         parent: 'Chrome Mac Page',
         type: 'Page',
         published: true,

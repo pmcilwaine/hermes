@@ -18,7 +18,7 @@ exports.data = {
     add_page_parent: {
         name: 'Chrome Windows Page Parent',
         menutitle: 'Chrome Windows Page Parent',
-        url: 'child-page',
+        url: 'chrome-windows-page/child-page',
         parent: 'Chrome Windows Page',
         type: 'Page',
         published: true,

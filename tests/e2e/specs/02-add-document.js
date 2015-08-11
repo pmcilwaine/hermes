@@ -71,7 +71,7 @@ describe('Add Document', function () {
 
                 var name = helpers.waitUntilDisplayed(by.model('record.document.name'));
                 var menutitle = helpers.waitUntilDisplayed(by.model('record.document.menutitle'));
-                var parent_name = helpers.waitUntilDisplayed(by.model('record.document.parent'));
+                var parent_name = helpers.waitUntilDisplayed(by.model('parent'));
                 var url = helpers.waitUntilDisplayed(by.model('record.document.url'));
                 var type = helpers.waitUntilDisplayed(by.model('record.document.type'));
                 var published = helpers.waitUntilDisplayed(by.model('record.document.published'));
@@ -81,6 +81,7 @@ describe('Add Document', function () {
                 menutitle.sendKeys(browser.params.add_page_parent.menutitle);
                 helpers.selectDropdown(parent_name, browser.params.add_page_parent.parent);
 
+                url.clear();
                 url.sendKeys(browser.params.add_page_parent.url);
                 helpers.selectDropdown(type, browser.params.add_page_parent.type);
 
