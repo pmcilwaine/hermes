@@ -6,7 +6,7 @@ var expect = chai.expect;
 
 var helpers = require('../../helpers/helpers.js');
 
-describe('Modify User', function () {
+describe.skip('Modify User', function () {
 
     describe('Has Permission', function () {
 

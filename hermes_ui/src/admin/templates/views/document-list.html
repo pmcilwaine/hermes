@@ -5,10 +5,11 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-lg-4">
+    <div class="col-lg-5">
         <button ui-sref="document.add" title="Add a document to the System." class="btn btn-sm">Add Document</button>
         <button ui-sref="document.migration" class="btn btn-sm">Upload Migration</button>
         <button class="btn btn-sm" ng-click="downloadMigration()" ng-disabled="!allItemsSelected && !hasItemSelected" title="Download a ZIP file. To migrate to another system">Download Archive</button>
+        <button ui-sref="document.restore" title="Restore Deleted Documents." class="btn btn-sm">Restore Documents</button>
     </div>
 </div>
 

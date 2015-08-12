@@ -32,6 +32,17 @@
                 }
             });
 
+            $stateProvider.state('document.restore', {
+                url: '/restore',
+                templateUrl: 'templates/views/document-restore-list.html',
+                controller: 'DocumentRestoreController',
+                resolve: {
+                    DocumentList: ['Documents', function (Documents) {
+                        return Documents.getAllRestore();
+                    }]
+                }
+            });
+
             $stateProvider.state('document.add', {
                 url: '/add',
                 templateUrl: 'templates/views/document-form.html',

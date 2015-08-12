@@ -65,6 +65,21 @@
                     "methods": ["PUT"]
                 }
             ]
+        },
+        {
+            "name": "restore_document",
+            "module_name": "hermes_cms.controller.admin.restore_document",
+            "class_name": "RestoreDocument",
+            "urls": [
+                {
+                    "url": "/restore_document",
+                    "methods": ["GET"]
+                },
+                {
+                    "url": "/restore_document/<document_id>",
+                    "methods": ["PUT"]
+                }
+            ]
         }
     ]
 }

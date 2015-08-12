@@ -12,6 +12,10 @@ from sqlobject.col import StringCol, DateTimeCol, BoolCol, IntCol
 from hermes_aws.s3 import S3
 
 
+class DocumentNotFound(Exception):
+    pass
+
+
 class Document(SQLObject):
     uuid = StringCol(length=36)  # this is the version record to be found in S3
     url = StringCol()  # this is unique for URL for each GID.
@@ -96,7 +100,18 @@ class Document(SQLObject):
         if not record:
             raise Exception('Cannot find document')
 
-        update = Update(Document.sqlmeta.table, values={'archived': 1}, where=Document.q.url == record.url)
+        update = Update(Document.sqlmeta.table, values={'archived': True}, where=Document.q.id == record.id)
+        Document._connection.query(Document._connection.sqlrepr(update))
+
+    @staticmethod
+    def restore_document(doc_uuid):
+        record = Document.selectBy(uuid=doc_uuid).getOne(None)
+
+        # todo must do better exception handling
+        if not record:
+            raise Exception('Cannot find document')
+
+        update = Update(Document.sqlmeta.table, values={'archived': False}, where=Document.q.id == record.id)
         Document._connection.query(Document._connection.sqlrepr(update))
 
     @staticmethod
