@@ -129,12 +129,61 @@ describe('Add Document', function () {
 
         });
 
-        it.skip('Error message displayed on invalid URL document', function () {
+        it.skip('Invalid URL when creating a Document based on Multipage Document URL', function () {
 
         });
 
-        it.skip('Validation message is displayed on blank form', function () {
+        it('Error message displayed on invalid URL document', function () {
+            helpers.waitUntilDisplayed(by.css('button')).click().then(function () {
 
+                var name = helpers.waitUntilDisplayed(by.model('record.document.name'));
+                var menutitle = helpers.waitUntilDisplayed(by.model('record.document.menutitle'));
+                var url = helpers.waitUntilDisplayed(by.model('record.document.url'));
+                var type = helpers.waitUntilDisplayed(by.model('record.document.type'));
+                var published = helpers.waitUntilDisplayed(by.model('record.document.published'));
+                var show_in_menu = helpers.waitUntilDisplayed(by.model('record.document.show_in_menu'));
+
+                name.sendKeys(browser.params.add_page.name);
+                menutitle.sendKeys(browser.params.add_page.menutitle);
+                url.sendKeys(browser.params.add_page.url);
+
+                helpers.selectDropdown(type, browser.params.add_page.type);
+
+                var template = helpers.waitUntilDisplayed(by.model('record.page.template'));
+                helpers.selectDropdown(template, browser.params.add_page.template);
+
+                if (browser.params.add_page.published) {
+                    published.click();
+                }
+
+                if (browser.params.add_page.show_in_menu) {
+                    show_in_menu.click();
+                }
+
+                helpers.waitUntilDisplayed(by.css('button[type=submit]')).click().then(function () {
+                    expect(browser.getLocationAbsUrl()).to.eventually.match(/\/document\/add/);
+
+                    var elements = element.all(by.css('p.help-block')).filter(function (elem) {
+                        return elem.getText().then(function (text) {
+                            return 'URL is already in use' === text;
+                        });
+                    });
+
+                    expect(elements.count()).to.eventually.equal(1);
+                });
+
+            });
+        });
+
+        it('Validation message is displayed on blank form', function () {
+            helpers.waitUntilDisplayed(by.css('button')).click().then(function () {
+
+                helpers.waitUntilDisplayed(by.css('button[type=submit]')).click().then(function () {
+                    expect(browser.getLocationAbsUrl()).to.eventually.match(/\/document\/add/);
+                    expect(element.all(by.css('.has-error')).count()).to.eventually.be.at.least(1);
+                });
+
+            });
         });
 
         after(function () {

@@ -13,7 +13,7 @@
             return resource('/admin/document/:id', {id: '@uuid'}, {
                 get: {method: 'GET'},
                 post: {method: 'POST'},
-                put: {method: 'PUT'},
+                put: {method: 'PUT', params: {id: '@id'}},
                 delete: {method: 'DELETE'},
                 dryRun: {method: 'POST', params: {validate: true}}
             });

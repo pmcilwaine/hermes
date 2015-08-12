@@ -42,6 +42,7 @@ class User(MethodView):
 
             user_data['first_name'] = user_data.get('first_name', '')
             user_data['last_name'] = user_data.get('last_name', '')
+            user_data['archived'] = False
 
             user = UserDB.save(user_data)
             if not user:
