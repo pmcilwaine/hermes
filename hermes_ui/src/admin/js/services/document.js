@@ -34,7 +34,7 @@
         };
 
         document.save = function (record, is_dry_run) {
-            var deferred = $q.defer();
+            var deferred = $q.defer(), method;
             if (is_dry_run !== undefined) {
                 DocumentResource.dryRun(record, function ok (msg) {
                     console.log('ok dryRun');
@@ -45,9 +45,15 @@
                     deferred.reject(msg.data);
                 });
             } else {
-                DocumentResource.post(record, function ok (msg) {
+                if (!record.document.uuid) {
+                    method = DocumentResource.post;
+                } else {
+                    method = DocumentResource.put;
+                }
+
+                method(record, function ok(msg) {
                     deferred.resolve(msg);
-                }, function fail (msg) {
+                }, function fail(msg) {
                     deferred.reject(msg);
                 });
             }

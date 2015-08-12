@@ -1,7 +1,8 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
-from wtforms import StringField, validators, IntegerField
+from wtforms import StringField, validators, IntegerField, ValidationError
 from hermes_cms.validators.customform import CustomForm
+from hermes_cms.db.document import Document as DocumentDB
 
 
 __all__ = ['Document']
@@ -24,8 +25,11 @@ class Document(object):
         :rtype: bool
         """
         valid = True
+        data = self.fields.get('document', {})
+        if self.fields.get('id'):
+            data['id'] = self.fields.get('id')
 
-        validate_document = DocumentForm(data=self.fields.get('document', {}))
+        validate_document = DocumentForm(data=data)
         if not validate_document.validate():
             valid = False
             self._errors.update(validate_document.errors())
@@ -43,11 +47,12 @@ class Document(object):
 
 
 class DocumentForm(CustomForm):
-    gid = IntegerField()
+    id = IntegerField()
     name = StringField(validators=[validators.DataRequired('Must enter the name of the document.')])
     url = StringField(validators=[validators.DataRequired('Must enter a URL')])
     type = StringField(validators=[validators.DataRequired('Must select a document type')])
 
     @staticmethod
     def validate_url(form, field):
-        pass
+        if DocumentDB.selectBy(url=field.data).filter(DocumentDB.q.id != form.id.data).count():
+            raise ValidationError('URL is already in use')

@@ -5,7 +5,7 @@ import logging
 from hermes_cms.db import Document
 from hermes_cms.helpers import common
 from sqlobject.sqlbuilder import IN, DESC
-from flask import Response, request
+from flask import request
 
 log = logging.getLogger('hermes_cms.core.route')
 
@@ -54,7 +54,7 @@ REGISTRY = {
             'hermes_cms.templates.public'
         ],
         'public': {
-            'document_module': 'hermes_cms.controller.public',
+            'document_module': 'hermes_cms.controller.public.error',
             'document_class': 'Error'
         }
     }

@@ -37,6 +37,9 @@ class Document(SQLObject):
         record['document']['archived'] = record['document'].get('archived', False)
 
         document_data = {'url': None, 'path': None, 'parent': 0, 'type': None}
+        if record.get('id'):
+            document_data['id'] = record.get('id')
+
         document_data.update(record['document'])
 
         document = Document(**document_data)

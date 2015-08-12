@@ -41,12 +41,12 @@ class Document(MethodView):
 
         return Response(response=json.dumps({}), status=200, content_type='application/json')
 
-    # pylint: disable=no-self-use
+    # pylint: disable=no-self-use,unused-argument
     @requires_permission('modify_document')
-    def put(self):
-        pass
+    def put(self, document_id=None):
+        return self.post()
 
-    # pylint: disable=no-self-use
+    # pylint: disable=no-self-use,unused-argument
     def get(self, document_id=None):
         def document_list():
 
@@ -55,12 +55,9 @@ class Document(MethodView):
 
             documents = []
             for document in DocumentDB.query(DocumentDB.all(), where=DocumentDB.q.archived == False,
-                                             groupBy=(DocumentDB.q.id, DocumentDB.q.uuid, DocumentDB.q.created,
-                                                      DocumentDB.q.published, DocumentDB.q.type, DocumentDB.q.name,
-                                                      DocumentDB.q.archived, DocumentDB.q.menutitle,
-                                                      DocumentDB.q.show_in_menu, DocumentDB.q.parent,
-                                                      DocumentDB.q.path, DocumentDB.q.user_id),
-                                             orderBy=DocumentDB.q.path, start=offset, end=offset + limit):
+                                             orderBy=(DocumentDB.q.id, DocumentDB.q.path, DESC(DocumentDB.q.created)),
+                                             start=offset, end=offset + limit,
+                                             distinctOn=DocumentDB.q.id, distinct=True):
 
                 documents.append({
                     'id': document.id,
@@ -86,7 +83,10 @@ class Document(MethodView):
                 # todo handle 404 requests correctly
                 return Response(response=json.dumps({}), status=404, content_type='application/json')
 
-            return Response(response=json.dumps(DocumentDB.get_document(record)), status=200,
+            content = DocumentDB.get_document(record)
+            content['id'] = record.id
+
+            return Response(response=json.dumps(content), status=200,
                             content_type='application/json')
 
         if not document_id:
