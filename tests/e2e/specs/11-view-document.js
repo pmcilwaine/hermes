@@ -6,7 +6,7 @@ var expect = chai.expect;
 
 var helpers = require('../../helpers/helpers.js');
 
-describe('View Document', function () {
+describe.skip('View Document', function () {
 
     it.skip('Can View Document', function () {
 

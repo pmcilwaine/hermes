@@ -47,6 +47,11 @@
             return resource('/admin/restore_user/:id', {id: '@id'}, {
                 put: {method: 'PUT'}
             });
+        }])
+        .factory('RestoreDocumentResource', ['$resource', function (resource) {
+            return resource('/admin/restore_document/:id', {id: '@uuid'}, {
+                put: {method: 'PUT'}
+            });
         }]);
 
 })();

@@ -2,7 +2,7 @@
 
     var dependencies, documentService;
 
-    documentService = function ($q, DocumentResource) {
+    documentService = function ($q, DocumentResource, RestoreDocumentResource) {
         var document = {}, new_document = {};
 
         document.getNextPage = function () {
@@ -85,6 +85,16 @@
             return DocumentResource.get({offset: offset, limit: limit}).$promise.then(function (documents) {
                 return documents;
             });
+
+        };
+
+        document.getAllRestore = function (offset, limit) {
+            offset = offset || 0;
+            limit = limit || 100;
+
+            return RestoreDocumentResource.get({offset: offset, limit: limit}).$promise.then(function (documents) {
+                return documents;
+            });
         };
 
         return document;
@@ -93,6 +103,7 @@
     dependencies = [
         '$q',
         'DocumentResource',
+        'RestoreDocumentResource',
         documentService
     ];
 

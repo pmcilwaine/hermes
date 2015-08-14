@@ -16,6 +16,16 @@ helpers.waitUntilDisplayed = function(selector, index, timeout) {
     return element.all(selector).get(index);
 };
 
+helpers.waitForUrl = function(match, timeout) {
+    timeout = timeout || 30000;
+
+    browser.driver.wait(function () {
+        return browser.getLocationAbsUrl().then(function (url) {
+            return url.match(match);
+        });
+    }, timeout);
+}
+
 helpers.selectDropdown = function(elem, value) {
     elem.all(by.cssContainingText('option', value)).get(0).click();
 };
@@ -25,25 +35,23 @@ helpers.adminUserLogin = function () {
         element.all(by.css('#email')).get(0).sendKeys("test@example.org");
         element.all(by.css('#password')).get(0).sendKeys("password");
         element.all(by.css('form button[type=submit]')).click().then(function () {
-            browser.wait(function () {
-                return browser.getLocationAbsUrl().then(function (url) {
-                    return url.match(/\/document\/list$/);
-                });
-            }, 30000);
-        })
+            helpers.waitForUrl(/\/document\/list$/);
+        });
     });
 };
 
 helpers.userLogin = function () {
     browser.get('/admin/').then(function () {
-        element.all(by.css('#email')).get(0).sendKeys(browser.params.add_user.email);
-        element.all(by.css('#password')).get(0).sendKeys(browser.params.add_user.password);
+        element.all(by.css('#email')).get(0).sendKeys("testing@example.org");
+        element.all(by.css('#password')).get(0).sendKeys("password");
         element.all(by.css('form button[type=submit]')).click();
+        helpers.waitForUrl(/\/document\/list$/);
     });
 };
 
 helpers.clickUserMenu = function () {
     helpers.waitUntilDisplayed(by.css('.navbar li a'), 1).click();
+    helpers.waitForUrl(/\/user\/list$/);
 };
 
 module.exports = helpers;

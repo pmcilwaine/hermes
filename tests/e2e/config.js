@@ -12,7 +12,7 @@ exports.config = {
         }
     },
     specs: 'specs/*.js',
-    getPageTimeout:600000,
+    getPageTimeout: 600000,
     allScriptsTimeout: 99999,
     maxSessions: 2,
     onPrepare: function () {

@@ -16,13 +16,7 @@ describe('Delete User', function () {
         });
 
         it('Account can be deleted', function () {
-            var item = element.all(by.css('tbody tr')).filter(function (elem) {
-                return elem.all(by.css('td')).get(0).getText().then(function (text) {
-                    return text.trim() === browser.params.add_user.email;
-                });
-            });
-
-            item.all(by.css('button')).get(1).click();
+            var item;
 
             item = element.all(by.css('tbody tr')).filter(function (elem) {
                 return elem.all(by.css('td')).get(0).getText().then(function (text) {
@@ -30,7 +24,21 @@ describe('Delete User', function () {
                 });
             });
 
-            expect(item.count()).to.eventually.equal(0);
+            browser.driver.wait(function () {
+                return function () {
+                    return item.count() > 0;
+                };
+            });
+
+            item.all(by.css('button')).get(1).click(function () {
+                var items = element.all(by.css('tbody tr')).filter(function (elem) {
+                    return elem.all(by.css('td')).get(0).getText().then(function (text) {
+                        return text.trim() === browser.params.add_user.email;
+                    });
+                });
+
+                expect(items.count()).to.eventually.equal(0);
+            });
         });
 
         after(function () {
