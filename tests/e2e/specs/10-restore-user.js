@@ -13,7 +13,7 @@ describe('Restore User', function () {
         before(function () {
             helpers.adminUserLogin();
             helpers.clickUserMenu();
-            helpers.waitUntilDisplayed(by.css('button'), 1).click();
+            helpers.waitUntilDisplayed(by.css('button'), 2).click();
             helpers.waitForUrl(/\/user\/restore/);
         });
 
@@ -30,8 +30,15 @@ describe('Restore User', function () {
             });
 
             elements.get(0).all(by.css('button')).get(0).click().then(function () {
-                helpers.waitForUrl(/\/user\/list/);
-                expect(browser.getLocationAbsUrl()).to.eventually.match(/\/user\/list/);
+                var items;
+
+                items = element.all(by.css("tbody tr")).filter(function (elem) {
+                    return elem.all(by.css("td")).get(0).getText().then(function (text) {
+                        return text.trim() === browser.params.add_user.email;
+                    });
+                });
+
+                expect(items.count()).to.eventually.equal(0);
             });
         });
 

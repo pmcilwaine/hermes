@@ -60,6 +60,19 @@
             });
         };
 
+        user.hasPermission = function (method) {
+            var deferred = $q.defer();
+            UserResource.options({method: method}).$promise.then(function ok (response) {
+                if (response[method]) {
+                    deferred.resolve(response);
+                } else {
+                    deferred.reject(response);
+                }
+            });
+
+            return deferred.promise;
+        };
+
         return user;
     };
 

@@ -117,7 +117,12 @@ def test_user_save(config, db_connect_mock, validation_mock, user_mock, permissi
         'id': 1,
         'email': 'test@example.org',
         'first_name': '',
-        'last_name': ''
+        'last_name': '',
+        'notify_msg': {
+            'title': 'Added User',
+            'type': 'success',
+            'message': 'User test@example.org has been added'
+        }
     }
 
     response = app().post('/admin/user', data=json.dumps({
@@ -214,7 +219,12 @@ def test_user_update(config, db_connect_mock, validation_mock, user_mock, permis
         'id': 2,
         'email': 'test@example.org',
         'first_name': 'Test',
-        'last_name': 'User'
+        'last_name': 'User',
+        'notify_msg': {
+            'title': 'Modified User',
+            'type': 'success',
+            'message': 'User test@example.org has been modified'
+        }
     }
 
     assert json.loads(response.data) == expected

@@ -28,8 +28,20 @@ class RestoreUser(MethodView):
     def put(self, user_id=None):
         user = UserDB.selectBy(id=user_id).getOne(None)
         if not user:
-            return Response(status=404)
+            return Response(response=json.dumps({
+                'notify_msg': {
+                    'title': 'Not Found',
+                    'message': 'Could not find user to restore.',
+                    'type': 'success'
+                }}
+            ), content_type='application/json', status=404)
 
         user.set(archived=False)
 
-        return Response(status=200)
+        return Response(response=json.dumps({
+            'notify_msg': {
+                'title': 'User Restored',
+                'message': 'User {0} has been restored'.format(str(user.email).strip()),
+                'type': 'success'
+            }}
+        ), content_type='application/json', status=200)

@@ -114,6 +114,21 @@
             return deferred.promise;
         };
 
+        document.hasPermission = function (method) {
+            var deferred = $q.defer();
+            DocumentResource.options({method: method}).$promise.then(function ok (response) {
+                if (response[method]) {
+                    deferred.resolve(response);
+                } else {
+                    deferred.reject(response);
+                }
+            }, function fail (response) {
+                deferred.reject(response);
+            });
+
+            return deferred.promise;
+        };
+
         return document;
     };
 

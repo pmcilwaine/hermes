@@ -51,6 +51,9 @@
                     document: function () { return {}; },
                     document_list: ['Documents', function (Documents) {
                         return Documents.getAllWithRepeat(String.fromCharCode(160));
+                    }],
+                    option: ['Documents', function (Documents) {
+                        return Documents.hasPermission('POST');
                     }]
                 }
             });
@@ -80,8 +83,7 @@
                 controller: 'FileFormController',
                 resolve: {
                     document: ['Documents', 'DocumentResource', '$stateParams',
-                        function (Documents, DocumentResource, stateParams) {
-                            console.log(stateParams);
+                        function (Documents) {
                             return Documents.getNewDocument();
                         }],
                     document_list: ['Documents', function (Documents) {
@@ -96,8 +98,7 @@
                 controller: 'MultipageFormController',
                 resolve: {
                     document: ['Documents', 'DocumentResource', '$stateParams',
-                        function (Documents, DocumentResource, stateParams) {
-                            console.log(stateParams);
+                        function (Documents) {
                             return Documents.getNewDocument();
                         }]
                 }
@@ -175,6 +176,9 @@
                 resolve: {
                     user: ['Users', function (Users) {
                         return Users.createNew();
+                    }],
+                    option: ['Users', function (Users) {
+                        return Users.hasPermission('POST');
                     }]
                 }
             });

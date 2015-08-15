@@ -16,17 +16,12 @@ describe('Add User', function () {
         });
 
         it('Can create a new user account', function () {
-            helpers.waitUntilDisplayed(by.css('button')).click().then(function () {
+            helpers.waitUntilDisplayed(by.css('button'), 1).click().then(function () {
 
-                var email = element(by.model('record.email'));
-                var password = element(by.model('record.password'));
-                var first_name = element(by.model('record.first_name'));
-                var last_name = element(by.model('record.last_name'));
-
-                email.sendKeys(browser.params.add_user.email);
-                password.sendKeys(browser.params.add_user.password);
-                first_name.sendKeys(browser.params.add_user.first_name);
-                last_name.sendKeys(browser.params.add_user.last_name);
+                helpers.waitUntilDisplayed(by.model('record.email')).sendKeys(browser.params.add_user.email);
+                helpers.waitUntilDisplayed(by.model('record.password')).sendKeys(browser.params.add_user.password);
+                helpers.waitUntilDisplayed(by.model('record.first_name')).sendKeys(browser.params.add_user.first_name);
+                helpers.waitUntilDisplayed(by.model('record.last_name')).sendKeys(browser.params.add_user.last_name);
 
                 helpers.waitUntilDisplayed(by.css('button[type=submit]')).click();
             });
@@ -34,7 +29,7 @@ describe('Add User', function () {
 
         it('Email address already exists', function () {
             helpers.waitForUrl(/\/user\/list/);
-            helpers.waitUntilDisplayed(by.css('button')).click().then(function () {
+            helpers.waitUntilDisplayed(by.css('button'), 1).click().then(function () {
                 helpers.waitForUrl(/\/user\/add$/);
 
                 helpers.waitUntilDisplayed(by.model('record.email')).sendKeys(browser.params.add_user.email);

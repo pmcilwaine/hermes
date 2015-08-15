@@ -16,7 +16,7 @@ describe('Add Document', function () {
 
         it('Can create a new page type document', function () {
             helpers.waitForUrl(/\/document\/list$/);
-            helpers.waitUntilDisplayed(by.css('button')).click().then(function () {
+            helpers.waitUntilDisplayed(by.css('button'), 1).click().then(function () {
                 helpers.waitForUrl(/\/document\/add$/);
 
                 helpers.waitUntilDisplayed(by.model('record.document.name')).sendKeys(browser.params.add_page.name)
@@ -65,7 +65,7 @@ describe('Add Document', function () {
 
         it('Can create new page type document with parent', function () {
             helpers.waitForUrl(/\/document\/list$/);
-            helpers.waitUntilDisplayed(by.css('button')).click().then(function () {
+            helpers.waitUntilDisplayed(by.css('button'), 1).click().then(function () {
                 helpers.waitForUrl(/\/document\/add$/);
 
                 var name = helpers.waitUntilDisplayed(by.model('record.document.name'));
@@ -130,7 +130,7 @@ describe('Add Document', function () {
 
         it.skip('Error message displayed on invalid URL document', function () {
             helpers.waitForUrl(/\/document\/list$/);
-            helpers.waitUntilDisplayed(by.css('button')).click().then(function () {
+            helpers.waitUntilDisplayed(by.css('button'), 1).click().then(function () {
                 helpers.waitForUrl(/\/document\/add/);
 
                 var name = helpers.waitUntilDisplayed(by.model('record.document.name'));
@@ -174,7 +174,7 @@ describe('Add Document', function () {
 
         it('Validation message is displayed on blank form', function () {
             helpers.waitForUrl(/\/document\/list$/);
-            helpers.waitUntilDisplayed(by.css('button')).click().then(function () {
+            helpers.waitUntilDisplayed(by.css('button'), 1).click().then(function () {
                 helpers.waitForUrl(/\/document\/add$/);
 
                 helpers.waitUntilDisplayed(by.css('button[type=submit]')).click().then(function () {
@@ -192,10 +192,21 @@ describe('Add Document', function () {
 
     describe('Does not have permission', function () {
 
-        it.skip('Cannot create a new document', function () {
-
+        before(function () {
+            helpers.userLogin();
         });
 
+        it('Cannot create a new document', function () {
+            helpers.waitForUrl(/\/document\/list$/);
+            helpers.waitUntilDisplayed(by.css('button'), 1).click().then(function () {
+                expect(element.all(by.css('.alert')).count()).to.eventually.equal(1);
+                element.all(by.css('.alert button')).get(0).click();
+            });
+        });
+
+        after(function () {
+            browser.get('/logout');
+        });
     });
 
 });

@@ -12,7 +12,7 @@ describe('Restore Document', function () {
 
         before(function () {
             helpers.adminUserLogin();
-            helpers.waitUntilDisplayed(by.css('button'), 3).click();
+            helpers.waitUntilDisplayed(by.css('button'), 4).click();
             helpers.waitForUrl(/\/document\/restore/);
         });
 
@@ -41,6 +41,28 @@ describe('Restore Document', function () {
                     expect(elements.count()).to.eventually.equal(1);
                 });
             });
+        });
+
+        after(function () {
+            browser.get('/logout');
+        });
+    });
+
+    describe('Does not have permission', function () {
+
+        before(function () {
+            helpers.userLogin();
+        });
+
+        it('Unable to restore deleted document', function () {
+            helpers.waitForUrl(/\/document\/list$/);
+
+            // click on delete button
+            helpers.waitUntilDisplayed(by.css('button'), 4).click().then(function () {
+                expect(element.all(by.css('.alert')).count()).to.eventually.equal(1);
+                element.all(by.css('.alert button')).get(0).click();
+            });
+
         });
 
         after(function () {
