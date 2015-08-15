@@ -60,7 +60,7 @@ describe('Users', function () {
 
     it('Create New User', function () {
         expect(browser.getLocationAbsUrl()).to.eventually.match(/\/user\/list/);
-        element.all(by.css('button')).get(0).click();
+        element.all(by.css('button')).get(1).click();
         expect(browser.getLocationAbsUrl()).to.eventually.match(/\/user\/add/);
 
         var email = element(by.model('record.email'));
