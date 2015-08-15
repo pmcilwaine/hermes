@@ -2,7 +2,7 @@
 
     var dependencies, documentService;
 
-    documentService = function ($q, DocumentResource, RestoreDocumentResource) {
+    documentService = function ($q, DocumentResource, RestoreDocumentResource, RestoreDocumentVersionResource) {
         var document = {}, new_document = {};
 
         document.getNextPage = function () {
@@ -97,6 +97,23 @@
             });
         };
 
+        document.listVersions = function(id) {
+            return RestoreDocumentVersionResource.get({id: id}).$promise.then(function (documents) {
+                return documents;
+            });
+        };
+
+        document.restoreVersion = function (record) {
+            var deferred = $q.defer();
+            RestoreDocumentVersionResource.put(record, function ok (response) {
+                deferred.resolve(response);
+            }, function fail (response) {
+                deferred.reject(response);
+            });
+
+            return deferred.promise;
+        };
+
         return document;
     };
 
@@ -104,6 +121,7 @@
         '$q',
         'DocumentResource',
         'RestoreDocumentResource',
+        'RestoreDocumentVersionResource',
         documentService
     ];
 

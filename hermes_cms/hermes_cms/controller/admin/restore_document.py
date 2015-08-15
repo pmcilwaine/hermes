@@ -10,6 +10,7 @@ from hermes_cms.db import Document as DocumentDB, DocumentNotFound
 
 class RestoreDocument(MethodView):
 
+    # pylint: disable=no-self-use
     @requires_permission('restore_deleted_document')
     def get(self):
         offset = int(request.args.get('offset', 0))
@@ -38,6 +39,7 @@ class RestoreDocument(MethodView):
             }
         }), status=200, content_type='application/json')
 
+    # pylint: disable=no-self-use
     @requires_permission('restore_deleted_document')
     def put(self, document_id=None):
         try:

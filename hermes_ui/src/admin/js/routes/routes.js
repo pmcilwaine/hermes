@@ -109,6 +109,17 @@
                 controller: 'MigrationUploadController'
             });
 
+            $stateProvider.state('document.versions', {
+                url: '/version/{id:int}',
+                controller: 'RestoreDocumentVersionController',
+                templateUrl: 'templates/views/document-restore-version-list.html',
+                resolve: {
+                    DocumentList: ['Documents', '$stateParams', function (Documents, stateParams) {
+                        return Documents.listVersions(stateParams.id);
+                    }]
+                }
+            });
+
             $stateProvider.state('users', {
                 abstract: true,
                 url: '/user',

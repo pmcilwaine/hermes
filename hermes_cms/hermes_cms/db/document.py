@@ -134,12 +134,25 @@ class Document(SQLObject):
         kwargs['staticTables'] = [Document.sqlmeta.table]
         kwargs['items'] = fields
         query = connection.sqlrepr(Select(**kwargs))
-        num_columns = len(fields)
 
         items = []
         for result in connection.queryAll(query):
-            _id, select_results = result[0], result[1:num_columns]
+            _id, select_results = result[0], result[1:]
             entry = Document.get(_id, selectResults=select_results)
             items.append(entry)
+
+        return items
+
+    @staticmethod
+    def query_as_dict(fields, **kwargs):
+        connection = Document._connection
+        kwargs['staticTables'] = [Document.sqlmeta.table]
+        kwargs['items'] = fields
+        query = connection.sqlrepr(Select(**kwargs))
+        cols = [field.fieldName for field in fields]
+
+        items = []
+        for result in connection.queryAll(query):
+            items.append(dict(zip(cols, result)))
 
         return items

@@ -52,6 +52,12 @@
             return resource('/admin/restore_document/:id', {id: '@uuid'}, {
                 put: {method: 'PUT'}
             });
+        }])
+        .factory('RestoreDocumentVersionResource', ['$resource', function (resource) {
+            return resource('/admin/restore_version/:id', {id: '@id'}, {
+                query: {method: 'GET'},
+                put: {method: 'PUT', params: {id: '@uuid'}}
+            });
         }]);
 
 })();
