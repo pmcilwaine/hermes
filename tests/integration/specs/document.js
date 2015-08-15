@@ -29,7 +29,7 @@ describe('Documents', function () {
     });
 
     it('Create Page Type Document', function () {
-        element.all(by.css('button')).get(0).click();
+        element.all(by.css('button')).get(1).click();
 
         var name = element(by.model('record.document.name'));
         var url = element(by.model('record.document.url'));
@@ -45,13 +45,13 @@ describe('Documents', function () {
         element.all(by.css('button')).get(0).click();
 
         var content = element(by.model('record.page.content'));
-        content.sendKeys('<p>Content for page</p>');
         element.all(by.css('button')).get(0).click();
+
         expect(element.all(by.css('table tbody tr')).count()).to.eventually.equal(2);
     });
 
     it('Create File Type Document', function () {
-        element.all(by.css('button')).get(0).click();
+        element.all(by.css('button')).get(1).click();
 
         var name = element(by.model('record.document.name'));
         var url = element(by.model('record.document.url'));
@@ -83,7 +83,8 @@ describe('Documents', function () {
     });
 
     it('Validation message is displayed for blank form', function () {
-        element.all(by.css('button')).get(0).click().then(function () {
+
+        element.all(by.css('button')).get(1).click().then(function () {
             element.all(by.css('button')).get(0).click().then(function () {
                 element.all(by.css('button')).get(0).click().then(function () {
 
