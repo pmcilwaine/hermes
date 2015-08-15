@@ -45,7 +45,8 @@ class MigrationDownload(MethodView):
                 (not data.get('document') and data.get('all_documents'))):
             return Response(status=400)
 
-        name = 'Migration Download {0}'.format(arrow.now().format('YYYY-MM-DD HH:mm'))
+        name = data.get('name', 'Migration Download {0}'.format(arrow.now().format('YYYY-MM-DD HH:mm')))
+
         job = Job.save({
             'name': name,
             'status': 'pending',
@@ -70,5 +71,4 @@ class MigrationDownload(MethodView):
                 'title': 'Job Added',
                 'message': 'Migration job has been added. Download will be ready shortly.',
                 'type': 'success'
-            }}
-        ), content_type='application/json', status=200)
+            }}), content_type='application/json', status=200)

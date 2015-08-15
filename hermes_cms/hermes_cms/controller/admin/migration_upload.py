@@ -23,7 +23,8 @@ class MigrationUpload(MethodView):
 
         data['user_id'] = session['auth_user'].get('id', -1)
 
-        name = 'Migration Upload {0}'.format(arrow.now().format('YYYY-MM-DD HH:mm'))
+        name = data.get('name', 'Migration Upload {0}'.format(arrow.now().format('YYYY-MM-DD HH:mm')))
+
         job = Job.save({
             'name': name,
             'status': 'pending',
@@ -49,5 +50,4 @@ class MigrationUpload(MethodView):
                 'title': 'Job Added',
                 'message': 'Migration job has been added. Upload will commence shortly.',
                 'type': 'success'
-            }}
-        ), content_type='application/json', status=200)
+            }}), content_type='application/json', status=200)
