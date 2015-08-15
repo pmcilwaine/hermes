@@ -42,6 +42,7 @@ class RestoreDocumentVersion(MethodView):
 
         document_type = document_data['document']['type']
         helper_class = Registry().get('document').get(document_type, {}).get('admin_helper', {})
+        print helper_class
         if helper_class:
             common.load_class(
                 helper_class.get('document_module'),
