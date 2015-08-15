@@ -12,6 +12,7 @@ from hermes_cms.core.auth import requires_permission
 
 class RestoreDocumentVersion(MethodView):
 
+    # pylint: disable=no-self-use
     @requires_permission('restore_version_document')
     def get(self, document_id=None):
         documents = []
@@ -26,6 +27,7 @@ class RestoreDocumentVersion(MethodView):
         return Response(response=json.dumps({'documents': documents}),
                         content_type='application/json', status=200)
 
+    # pylint: disable=no-self-use
     @requires_permission('restore_version_document')
     def put(self, document_id=None):
         document = DocumentDB.selectBy(uuid=document_id).getOne(None)

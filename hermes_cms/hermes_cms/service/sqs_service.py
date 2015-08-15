@@ -41,5 +41,6 @@ class SQSService(Service):
             try:
                 self.job_class.do_work(message)
                 self._sqs_conn.delete_message(self.queue, message)
+            # pylint: disable=broad-except
             except Exception as e:
                 log.exception(e)

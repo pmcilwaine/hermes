@@ -6,7 +6,7 @@ import uuid
 import json
 import arrow
 from sqlobject import SQLObject
-from sqlobject.sqlbuilder import Select, Update, SQLObjectState
+from sqlobject.sqlbuilder import Select, Update
 from hermes_cms.core.registry import Registry
 from sqlobject.col import StringCol, DateTimeCol, BoolCol, IntCol
 from hermes_aws.s3 import S3
