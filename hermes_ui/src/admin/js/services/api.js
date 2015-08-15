@@ -6,6 +6,7 @@
                 get: {method: 'GET'},
                 post: {method: 'POST'},
                 put: {method: 'PUT'},
+                options: {method: 'OPTIONS'},
                 delete: {method: 'DELETE'}
             });
         }])
@@ -13,6 +14,7 @@
             return resource('/admin/document/:id', {id: '@uuid'}, {
                 get: {method: 'GET'},
                 post: {method: 'POST'},
+                options: {method: 'OPTIONS'},
                 put: {method: 'PUT', params: {id: '@id'}},
                 delete: {method: 'DELETE'},
                 dryRun: {method: 'POST', params: {validate: true}}

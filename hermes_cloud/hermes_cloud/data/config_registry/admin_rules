@@ -28,7 +28,7 @@
             "urls": [
                 {
                     "url": "/user",
-                    "methods": ["GET", "POST"]
+                    "methods": ["GET", "POST", "OPTIONS"]
                 },
                 {
                     "url": "/user/<int:user_id>",
@@ -43,7 +43,7 @@
             "urls": [
                 {
                     "url": "/document",
-                    "methods": ["GET", "POST"]
+                    "methods": ["GET", "POST", "OPTIONS"]
                 },
                 {
                     "url": "/document/<document_id>",

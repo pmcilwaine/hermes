@@ -103,6 +103,8 @@ class Document(SQLObject):
         update = Update(Document.sqlmeta.table, values={'archived': True}, where=Document.q.id == record.id)
         Document._connection.query(Document._connection.sqlrepr(update))
 
+        return record
+
     @staticmethod
     def restore_document(doc_uuid):
         record = Document.selectBy(uuid=doc_uuid).getOne(None)
@@ -113,6 +115,8 @@ class Document(SQLObject):
 
         update = Update(Document.sqlmeta.table, values={'archived': False}, where=Document.q.id == record.id)
         Document._connection.query(Document._connection.sqlrepr(update))
+
+        return record
 
     @staticmethod
     def all():

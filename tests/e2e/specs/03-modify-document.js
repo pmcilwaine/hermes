@@ -29,7 +29,7 @@ describe('Modify Document', function () {
                 helpers.waitForUrl(/\/page\//);
 
                 var name = helpers.waitUntilDisplayed(by.model('record.document.name')),
-                    name_str = browser.params.add_page.name + ' Updated'.trim();
+                    name_str = browser.params.add_page.name + 'Updated'.trim();
 
                 name.clear();
                 name.sendKeys(name_str);
@@ -65,10 +65,30 @@ describe('Modify Document', function () {
 
     describe('Does not have permission', function () {
 
-        it.skip('Cannot modify document', function () {
-
+        before(function () {
+            helpers.userLogin();
         });
 
+        it('Cannot modify document', function () {
+            helpers.waitForUrl(/\/document\/list$/);
+            var elements = element.all(by.css('tbody tr')).filter(function (elem) {
+                return elem.all(by.css('td')).get(1).getText().then(function (text) {
+                    return text.trim() === browser.params.add_page.name + 'Updated';
+                });
+            });
+
+            // click on edit button
+            expect(elements.count()).to.eventually.be.equal(1);
+
+            elements.get(0).all(by.css('button')).get(1).click().then(function () {
+                expect(element.all(by.css('.alert')).count()).to.eventually.equal(1);
+                element.all(by.css('.alert button')).get(0).click();
+            });
+        });
+
+        after(function () {
+            browser.get('/logout');
+        });
     });
 
 });

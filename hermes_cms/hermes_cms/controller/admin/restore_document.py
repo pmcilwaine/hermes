@@ -43,7 +43,19 @@ class RestoreDocument(MethodView):
     @requires_permission('restore_deleted_document')
     def put(self, document_id=None):
         try:
-            DocumentDB.restore_document(document_id)
-            return Response(status=200)
+            document = DocumentDB.restore_document(document_id)
+            return Response(response=json.dumps({
+                'notify_msg': {
+                    'title': 'Restored',
+                    'message': 'Document {0} has been restored'.format(str(document.name).strip()),
+                    'type': 'success'
+                }}
+            ), content_type='application/json', status=200)
         except DocumentNotFound:
-            return Response(status=404)
+            return Response(response=json.dumps({
+                'notify_msg': {
+                    'title': 'Cannot be found',
+                    'message': 'Cannot find document to restore.',
+                    'type': 'success'
+                }}
+            ), content_type='application/json', status=404)

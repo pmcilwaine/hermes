@@ -2,13 +2,13 @@
 
     var dependencies, userController;
 
-    userController = function (scope, $state, userList, RestoreUserResource) {
+    userController = function (scope, userList, RestoreUserResource) {
         scope.users = userList;
 
         scope.restoreItem = function (index) {
             var record = scope.users[index];
+            scope.users.splice(index, 1);
             RestoreUserResource.put(record, function ok () {
-                $state.go('users.list');
             }, function fail () {
             });
         };
@@ -16,7 +16,6 @@
 
     dependencies = [
         '$scope',
-        '$state',
         'UserList',
         'RestoreUserResource',
         userController

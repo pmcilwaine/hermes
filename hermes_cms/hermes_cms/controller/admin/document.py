@@ -7,7 +7,7 @@ from hermes_cms.helpers import common
 from sqlobject.sqlbuilder import DESC
 from hermes_cms.core.registry import Registry
 from hermes_cms.db import Document as DocumentDB
-from hermes_cms.core.auth import requires_permission
+from hermes_cms.core.auth import Auth, requires_permission
 from hermes_cms.validators import Document as DocumentValidation
 
 
@@ -39,12 +39,42 @@ class Document(MethodView):
                 document
             ).do_work()
 
-        return Response(response=json.dumps({}), status=200, content_type='application/json')
+        return Response(response=json.dumps({'notify_msg': {
+            'title': 'Document Modified' if document_data.get('id') else 'Document Added',
+            'message': '{0} has been {1}'.format(
+                str(document.name).strip(),
+                'modified' if document_data.get('id') else 'added'
+            ),
+            'type': 'success'
+        }}), status=200, content_type='application/json')
 
     # pylint: disable=no-self-use,unused-argument
     @requires_permission('modify_document')
     def put(self, document_id=None):
         return self.post()
+
+    def options(self):
+        user = session.get('auth_user', {})
+        option = {
+            'POST': Auth.has_permission(user, 'add_document'),
+            'PUT': Auth.has_permission(user, 'add_document,modify_document'),
+            'DELETE': Auth.has_permission(user, 'delete_document')
+        }
+
+        if request.args.get('method'):
+            if not option.get(request.args.get('method')):
+                option['notify_msg'] = {
+                    'title': 'No Permission',
+                    'message': 'You do not have permission to perform that action',
+                    'type': 'error'
+                }
+
+            return Response(
+                response=json.dumps(option),
+                status=403 if not option.get(request.args.get('method')) else 200,
+                content_type='application/json')
+
+        return Response(response=json.dumps(option), content_type='application/json', status=200)
 
     # pylint: disable=no-self-use,unused-argument
     def get(self, document_id=None):
@@ -98,4 +128,14 @@ class Document(MethodView):
     @requires_permission('delete_document')
     def delete(self, document_id):
         DocumentDB.delete_document(doc_uuid=document_id)
-        return Response(status=200)
+
+        document = DocumentDB.selectBy(uuid=document_id).getOne(None)
+        notification = {
+            'title': 'Deleted',
+            'message': '{0} has been deleted'.format(document.name.strip()),
+            'type': 'success'
+        }
+
+        return Response(response=json.dumps({'notify_msg': notification}),
+                        content_type='application/json',
+                        status=200)

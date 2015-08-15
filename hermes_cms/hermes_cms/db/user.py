@@ -23,6 +23,15 @@ class User(SQLObject):
     archived = BoolCol(default=False)
     permissions = StringCol(default='')
 
+    def _get_first_name(self):
+        return str(self._SO_get_first_name()).strip()
+
+    def _get_last_name(self):
+        return str(self._SO_get_last_name()).strip()
+
+    def _get_email(self):
+        return str(self._SO_get_email()).strip()
+
     def _set_password(self, value):
         # pylint: disable=no-member
         self._SO_set_password(User.hash_password(value))
