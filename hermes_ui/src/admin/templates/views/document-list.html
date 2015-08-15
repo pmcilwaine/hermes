@@ -31,7 +31,7 @@
                     <td>{{ document.name }}</td>
                     <td>{{ document.url }}</td>
                     <td>
-                        <button class="btn btn-info btn-sm">Versions</button>
+                        <button ui-sref="document.versions({id: document.id})" class="btn btn-info btn-sm">Versions</button>
                         <button ui-sref="document.{{ document.type | lowercase }}({id: document.uuid})" class="btn btn-warning btn-sm">Edit</button>
                         <button ng-click="deleteItem($index);" class="btn btn-danger btn-sm">Delete</button>
                     </td>

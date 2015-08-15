@@ -80,6 +80,17 @@
                     "methods": ["PUT"]
                 }
             ]
+        },
+        {
+            "name": "restore_document_version",
+            "module_name": "hermes_cms.controller.admin.restore_document_version",
+            "class_name": "RestoreDocumentVersion",
+            "urls": [
+                {
+                    "url": "/restore_version/<document_id>",
+                    "methods": ["GET", "PUT"]
+                }
+            ]
         }
     ]
 }
