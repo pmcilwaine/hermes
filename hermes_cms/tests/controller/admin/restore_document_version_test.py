@@ -23,7 +23,8 @@ def test_restore_invalid_document_404(document_db, permission_mock, session_mock
 @patch('hermes_cms.controller.admin.restore_document_version.DocumentDB')
 def test_restore_valid_doc_version(document_db, session_document_mock, permission_mock, session_mock):
     document_db.selectBy.return_value.getOne.return_value = MagicMock(**{
-        'uuid': 'some-uuid'
+        'uuid': 'some-uuid',
+        'id': 1
     })
     session_document_mock.__getitem__.return_value.get.return_value = 1
     permission_mock.return_value = True
