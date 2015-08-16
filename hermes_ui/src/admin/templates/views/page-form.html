@@ -42,6 +42,18 @@
                 <p ng-show="pageForm.content.$invalid" class="help-block">{{ errors.content }}</p>
             </div>
 
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="record.document.published" value="1"> Publish Document
+                </label>
+            </div>
+
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="record.document.show_in_menu" value="1"> Show in Navigation
+                </label>
+            </div>
+
             <button type="submit" class="btn btn-primary" accesskey="s">Save</button>
             <button type="button" ui-sref="document.list" class="btn btn-default">Cancel</button>
 
