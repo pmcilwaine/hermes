@@ -12,7 +12,8 @@
         'hermes.templates',
         'ui.router',
         'ui.bootstrap',
-        'ngFileUpload'
+        'ngFileUpload',
+        'ui.tinymce'
     ];
 
     angular.module('hermes.app', dependencies);

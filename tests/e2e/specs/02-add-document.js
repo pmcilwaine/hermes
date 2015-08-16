@@ -42,20 +42,35 @@ describe('Add Document', function () {
                 }
 
                 helpers.waitUntilDisplayed(by.css('button[type=submit]')).click().then(function () {
+                    var iframe;
                     helpers.waitForUrl(/\/document\/page\/$/);
 
-                    helpers.waitUntilDisplayed(by.model('record.page.content')).sendKeys(browser.params.add_page.content);
+                    helpers.waitUntilDisplayed(by.css('iframe'));
+                    iframe = browser.driver.findElement(by.css('iframe'));
 
-                    helpers.waitUntilDisplayed(by.css('button[type=submit]')).click().then(function () {
-                        helpers.waitForUrl(/\/document\/list$/);
+                    browser.driver.switchTo().frame(iframe).then(function () {
 
-                        var elements = element.all(by.css('tbody tr')).filter(function (elem) {
-                            return elem.all(by.css('td')).get(1).getText().then(function (text) {
-                                return text === browser.params.add_page.name;
+                        var body = element(by.id('tinymce'));
+                        body.clear();
+                        body.click();
+                        body.sendKeys(browser.params.add_page.content);
+
+                        browser.driver.switchTo().defaultContent().then(function () {
+
+                            helpers.waitUntilDisplayed(by.css('button[type=submit]')).click().then(function () {
+                                helpers.waitForUrl(/\/document\/list$/);
+
+                                var elements = element.all(by.css('tbody tr')).filter(function (elem) {
+                                    return elem.all(by.css('td')).get(1).getText().then(function (text) {
+                                        return text === browser.params.add_page.name;
+                                    });
+                                });
+
+                                expect(elements.count()).to.eventually.equal(1);
                             });
+
                         });
 
-                        expect(elements.count()).to.eventually.equal(1);
                     });
 
                 });
@@ -96,8 +111,50 @@ describe('Add Document', function () {
                 }
 
                 helpers.waitUntilDisplayed(by.css('button[type=submit]')).click().then(function () {
+                    var iframe;
                     helpers.waitForUrl(/\/document\/page\/$/);
-                    helpers.waitUntilDisplayed(by.model('record.page.content')).sendKeys(browser.params.add_page_parent.content);
+
+                    helpers.waitUntilDisplayed(by.css('iframe'));
+                    iframe = browser.driver.findElement(by.css('iframe'));
+
+                    browser.driver.switchTo().frame(iframe).then(function () {
+
+                        var body = element(by.id('tinymce'));
+                        body.clear();
+                        body.click();
+                        body.sendKeys(browser.params.add_page_parent.content);
+
+                        browser.driver.switchTo().defaultContent().then(function () {
+
+                            helpers.waitUntilDisplayed(by.css('button[type=submit]')).click().then(function () {
+                                helpers.waitForUrl(/\/document\/list$/);
+
+                                var elements = element.all(by.css('tbody tr')).filter(function (elem) {
+                                    return elem.all(by.css('td')).get(1).getText().then(function (text) {
+                                        return text === browser.params.add_page.name;
+                                    });
+                                });
+
+                                expect(elements.count()).to.eventually.equal(1);
+                            });
+
+                        });
+
+                    });
+
+
+                    /*helpers.waitForUrl(/\/document\/page\/$/);
+
+                    var iframe = browser.driver.findElement(by.id('ui-tinymce-0_ifr'));
+                    browser.pause();
+                    browser.driver.switchTo().frame(iframe);
+
+                    var body = element(by.id('tinymce'));
+                    body.clear();
+                    body.click();
+                    body.sendKeys(browser.params.add_page_parent.content);
+
+                    browser.driver.switchTo().defaultContent();
 
                     helpers.waitUntilDisplayed(by.css('button[type=submit]')).click().then(function () {
                         helpers.waitForUrl(/\/document\/list$/);
@@ -109,7 +166,7 @@ describe('Add Document', function () {
                         });
 
                         expect(elements.count()).to.eventually.equal(1);
-                    });
+                    });*/
 
                 });
 
