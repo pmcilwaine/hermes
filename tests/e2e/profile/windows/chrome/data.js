@@ -25,5 +25,8 @@ exports.data = {
         show_in_menu: true,
         template: 'Standard',
         content: '<p>Hello World</p>'
+    },
+    migration_download: {
+        name: 'Chrome Windows Download Migration'
     }
 };

@@ -54,4 +54,9 @@ helpers.clickUserMenu = function () {
     helpers.waitForUrl(/\/user\/list$/);
 };
 
+helpers.clickJobMenu = function () {
+    helpers.waitUntilDisplayed(by.css('.navbar li a'), 2).click();
+    helpers.waitForUrl(/\/job$/);
+};
+
 module.exports = helpers;

@@ -17,7 +17,8 @@
         scope.downloadMigration = function () {
             var modalInstance = modal.open({
                 controller: 'JobModalFormController',
-                templateUrl: 'templates/views/job-name-form.html'
+                templateUrl: 'templates/views/job-name-form.html',
+                backdropClass: 'modal-backdrop h-full'
             });
 
             modalInstance.result.then(function (job_name) {
