@@ -83,8 +83,7 @@ class User(MethodView):
                         'modified' if user_id else 'added'
                     ),
                     'type': 'success'
-                }
-            }), status=200, content_type='application/json')
+                }}), status=200, content_type='application/json')
 
         except (HermesRequestException, HermesNotSavedException) as e:
             return Response(response=e.as_json(), status=400, content_type='application/json')
@@ -132,8 +131,7 @@ class User(MethodView):
                     'title': 'User not Found',
                     'message': 'No user can be found to be deleted',
                     'type': 'success'
-                }}
-            ), content_type='application/json', status=404)
+                }}), content_type='application/json', status=404)
 
         user.set(archived=True)
 
@@ -142,5 +140,4 @@ class User(MethodView):
                 'title': 'User Deleted',
                 'message': 'User {0} has been deleted'.format(str(user.email).strip()),
                 'type': 'success'
-            }}
-        ), content_type='application/json', status=200)
+            }}), content_type='application/json', status=200)

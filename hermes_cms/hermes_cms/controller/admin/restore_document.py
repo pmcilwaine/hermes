@@ -49,13 +49,11 @@ class RestoreDocument(MethodView):
                     'title': 'Restored',
                     'message': 'Document {0} has been restored'.format(str(document.name).strip()),
                     'type': 'success'
-                }}
-            ), content_type='application/json', status=200)
+                }}), content_type='application/json', status=200)
         except DocumentNotFound:
             return Response(response=json.dumps({
                 'notify_msg': {
                     'title': 'Cannot be found',
                     'message': 'Cannot find document to restore.',
                     'type': 'success'
-                }}
-            ), content_type='application/json', status=404)
+                }}), content_type='application/json', status=404)

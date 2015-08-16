@@ -33,8 +33,7 @@ class RestoreUser(MethodView):
                     'title': 'Not Found',
                     'message': 'Could not find user to restore.',
                     'type': 'success'
-                }}
-            ), content_type='application/json', status=404)
+                }}), content_type='application/json', status=404)
 
         user.set(archived=False)
 
@@ -43,5 +42,4 @@ class RestoreUser(MethodView):
                 'title': 'User Restored',
                 'message': 'User {0} has been restored'.format(str(user.email).strip()),
                 'type': 'success'
-            }}
-        ), content_type='application/json', status=200)
+            }}), content_type='application/json', status=200)

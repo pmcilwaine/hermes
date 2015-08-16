@@ -2,7 +2,7 @@
 
     var dependencies, documentController;
 
-    documentController = function (scope, DocumentList, Documents, MigrationDownload) {
+    documentController = function (scope, modal, DocumentList, Documents, MigrationDownload) {
         scope.documents = DocumentList.documents;
         scope.selectedItems = {};
 
@@ -15,20 +15,35 @@
         };
 
         scope.downloadMigration = function () {
-            var payload = {"document": [], "all_documents": scope.allItemsSelected};
-            _.forEach(scope.selectedItems, function (bool, uuid) {
-                payload.document.push({parent_id: uuid});
+            var modalInstance = modal.open({
+                controller: 'JobModalFormController',
+                templateUrl: 'templates/views/job-name-form.html',
+                backdropClass: 'modal-backdrop h-full'
             });
 
-            MigrationDownload.newJob(payload, function ok() {
-                console.log('posted data');
+            modalInstance.result.then(function (job_name) {
+                var payload = {"document": [], "all_documents": scope.allItemsSelected};
+                if (job_name) {
+                    payload.name = job_name;
+                }
 
+                _.forEach(scope.selectedItems, function (bool, uuid) {
+                    payload.document.push({parent_id: uuid});
+                });
+
+                MigrationDownload.newJob(payload, function ok() {
+                    scope.selectItems = {};
+                    scope.hasItemSelected = false;
+                    scope.allItemsSelected = false;
+                }, function fail () {
+                    console.log('didnt post data');
+                });
+            }, function () {
                 scope.selectItems = {};
                 scope.hasItemSelected = false;
                 scope.allItemsSelected = false;
-            }, function fail () {
-                console.log('didnt post data');
             });
+
         };
 
         scope.deleteItem = function (index) {
@@ -44,6 +59,7 @@
 
     dependencies = [
         '$scope',
+        '$modal',
         'DocumentList',
         'Documents',
         'MigrationDownloadResource',
