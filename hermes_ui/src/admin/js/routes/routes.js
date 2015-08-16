@@ -100,7 +100,10 @@
                     document: ['Documents', 'DocumentResource', '$stateParams',
                         function (Documents) {
                             return Documents.getNewDocument();
-                        }]
+                        }],
+                    document_list: ['Documents', function (Documents) {
+                        return Documents.getAllWithRepeat(String.fromCharCode(160));
+                    }]
                 }
             });
 
