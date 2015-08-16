@@ -8,6 +8,7 @@
         }
     },
     "Resources": {
+        <%include file="instance-iamrole.template"/>
         <% cidr_jumpbox = {'AZ1': '10.0.253.0/28', 'AZ2': '10.0.253.16/28'} %>
         <% cidr_asg = {'AZ1': '10.0.40.0/24', 'AZ2': '10.0.50.0/24'} %>
         "LogServerSG": {
@@ -62,6 +63,7 @@
                 ],
                 "ImageId" : {"Ref": "AMI"},
                 "InstanceType" : "t2.micro",
+                "IamInstanceProfile" : { "Ref" : "EC2IAMInstProf" },
                 "KeyName": "${ssh_key}",
                 "SecurityGroupIds" : [ {"Ref": "LogServerSG"} ],
                 "PrivateIpAddress": "10.0.100.90",
@@ -77,6 +79,24 @@
                     "echo 'ELB_NAME=${stack_out['cms']['CMSLoadBalancerName']}' > /etc/sysconfig/load_balancer"
                 ] ] } }
             }
+        },
+        "LogIAM": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "logIAMPolicy",
+                "PolicyDocument": {
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "elb:DescribeLoadBalancers"
+                            ],
+                            "Resource": "*"
+                        }
+                    ]
+                }
+            },
+            "Roles": [{"Ref": "EC2IAMRole"}]
         }
     },
     "Outputs": {

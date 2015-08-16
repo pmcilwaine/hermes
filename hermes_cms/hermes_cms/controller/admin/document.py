@@ -78,6 +78,8 @@ class Document(MethodView):
 
     # pylint: disable=no-self-use,unused-argument
     def get(self, document_id=None):
+
+        @requires_permission('list_document')
         def document_list():
 
             offset = int(request.args.get('offset', 0))

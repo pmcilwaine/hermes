@@ -223,7 +223,8 @@ class HermesCreateCloud(object):
             if name == "cms":
                 self.params[name].extend([
                     ('MinInstances', self.args.min),
-                    ('MinInstancesInService', 1)
+                    ('MinInstancesInService', 1),
+                    ('MaxInstances', self.args.max)
                 ])
 
         self.stack_mgr.add_stacks([
