@@ -45,7 +45,7 @@ describe('Documents', function () {
         element.all(by.css('button')).get(0).click();
 
         var content = element(by.model('record.page.content'));
-        element.all(by.css('button')).get(0).click();
+        element.all(by.css('button[type=submit]')).get(0).click();
 
         expect(element.all(by.css('table tbody tr')).count()).to.eventually.equal(2);
     });
@@ -68,17 +68,7 @@ describe('Documents', function () {
         var fileToUpload = '../../data/test_cases.dot',
             absolutePath = path.resolve(__dirname, fileToUpload);
 
-        //console.log(browser.driver.remote)
-
-        //var remote = require('protractor/node_modules/selenium-webdriver/remote');
-        //browser.setFileDetector(new remote.FileDetector);
-
-        //browser.driver.setFileDetector(new browser.driver.remote.FileDetector);
-        //file.sendKeys('https://s3-ap-southeast-2.amazonaws.com/tests-paulmcilwaine-com/systemwide_req_spec.dot');
         element.all(by.css('button')).get(0).click();
-        /*browser.manage().logs().get('browser').then(function(browserLog) {
-            console.log('\n log: ' + require('util').inspect(browserLog));
-        });*/
         expect(element.all(by.css('table tbody tr')).count()).to.eventually.equal(3);
     });
 

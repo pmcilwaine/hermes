@@ -23,6 +23,7 @@ buildPaths.patterns = {
 
 buildPaths.hermes = {
     jsAdmin: 'dist/admin/js',
+    jsTinymce: 'dist/admin/tinymce',
     jsPublic: 'dist/public/js',
     templates: 'dist/admin/templates'
 };
@@ -63,6 +64,22 @@ gulp.task('jsvendor_admin', function() {
     return gulp.src(mainBowerFiles({ filter: buildPaths.patterns.js }))
         .pipe($.concat('lib.js', { newLine: ';\n' }))
         .pipe(gulp.dest(buildPaths.hermes.jsAdmin));
+});
+
+gulp.task('jstinymce', function () {
+    gulp.src([
+        'bower_components/tinymce-dist/themes/modern/theme.min.js'
+    ])
+    .pipe(gulp.dest(buildPaths.hermes.jsTinymce + '/themes/modern'));
+
+
+    gulp.src([
+        'bower_components/tinymce-dist/skins/**/*'
+    ])
+    .pipe(gulp.dest(buildPaths.hermes.jsTinymce + '/skins'));
+
+    return gulp.src(['bower_components/tinymce-dist/plugins/**/*.min.js'])
+        .pipe(gulp.dest(buildPaths.hermes.jsTinymce + '/plugins'));
 });
 
 gulp.task('jsvendor_public', function() {
@@ -155,9 +172,9 @@ gulp.task('watch', function () {
 });
 
 gulp.task('default', ['clean'], function (cb) {
-   runSequence('bower', ['styles', 'jshint', 'views', 'jscopy', 'watch'], cb);
+   runSequence('bower', ['styles', 'jshint', 'views', 'jscopy', 'jstinymce', 'watch'], cb);
 });
 
 gulp.task('build:prod', ['clean'], function (cb) {
-    runSequence('bower', ['styles', 'jshint', 'views', 'jscopy'], cb);
+    runSequence('bower', ['styles', 'jshint', 'views', 'jscopy', 'jstinymce'], cb);
 });
