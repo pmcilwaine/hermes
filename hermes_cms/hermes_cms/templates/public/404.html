@@ -38,18 +38,11 @@
         <div class="col-lg-4">
 
             <ul class="nav nav-pills nav-stacked nav-list">
-                <li class="active">
-                    <a href="#">Page 1</a>
-                    <ul class="nav nav-pills nav-stacked nav-list">
-                        <li><a href="">Child Page</a></li>
-                        <li><a href="">Child Page</a></li>
-                        <li><a href="">Child Page</a></li>
-                        <li><a href="">Child Page</a></li>
-                        <li><a href="">Child Page</a></li>
-                    </ul>
+                % for item in nav({'document': document}, depth='children'):
+                <li${' class="active"' if item['current'] else ''}>
+                <a href="${item['url']}">${item['menutitle']}</a>
                 </li>
-                <li><a href="">Page 2</a></li>
-                <li><a href="">Page 3</a></li>
+                % endfor
             </ul>
 
         </div>
