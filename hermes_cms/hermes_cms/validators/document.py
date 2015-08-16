@@ -1,8 +1,9 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
-from wtforms import StringField, validators, IntegerField, ValidationError
+from sqlobject.sqlbuilder import IN
 from hermes_cms.validators.customform import CustomForm
 from hermes_cms.db.document import Document as DocumentDB
+from wtforms import StringField, validators, IntegerField, ValidationError
 
 
 __all__ = ['Document']
@@ -55,4 +56,16 @@ class DocumentForm(CustomForm):
     @staticmethod
     def validate_url(form, field):
         if DocumentDB.selectBy(url=field.data).filter(DocumentDB.q.id != form.id.data).count():
+            raise ValidationError('URL is already in use')
+
+        # check if multipage is a parent
+        urls = [field.data]
+        tmp_str = str(field.data)
+        while tmp_str != '':
+            tmp_str = '/'.join(tmp_str.split('/')[0:-1])
+            if tmp_str:
+                urls.append(tmp_str)
+
+        query = (IN(DocumentDB.q.url, urls) & (DocumentDB.q.id != form.id.data) & (DocumentDB.q.type == 'MultiPage'))
+        if DocumentDB.select(query).count():
             raise ValidationError('URL is already in use')

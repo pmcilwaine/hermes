@@ -30,6 +30,12 @@ class Document(SQLObject):
     path = StringCol()  # Uses the gid as parentGID/currentGID etc.
     user_id = IntCol()
 
+    def _get_url(self):
+        return str(self._SO_get_url()).strip()
+
+    def _get_name(self):
+        return str(self._SO_get_name()).strip()
+
     def _get_type(self):
         return str(self._SO_get_type()).strip()
 
