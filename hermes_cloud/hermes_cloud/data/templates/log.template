@@ -51,6 +51,13 @@
                 "VpcId" : "${stack_out['vpc']['VPCID']}"
             }
         },
+        "SubNetLoggerAssocAZ1" : {
+            "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties" : {
+                "SubnetId" : { "Ref" : "SubNetLoggerAZ1" },
+                "RouteTableId" : "${stack_out['vpc']['PrivateRouteTableAZ1']}"
+            }
+        },
         "LogServer": {
             "Type" : "AWS::EC2::Instance",
             "Properties" : {
@@ -89,7 +96,7 @@
                         {
                             "Effect": "Allow",
                             "Action": [
-                                "elb:DescribeLoadBalancers"
+                                "elasticloadbalancing:DescribeLoadBalancers"
                             ],
                             "Resource": "*"
                         }
