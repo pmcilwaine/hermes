@@ -94,9 +94,9 @@
                             "Resource": "*"
                         }
                     ]
-                }
-            },
-            "Roles": [{"Ref": "EC2IAMRole"}]
+                },
+                "Roles": [{"Ref": "EC2IAMRole"}]
+            }
         }
     },
     "Outputs": {
