@@ -231,16 +231,19 @@ def test_user_update(config, db_connect_mock, validation_mock, user_mock, permis
     assert response.status_code == 200
 
 
+@patch('hermes_cms.core.auth.session')
+@patch.object(Auth, 'has_permission')
 @patch('hermes_cms.views.admin.Registry')
 @patch('hermes_cms.controller.admin.user.UserDB')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_user_get_list(config, db_connect_mock, user_mock, _mock, blueprint_config):
+def test_user_get_list(config, db_connect_mock, user_mock, _mock, permission_mock, session_mock, blueprint_config):
     config.return_value = blueprint_config
     db_connect_mock.return_value = None
     user_mock.selectBy.return_value = [
         MagicMock(email='test@example.org', first_name='Test', last_name='User', id=3)
     ]
+    permission_mock.return_value = True
 
     expected = {
         'users': [
