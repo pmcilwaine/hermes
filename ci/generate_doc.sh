@@ -10,61 +10,64 @@ fi
 
 ROOT_DIR=$(readlink -m $(dirname $0)/..)
 BUILD_VERSION=$1
-VERSION=$(cat ${ROOT_DIR}/core/VERSION)
+VERSION=$(cat hermes_ui/hermes_ui.spec | grep Version | cut -f9 -d ' ')
 
 cat ${ROOT_DIR}/README.md | tail -n+2 > ${ROOT_DIR}/tmpfile
 
-cd ${ROOT_DIR}/docs
 mkdir -p ${ROOT_DIR}/docs/output/developer
-mkdir -p ${ROOT_DIR}/docs/output/userguide
 
-# create developer documentation
-#pandoc --template=templates/developer.html --variable=build:${BUILD_VERSION}
+pandoc --template=${ROOT_DIR}/docs/templates/main.html --variable=build:${BUILD_VERSION} \
+    --variable=version:${VERSION} --toc --variable=date:"$(date)" \
+    -s ${ROOT_DIR}/tmpfile -o ${ROOT_DIR}/docs/output/index.html
 
-# get documents
-DOCUMENTS=$(find developer -type f | xargs)
-pandoc --template=templates/template.html -s ${ROOT_DIR}/tmpfile ${DOCUMENTS} \
-    -o output/developer/index.html --variable=build:${BUILD_VERSION} \
-    --variable=version:${VERSION} --variable=date:"$(date)" \
-    --variable=doctype:"Developer Guide" --toc --highlight-style pygments
+for file in $(find ${ROOT_DIR}/docs/developer -name "*.md" -type f); do
+    pandoc --template=${ROOT_DIR}/docs/templates/main.html --variable=build:${BUILD_VERSION} \
+    --variable=version:${VERSION} --toc --variable=date:"$(date)" \
+    -s ${file} -o ${ROOT_DIR}/docs/output/$(basename ${file%%.*} | sed -e 's/[0-9_]//g').html
+done
 
+cp -R ${ROOT_DIR}/docs/developer/assets ${ROOT_DIR}/docs/output
+cp -R ${ROOT_DIR}/docs/templates/css ${ROOT_DIR}/docs/output
+cp -R ${ROOT_DIR}/docs/templates/js ${ROOT_DIR}/docs/output
 
-DOCUMENTS=$(find userguide -type f | xargs)
-pandoc --template=templates/template.html ${ROOT_DIR}/tmpfile ${DOCUMENTS} \
-    -o output/userguide/index.html --variable=build:${BUILD_VERSION} \
-    --variable=version:${VERSION} --variable=date:"$(date)" \
-    --variable=doctype:"User Guide" --toc
+cd ${ROOT_DIR}/docs/output
 
-# pandoc -t latex ${ROOT_DIR}/tmpfile ${DOCUMENTS} \
-#    -o output/userguide/index.latex --variable=build:${BUILD_VERSION} \
-#    --variable=version:${VERSION} --variable=date:"$(date)" \
-#    --variable=doctype:"User Guide" --toc
+echo "
+import glob
+from bs4 import BeautifulSoup
 
-rm ${ROOT_DIR}/tmpfile
+for filename in glob.glob('*.html'):
+    soup = BeautifulSoup(open(filename, 'r').read(), 'html.parser')
 
-# create user guide documentation
-#pandoc --template=templates/userguide.html --variable=build:${BUILD_VERSION}
+    toc = soup.find(id='toc')
+
+    # lis
+    lis = toc.find_all('li')
+    toc.clear()
+
+    for li in lis:
+        toc.append(li)
+
+    for table in soup.find_all('table'):
+        table['class'] = 'table table-striped table-bordered'
+
+    nav_item = soup.find('a', href=filename)
+    if nav_item:
+        nav_item.parent['class'] = 'active'
+
+    open(filename, 'w').write(str(soup))
+" | python -
+exit 1
 
 # generate api documentation
-#(cat ${ROOT_DIR}/ci/DoxygenFile; echo "PROJECT_NUMBER=${VERSION}") | doxygen -
+DOXYPY=$(which doxypy.py)
+OUTPUT_DIRECTORY=${ROOT_DIR}/docs/api
+INPUT_LIST="${ROOT_DIR}/README.md ${ROOT_DIR}/hermes_cms ${ROOT_DIR}/hermes_cloud ${ROOT_DIR}/hermes_aws"
 
-# https://github.com/Velron/doxygen-bootstrapped
-#HTML_HEADER =
-#HTML_FOOTER =
-#HTML_STYLESHEET =
-#INPUT_FILTER = "python /path/to/doxypy.py"
-#FILTER_SOURCE_FILES = YES
-#HIDE_UNDOC_RELATIONS = NO
-#OPTIMIZE_OUTPUT_JAVA = YES
-#JAVADOC_AUTOBRIEF = YES
-#MULTILINE_CPP_IS_BRIEF = YES
-#DETAILS_AT_TOP = YES
-#EXTRACT_ALL = YES
-#EXTRACT_STATIC = YES
-#SHOW_DIRECTORIES = YES
-#SOURCE_BROWSER = YES
-#ALPHABETICAL_INDEX = YES
-#COLS_IN_ALPHA_INDEX = 8
-#TOC_EXPAND = YES
-#DISABLE_INDEX = YES
-#GENERATE_TREEVIEW = YES
+(cat ${ROOT_DIR}/ci/DoxygenFile; cat << EOF
+PROJECT_NUMBER=${VERSION}
+INPUT_FILTER="python ${DOXYPY}"
+INPUT=${INPUT_LIST}
+OUTPUT_DIRECTORY="${OUTPUT_DIRECTORY}
+EOF
+) | doxygen -
