@@ -26,6 +26,15 @@ exports.data = {
         template: 'Standard',
         content: '<p>Hello World</p>'
     },
+    add_file: {
+        name: 'Chrome Mac File',
+        url: 'chrome-mac-page/chrome-mac-file',
+        parent: 'Chrome Mac Page',
+        type: 'File',
+        published: true,
+        show_in_menu: false,
+        file_path: ''
+    },
     migration_download: {
         name: 'Chrome Mac Download Migration'
     }

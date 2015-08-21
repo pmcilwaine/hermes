@@ -142,32 +142,6 @@ describe('Add Document', function () {
 
                     });
 
-
-                    /*helpers.waitForUrl(/\/document\/page\/$/);
-
-                    var iframe = browser.driver.findElement(by.id('ui-tinymce-0_ifr'));
-                    browser.pause();
-                    browser.driver.switchTo().frame(iframe);
-
-                    var body = element(by.id('tinymce'));
-                    body.clear();
-                    body.click();
-                    body.sendKeys(browser.params.add_page_parent.content);
-
-                    browser.driver.switchTo().defaultContent();
-
-                    helpers.waitUntilDisplayed(by.css('button[type=submit]')).click().then(function () {
-                        helpers.waitForUrl(/\/document\/list$/);
-
-                        var elements = element.all(by.css('tbody tr')).filter(function (elem) {
-                            return elem.all(by.css('td')).get(1).getText().then(function (text) {
-                                return text.trim() === browser.params.add_page_parent.name;
-                            });
-                        });
-
-                        expect(elements.count()).to.eventually.equal(1);
-                    });*/
-
                 });
 
             });

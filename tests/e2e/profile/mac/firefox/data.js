@@ -26,6 +26,15 @@ exports.data = {
         template: 'Standard',
         content: '<p>Hello World</p>'
     },
+    add_file: {
+        name: 'Firefox Mac File',
+        url: 'firefox-mac-page/firefox-mac-file',
+        parent: 'Firefox Mac Page',
+        type: 'File',
+        published: true,
+        show_in_menu: false,
+        file_path: ''
+    },
     migration_download: {
         name: 'Firefox Mac Download Migration'
     }

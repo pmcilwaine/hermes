@@ -26,6 +26,15 @@ exports.data = {
         template: 'Standard',
         content: '<p>Hello World</p>'
     },
+    add_file: {
+        name: 'Firefox Windows File',
+        url: 'firefox-windows-page/firefox-windows-file',
+        parent: 'Firefox Windows Page',
+        type: 'File',
+        published: true,
+        show_in_menu: false,
+        file_path: ''
+    },
     migration_download: {
         name: 'Firefox Windows Download Migration'
     }

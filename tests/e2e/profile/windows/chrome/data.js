@@ -26,6 +26,15 @@ exports.data = {
         template: 'Standard',
         content: '<p>Hello World</p>'
     },
+    add_file: {
+        name: 'Chrome Windows File',
+        url: 'chrome-windows-page/chrome-windows-file',
+        parent: 'Chrome Windows Page',
+        type: 'File',
+        published: true,
+        show_in_menu: false,
+        file_path: ''
+    },
     migration_download: {
         name: 'Chrome Windows Download Migration'
     }

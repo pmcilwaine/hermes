@@ -8,7 +8,15 @@ var helpers = require('../../helpers/helpers.js');
 
 describe.skip('View Document', function () {
 
-    it.skip('Can View Document', function () {
+    describe('Can View Document', function () {
+
+        before(function () {
+            browser.get('/' + browser.params.add_page.url);
+        });
+
+        it('Document is Displayed', function () {
+            expect(element.all(by.css('h1')).get(0).getText()).to.eventually.equal(browser.params.add_page.name);
+        });
 
     });
 
@@ -25,6 +33,10 @@ describe.skip('View Document', function () {
     });
 
     it.skip('Can download a File Type Document', function () {
+
+    });
+
+    it.skip('Can view Multipage Type Document', function () {
 
     });
 

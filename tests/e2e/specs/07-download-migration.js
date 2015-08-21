@@ -34,6 +34,22 @@ describe('Download Migration', function () {
             });
         });
 
+        describe('Migration Download is Complete', function () {
+           // before should go to jobs page
+        });
+
+        it.skip('Migration Download is complete', function () {
+
+            // refresh
+            // find migration download name
+            // check status
+            // if not complete or failed loop again
+                // if we have looped more than 10 times automatically fail
+
+            // expect(is_complete).to.be.true;
+
+        });
+
         after(function () {
             browser.get('/logout');
         });
