@@ -15,7 +15,6 @@ describe('Restore User', function () {
             helpers.clickUserMenu();
             helpers.waitUntilDisplayed(by.css('button'), 2).click();
             helpers.waitForUrl(/\/user\/restore/);
-            console.log('restore');
         });
 
         it('Can restore user account', function () {
@@ -48,4 +47,22 @@ describe('Restore User', function () {
         });
     });
 
-});
+    describe('Does not have permission', function () {
+
+        before(function () {
+            helpers.userLogin();
+            helpers.clickUserMenu();
+        });
+
+        it('Cannot restore users', function () {
+            helpers.waitUntilDisplayed(by.css('button'), 1).click().then(function () {
+                expect(element.all(by.css('.alert')).count()).to.eventually.equal(1);
+            })
+        });
+
+        after(function () {
+            browser.get('/logout');
+        });
+    })
+
+    });

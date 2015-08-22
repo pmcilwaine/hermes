@@ -21,8 +21,7 @@ from hermes_cms.service.job import Job, InvalidJobError
 class MigrationDownloadJob(Job):
 
     def __init__(self):
-        self.registry = Registry()
-        log = logging.getLogger('hermes_cms.service.migration_download')
+        self.registry = Registry(log=log)
         database_url = str(self.registry.get('database').get('database'))
         sqlhub.processConnection = connectionForURI(database_url)
 

@@ -22,7 +22,7 @@ from hermes_aws import S3
 class MultipageJob(Job):
 
     def __init__(self):
-        self.registry = Registry()
+        self.registry = Registry(log=log)
         database_url = str(self.registry.get('database').get('database'))
         sqlhub.processConnection = connectionForURI(database_url)
 

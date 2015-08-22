@@ -6,7 +6,7 @@ exports.data = {
         password: 'password'
     },
     modify_user: {
-        first_name: 'Testing',
+        first_name: 'Testing Firefox Mac',
         last_name: 'Users 2'
     },
     add_page: {
@@ -38,6 +38,15 @@ exports.data = {
         published: true,
         show_in_menu: false,
         file_path: 'test-service.txt'
+    },
+    add_multipage: {
+        name: 'Firefox Mac Multipage',
+        url: 'firefox-mac-page/firefox-mac-multipage',
+        parent: 'Firefox Mac Page',
+        type: 'MultiPage',
+        published: true,
+        show_in_menu: false,
+        file_path: 'multipage.zip'
     },
     migration_download: {
         name: 'Firefox Mac Download Migration'

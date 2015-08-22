@@ -4,7 +4,7 @@ import boto.sqs
 import logging
 from hermes_cms.core.log import setup_logging
 
-setup_logging()
+setup_logging(logfile='service.ini')
 log = logging.getLogger('hermes.service.sqs_service')
 
 from hermes_cms.service.service import Service

@@ -83,8 +83,12 @@
                 controller: 'FileFormController',
                 resolve: {
                     document: ['Documents', 'DocumentResource', '$stateParams',
-                        function (Documents) {
-                            return Documents.getNewDocument();
+                        function (Documents, DocumentResource, stateParams) {
+                            if (stateParams.id) {
+                                return Documents.getDocument(stateParams.id);
+                            } else {
+                                return Documents.getNewDocument();
+                            }
                         }],
                     document_list: ['Documents', function (Documents) {
                         return Documents.getAllWithRepeat(String.fromCharCode(160));
@@ -98,8 +102,12 @@
                 controller: 'MultipageFormController',
                 resolve: {
                     document: ['Documents', 'DocumentResource', '$stateParams',
-                        function (Documents) {
-                            return Documents.getNewDocument();
+                        function (Documents, DocumentResource, stateParams) {
+                            if (stateParams.id) {
+                                return Documents.getDocument(stateParams.id);
+                            } else {
+                                return Documents.getNewDocument();
+                            }
                         }],
                     document_list: ['Documents', function (Documents) {
                         return Documents.getAllWithRepeat(String.fromCharCode(160));

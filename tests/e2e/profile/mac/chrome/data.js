@@ -6,7 +6,7 @@ exports.data = {
         password: 'password'
     },
     modify_user: {
-        first_name: 'Testing',
+        first_name: 'Testing Chrome Mac',
         last_name: 'Users 2'
     },
     add_page: {
@@ -38,6 +38,15 @@ exports.data = {
         published: true,
         show_in_menu: false,
         file_path: 'test-service.txt'
+    },
+    add_multipage: {
+        name: 'Chrome Mac Multipage',
+        url: 'chrome-mac-page/chrome-mac-multipage',
+        parent: 'Chrome Mac Page',
+        type: 'MultiPage',
+        published: true,
+        show_in_menu: false,
+        file_path: 'multipage.zip'
     },
     migration_download: {
         name: 'Chrome Mac Download Migration'

@@ -6,7 +6,7 @@ exports.data = {
         password: 'password'
     },
     modify_user: {
-        first_name: 'Testing',
+        first_name: 'Testing Chrome Windows',
         last_name: 'Users 2'
     },
     add_page: {
@@ -38,6 +38,15 @@ exports.data = {
         published: true,
         show_in_menu: false,
         file_path: 'test-service.txt'
+    },
+    add_multipage: {
+        name: 'Chrome Windows Multipage',
+        url: 'chrome-mac-page/chrome-windows-multipage',
+        parent: 'Chrome Windows Page',
+        type: 'MultiPage',
+        published: true,
+        show_in_menu: false,
+        file_path: 'multipage.zip'
     },
     migration_download: {
         name: 'Chrome Windows Download Migration'

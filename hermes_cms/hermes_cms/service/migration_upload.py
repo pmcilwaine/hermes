@@ -23,7 +23,7 @@ import mimetypes
 class MigrationUploadJob(Job):
 
     def __init__(self):
-        self.registry = Registry()
+        self.registry = Registry(log=log)
         database_url = str(self.registry.get('database').get('database'))
         sqlhub.processConnection = connectionForURI(database_url)
 
