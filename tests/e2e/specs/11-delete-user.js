@@ -46,4 +46,33 @@ describe('Delete User', function () {
         });
     });
 
+    describe('Does not have permission', function () {
+
+        before(function () {
+            helpers.userLogin();
+            helpers.clickUserMenu();
+        });
+
+        it('Cannot delete user', function () {
+            helpers.waitForUrl(/\/user\/list$/);
+            var elements = element.all(by.css('tbody tr')).filter(function (elem) {
+                return elem.all(by.css('td')).get(0).getText().then(function (text) {
+                    return text.trim() === 'testing@example.org';
+                });
+            });
+
+            // click on edit button
+            expect(elements.count()).to.eventually.be.equal(1);
+
+            elements.get(0).all(by.css('button')).get(1).click().then(function () {
+                expect(element.all(by.css('.alert')).count()).to.eventually.equal(1);
+                element.all(by.css('.alert button')).get(0).click();
+            });
+        });
+
+        after(function () {
+            browser.get('/logout');
+        });
+    });
+
 });

@@ -47,4 +47,22 @@ describe('Restore User', function () {
         });
     });
 
-});
+    describe('Does not have permission', function () {
+
+        before(function () {
+            helpers.userLogin();
+            helpers.clickUserMenu();
+        });
+
+        it('Cannot restore users', function () {
+            helpers.waitUntilDisplayed(by.css('button'), 1).click().then(function () {
+                expect(element.all(by.css('.alert')).count()).to.eventually.equal(1);
+            })
+        });
+
+        after(function () {
+            browser.get('/logout');
+        });
+    })
+
+    });

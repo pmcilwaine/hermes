@@ -59,12 +59,13 @@ describe('Restore Version Document', function () {
     describe('Does not have permission', function () {
 
         before(function () {
+            browser.get('/logout');
             helpers.userLogin();
         });
 
         it('Error message displayed when attempting to list versions of document', function () {
-            helpers.waitForUrl(/\/document\/list$/);
             var elements;
+            helpers.waitForUrl(/\/document\/list$/);
 
             elements = element.all(by.css('tbody tr')).filter(function (elem) {
                 return elem.all(by.css('td')).get(1).getText().then(function (text) {
@@ -72,7 +73,6 @@ describe('Restore Version Document', function () {
                 });
             });
 
-            // click on delete button
             elements.first().all(by.css('button')).get(0).click().then(function () {
                 expect(element.all(by.css('.alert')).count()).to.eventually.equal(1);
                 element.all(by.css('.alert button')).get(0).click();

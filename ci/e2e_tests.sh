@@ -64,6 +64,14 @@ done
 ROOT_DIR=$(readlink -m $(dirname $0)/..)
 cd ${ROOT_DIR}/tests
 
+# setup environment
+npm install
+
+mkdir -p ${ROOT_DIR}/tests/e2e/files
+# Download files so we can test
+curl --silent https://s3-ap-southeast-2.amazonaws.com/tests-paulmcilwaine-com/test-service.txt -o ${ROOT_DIR}/tests/e2e/files/test-service.txt
+curl --silent https://s3-ap-southeast-2.amazonaws.com/tests-paulmcilwaine-com/multipage.zip -o ${ROOT_DIR}/tests/e2e/files/multipage.zip
+
 export CONFIGURATION="${CONFIGURATION-ci}"
 export TEST="e2e"
 

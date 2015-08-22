@@ -60,7 +60,6 @@ describe('Restore Document', function () {
             // click on delete button
             helpers.waitUntilDisplayed(by.css('button'), 4).click().then(function () {
                 expect(element.all(by.css('.alert')).count()).to.eventually.equal(1);
-                element.all(by.css('.alert button')).get(0).click();
             });
 
         });

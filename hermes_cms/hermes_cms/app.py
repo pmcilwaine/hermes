@@ -11,6 +11,7 @@ from sqlobject import sqlhub, connectionForURI
 setup_logging()
 log = logging.getLogger('hermes_cms.app')
 
+
 def db_connect():
     database_url = current_app.config.get('DATABASE')
     if not database_url:
