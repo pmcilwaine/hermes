@@ -6,7 +6,7 @@ var expect = chai.expect;
 
 var helpers = require('../../helpers/helpers.js');
 
-describe.skip('View Document', function () {
+describe('View Document', function () {
 
     describe('Can View Document', function () {
 
@@ -15,7 +15,7 @@ describe.skip('View Document', function () {
         });
 
         it('Document is Displayed', function () {
-            expect(element.all(by.css('h1')).get(0).getText()).to.eventually.equal(browser.params.add_page.name);
+            expect(element.all(by.css('h2')).get(0).getText()).to.eventually.equal(browser.params.add_page.name);
         });
 
     });
@@ -32,12 +32,20 @@ describe.skip('View Document', function () {
 
     });
 
-    it.skip('Can download a File Type Document', function () {
+    describe('Can download a File Type Document', function () {
+
+        it('Document is Displayed', function () {
+            browser.get('/' + browser.params.add_file.url);
+        });
+
+    });
+
+    /*it.skip('Can download a File Type Document', function () {
 
     });
 
     it.skip('Can view Multipage Type Document', function () {
 
-    });
+    });*/
 
 });

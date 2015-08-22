@@ -15,6 +15,7 @@ describe('Restore User', function () {
             helpers.clickUserMenu();
             helpers.waitUntilDisplayed(by.css('button'), 2).click();
             helpers.waitForUrl(/\/user\/restore/);
+            console.log('restore');
         });
 
         it('Can restore user account', function () {

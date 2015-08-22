@@ -3,16 +3,19 @@
 import json
 import boto
 import logging
+from hermes_cms.core.log import setup_logging
+
+setup_logging()
+log = logging.getLogger('hermes.service.migration_download')
+
 import zipfile
 from boto.s3.key import Key
 from cStringIO import StringIO
 from hermes_cms.core.registry import Registry
 from hermes_cms.db import Job as JobDB, Document
 from sqlobject import sqlhub, connectionForURI
-from sqlobject.sqlbuilder import LIKE, IN, AND
+from sqlobject.sqlbuilder import LIKE, IN, AND, DESC
 from hermes_cms.service.job import Job, InvalidJobError
-
-log = logging.getLogger('hermes_cms.service.migration_download')
 
 
 class MigrationDownloadJob(Job):
@@ -74,7 +77,7 @@ class MigrationDownloadJob(Job):
         if not parent:
             return None
 
-        return Document.selectBy(id=parent).getOne(None)
+        return Document.select(Document.q.id == parent, orderBy=DESC(Document.q.created), limit=1).getOne(None)
 
     def do_work(self, message=None):
         """

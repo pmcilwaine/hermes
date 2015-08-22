@@ -5,6 +5,10 @@ exports.data = {
         email: 'test-windows-firefox@example.org',
         password: 'password'
     },
+    modify_user: {
+        first_name: 'Testing',
+        last_name: 'Users 2'
+    },
     add_page: {
         name: 'Firefox Windows Page',
         menutitle: 'Firefox Windows Page',
@@ -33,7 +37,7 @@ exports.data = {
         type: 'File',
         published: true,
         show_in_menu: false,
-        file_path: ''
+        file_path: 'test-service.txt'
     },
     migration_download: {
         name: 'Firefox Windows Download Migration'

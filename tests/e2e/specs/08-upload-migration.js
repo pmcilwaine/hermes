@@ -6,9 +6,9 @@ var expect = chai.expect;
 
 var helpers = require('../../helpers/helpers.js');
 
-describe('Upload Migration File', function () {
+describe.skip('Upload Migration File', function () {
 
-    describe.skip('Does not have permission', function () {
+    describe('Does not have permission', function () {
 
         before(function () {
             helpers.userLogin();

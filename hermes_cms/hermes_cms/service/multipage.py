@@ -4,6 +4,11 @@ import json
 import zipfile
 import mimetypes
 import logging
+from hermes_cms.core.log import setup_logging
+
+setup_logging()
+log = logging.getLogger('hermes.service.migration_upload')
+
 from hermes_cms.service.job import Job, InvalidJobError, FatalJobError
 from hermes_cms.db import Job as JobDB, Document
 from hermes_cms.core.registry import Registry

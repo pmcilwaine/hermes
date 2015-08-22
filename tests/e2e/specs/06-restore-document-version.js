@@ -6,7 +6,7 @@ var expect = chai.expect;
 
 var helpers = require('../../helpers/helpers.js');
 
-describe('Restore Version Document', function () {
+describe.skip('Restore Version Document', function () {
 
     describe('Has Permission', function () {
 

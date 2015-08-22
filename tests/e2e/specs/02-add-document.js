@@ -6,6 +6,9 @@ var expect = chai.expect;
 
 var helpers = require('../../helpers/helpers.js');
 
+var path = require('path');
+var remote = require('protractor/node_modules/selenium-webdriver/remote');
+
 describe('Add Document', function () {
 
     describe('Has Permission', function () {
@@ -131,7 +134,7 @@ describe('Add Document', function () {
 
                                 var elements = element.all(by.css('tbody tr')).filter(function (elem) {
                                     return elem.all(by.css('td')).get(1).getText().then(function (text) {
-                                        return text === browser.params.add_page.name;
+                                        return text === browser.params.add_page_parent.name;
                                     });
                                 });
 
@@ -147,7 +150,53 @@ describe('Add Document', function () {
             });
         });
 
-        it.skip('Can create a new file type document', function () {
+        it('Can create a new file type document', function () {
+            helpers.waitForUrl(/\/document\/list$/);
+            helpers.waitUntilDisplayed(by.css('button'), 1).click().then(function () {
+                helpers.waitForUrl(/\/document\/add$/);
+
+                var name = helpers.waitUntilDisplayed(by.model('record.document.name'));
+                var parent_name = helpers.waitUntilDisplayed(by.model('parent'));
+                var url = helpers.waitUntilDisplayed(by.model('record.document.url'));
+                var type = helpers.waitUntilDisplayed(by.model('record.document.type'));
+                var published = helpers.waitUntilDisplayed(by.model('record.document.published'));
+                var show_in_menu = helpers.waitUntilDisplayed(by.model('record.document.show_in_menu'));
+
+                name.sendKeys(browser.params.add_file.name);
+                //helpers.selectDropdown(parent_name, browser.params.add_file.parent);
+
+                url.clear();
+                url.sendKeys(browser.params.add_file.url);
+                helpers.selectDropdown(type, browser.params.add_file.type);
+
+                if (browser.params.add_file.published) {
+                    published.click();
+                }
+
+                if (browser.params.add_file.show_in_menu) {
+                    show_in_menu.click();
+                }
+
+                helpers.waitUntilDisplayed(by.css('button[type=submit]')).click().then(function () {
+                    helpers.waitForUrl(/\/document\/file\/$/);
+
+                    var absolutePath = path.resolve('e2e/files', browser.params.add_file.file_path);
+                    browser.setFileDetector(new remote.FileDetector);
+                    helpers.waitUntilDisplayed(by.model('file')).sendKeys(absolutePath);
+
+                    helpers.waitUntilDisplayed(by.css('button[type=submit]')).click().then(function () {
+                        helpers.waitForUrl(/\/document\/list$/);
+
+                        var elements = element.all(by.css('tbody tr')).filter(function (elem) {
+                            return elem.all(by.css('td')).get(1).getText().then(function (text) {
+                                return text === browser.params.add_file.name;
+                            });
+                        });
+
+                        expect(elements.count()).to.eventually.equal(1);
+                    });
+                });
+            });
 
         });
 

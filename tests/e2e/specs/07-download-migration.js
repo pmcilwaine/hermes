@@ -34,7 +34,7 @@ describe('Download Migration', function () {
             });
         });
 
-        describe('Migration Download is Complete', function () {
+        describe.skip('Migration Download is Complete', function () {
            // before should go to jobs page
         });
 
