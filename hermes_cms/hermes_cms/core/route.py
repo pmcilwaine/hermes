@@ -64,10 +64,8 @@ REGISTRY = {
 def route(path):
     """
 
-    :type path: str
-    :param path:
-    :return:
-    :rtype: Response
+    @param path
+    @return Response
     """
 
     urls = [path]

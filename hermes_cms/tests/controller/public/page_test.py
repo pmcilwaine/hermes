@@ -4,7 +4,7 @@
 import os
 import pytest
 from mock import patch
-from hermes_cms.controller import Page
+from hermes_cms.controller.public.page import Page
 
 
 @pytest.fixture(autouse=True)
@@ -34,8 +34,8 @@ def document_fixture():
     }
 
 
-@patch('hermes_cms.controller.page.navigation')
-@patch('hermes_cms.controller.page.resource_filename')
+@patch('hermes_cms.controller.public.page.navigation')
+@patch('hermes_cms.controller.public.page.resource_filename')
 def test_get_page(resource_mock, navigation_mock, document_fixture, config_fixture):
     resource_mock.return_value = os.path.join(os.path.dirname(__file__), 'data')
     navigation_mock.return_value = []

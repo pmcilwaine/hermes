@@ -4,7 +4,7 @@ from flask import Response
 from mako.lookup import TemplateLookup
 from pkg_resources import resource_filename
 from hermes_cms.helpers.page import navigation
-from hermes_cms.controller.public import Document
+from hermes_cms.controller.public.document import Document
 
 
 class Error(Document):

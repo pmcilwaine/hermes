@@ -10,7 +10,7 @@ from pkg_resources import resource_filename
 
 log = logging.getLogger('hermes_cms.views.main')
 route = Blueprint('main', __name__)
-# todo this should be a configurable list of paths
+
 lookup = TemplateLookup(directories=[
     resource_filename('hermes_cms.templates', '')
 ])

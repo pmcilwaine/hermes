@@ -14,7 +14,9 @@ VERSION=$(cat hermes_ui/hermes_ui.spec | grep Version | cut -f9 -d ' ')
 
 cat ${ROOT_DIR}/README.md | tail -n+2 > ${ROOT_DIR}/tmpfile
 
+cd ${ROOT_DIR}/docs
 mkdir -p ${ROOT_DIR}/docs/output/developer
+mkdir -p ${ROOT_DIR}/docs/output/userguide
 
 pandoc --template=${ROOT_DIR}/docs/templates/main.html --variable=build:${BUILD_VERSION} \
     --variable=version:${VERSION} --toc --variable=date:"$(date)" \
@@ -57,7 +59,6 @@ for filename in glob.glob('*.html'):
 
     open(filename, 'w').write(str(soup))
 " | python -
-exit 1
 
 # generate api documentation
 DOXYPY=$(which doxypy.py)

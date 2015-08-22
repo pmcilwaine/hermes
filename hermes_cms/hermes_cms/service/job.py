@@ -14,9 +14,9 @@ class Job(object):
 
     def do_work(self, message=None):
         """
+        The the work for this job.
 
-        :type message: dict|None
-        :param message: A message to pass to the job.
+        @param message A message to pass to the job.
         :return:
         """
         pass
