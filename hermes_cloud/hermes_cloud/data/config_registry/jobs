@@ -7,7 +7,7 @@
             "service": {
                 "topic": "config:///topics.topic.multipage",
                 "service_class": "MultipageJob",
-                "service_module": "hermes_cms",
+                "service_module": "hermes_cms.service.multipage",
                 "messages": 1,
                 "queue": "config:///queues.queue.multipage"
             }
@@ -19,7 +19,7 @@
             "service": {
                 "topic": "config:///topics.topic.migrationupload",
                 "service_class": "MigrationUploadJob",
-                "service_module": "hermes_cms",
+                "service_module": "hermes_cms.service.migration_upload",
                 "messages": 1,
                 "queue": "config:///queues.queue.migrationupload"
             }
@@ -31,7 +31,7 @@
             "service": {
                 "topic": "config:///topics.topic.migrationdownload",
                 "service_class": "MigrationDownloadJob",
-                "service_module": "hermes_cms",
+                "service_module": "hermes_cms.service.migration_download",
                 "messages": 1,
                 "queue": "config:///queues.queue.migrationdownload"
             }

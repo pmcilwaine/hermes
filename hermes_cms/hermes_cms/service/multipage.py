@@ -6,8 +6,8 @@ import mimetypes
 import logging
 from hermes_cms.core.log import setup_logging
 
-setup_logging()
-log = logging.getLogger('hermes.service.migration_upload')
+setup_logging(logfile='service.ini')
+log = logging.getLogger('hermes.service.multipage')
 
 from hermes_cms.service.job import Job, InvalidJobError, FatalJobError
 from hermes_cms.db import Job as JobDB, Document
@@ -23,7 +23,6 @@ class MultipageJob(Job):
 
     def __init__(self):
         self.registry = Registry()
-        self.log = logging.getLogger('hermes_cms.service.multipage')
         database_url = str(self.registry.get('database').get('database'))
         sqlhub.processConnection = connectionForURI(database_url)
 
@@ -45,7 +44,7 @@ class MultipageJob(Job):
         job_id = str(contents['Message'])
         job = JobDB.selectBy(uuid=job_id).getOne(None)
         if not job:
-            self.log.error('Cannot find job %s', job_id)
+            log.error('Cannot find job %s', job_id)
             raise InvalidJobError('Invalid Job ID: {0}'.format(job_id))
 
         job.set(status='running')
@@ -66,10 +65,10 @@ class MultipageJob(Job):
                 key = Key(bucket=bucket, name=key_name)
                 key.content_type = mimetypes.guess_type(name)[0]
                 key.set_contents_from_string(zip_handle.read(name))
-                self.log.info('Uploaded %s', key_name)
+                log.info('Uploaded %s', key_name)
 
         job.set(status='complete')
         if job.message.get('on_complete', {}).get('alter'):
             document.set(**job.message['on_complete']['alter'])
 
-        self.log.info('Setting job=%s to complete', job_id)
+        log.info('Setting job=%s to complete', job_id)

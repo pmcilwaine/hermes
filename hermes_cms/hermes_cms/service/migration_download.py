@@ -5,7 +5,7 @@ import boto
 import logging
 from hermes_cms.core.log import setup_logging
 
-setup_logging()
+setup_logging(logfile='service.ini')
 log = logging.getLogger('hermes.service.migration_download')
 
 import zipfile
@@ -22,7 +22,7 @@ class MigrationDownloadJob(Job):
 
     def __init__(self):
         self.registry = Registry()
-        self.log = logging.getLogger('hermes_cms.service.migration_download')
+        log = logging.getLogger('hermes_cms.service.migration_download')
         database_url = str(self.registry.get('database').get('database'))
         sqlhub.processConnection = connectionForURI(database_url)
 
@@ -129,7 +129,7 @@ class MigrationDownloadJob(Job):
         job_id = str(contents['Message'])
         job = JobDB.selectBy(uuid=job_id).getOne(None)
         if not job:
-            self.log.error('Cannot find job %s', job_id)
+            log.error('Cannot find job %s', job_id)
             raise InvalidJobError('Invalid Job ID: {0}'.format(job_id))
 
         job.set(status='running')
@@ -155,7 +155,7 @@ class MigrationDownloadJob(Job):
             })
 
             self._handle_document(document, zip_handle)
-            self.log.info('Adding document uuid=%s to zip archive', str(document.uuid))
+            log.info('Adding document uuid=%s to zip archive', str(document.uuid))
 
         zip_handle.writestr('manifest', json.dumps(manifest))
         zip_handle.close()
@@ -163,7 +163,7 @@ class MigrationDownloadJob(Job):
         zip_key = Key(self.bucket, job_id)
         zip_key.content_type = 'application/zip'
         zip_key.set_contents_from_string(zip_contents.getvalue())
-        self.log.info("Created ZIP for Job '%s'", str(job_id))
+        log.info("Created ZIP for Job '%s'", str(job_id))
 
         message = job.message
         message['download'] = {
