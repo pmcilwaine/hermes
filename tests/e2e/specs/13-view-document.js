@@ -12,7 +12,6 @@ describe('View Document', function () {
 
         before(function () {
             browser.get('/' + browser.params.add_page.url);
-            helpers.waitForUrl(browser.params.add_page.url);
         });
 
         it('Document is Displayed', function () {
