@@ -192,13 +192,13 @@
         "NetworkAlarmHigh": {
             "Type": "AWS::CloudWatch::Alarm",
             "Properties": {
-                "AlarmDescription": "Network scale down >= 150,000 bytes for 10 minutes",
+                "AlarmDescription": "Network scale up >= 2,000,000 bytes for 10 minutes",
                 "MetricName": "NetworkIn",
                 "Namespace": "AWS/EC2",
                 "Statistic": "Average",
                 "Period": "300",
                 "EvaluationPeriods": "2",
-                "Threshold": "150000",
+                "Threshold": "2000000",
                 "AlarmActions": [ { "Ref": "CMSUpScalingPolicy" } ],
                 "Dimensions": [
                     {
@@ -212,13 +212,13 @@
         "NetworkAlarmLow": {
             "Type": "AWS::CloudWatch::Alarm",
             "Properties": {
-                "AlarmDescription": "Network scale down < 100,000 bytes for 10 minutes",
+                "AlarmDescription": "Network scale down < 1,000,000 bytes for 10 minutes",
                 "MetricName": "NetworkIn",
                 "Namespace": "AWS/EC2",
                 "Statistic": "Average",
                 "Period": "300",
                 "EvaluationPeriods": "2",
-                "Threshold": "20",
+                "Threshold": "1000000",
                 "AlarmActions": [ { "Ref": "CMSDownScalingPolicy" } ],
                 "Dimensions": [
                     {
