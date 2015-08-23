@@ -14,21 +14,18 @@ class Auth(object):
         """
         Finds out if the user is valid by checking the email and password supplied.
 
-        :param email: The email address to use.
-        :type email: basestring
-        :param password: The password as plaintext to use.
-        :type password: basestring
-        :rtype: User|None
+        @param email: The email address to use.
+        @param password: The password as plaintext to use.
+        @return User|None
         """
         return User.selectBy(email=email, password=User.hash_password(password)).getOne(None)
 
     @staticmethod
     def create_session(user):
         """
+        Create a session if the user object is valid.
 
-        :type user: hermes_cms.db.User
-        :param user:
-        :return:
+        @param user A `hermes_cms.db.User` object
         """
         if user:
             session['auth_user'] = user.as_json()
@@ -60,12 +57,10 @@ class Auth(object):
         Returns True if they do and False otherwise. No error message is supplied and it is up to the callee
          to show an error message if has_permission returns False
 
-        :type user: dict
-        :param user: The dictionary stored as the auth_user in the session object
-        :type permissions: basestring|list
-        :param permissions: a list or string of permissions to check for. String can only be used for a single
+        @param user: The `dict` stored as the auth_user in the session object
+        @param permissions: a `list` or `str` of permissions to check for. String can only be used for a single
         permission
-        :rtype: bool
+        @return True if the user has permission and False if user does not have permission
         """
 
         if isinstance(permissions, basestring):

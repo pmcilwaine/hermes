@@ -18,12 +18,11 @@ class S3(object):
 
     def metadata(self, bucket_name, key_name):
         """
+        Get the metadata for the object in the bucket specified.
 
-        :type bucket_name: basestring
-        :param bucket_name: The name of the bucket
-        :type key_name: basestring
-        :param key_name: The name of the key in the bucket
-        :return: dict
+        @param bucket_name: The name of the bucket
+        @param key_name: The name of the key in the bucket
+        @return dict
         """
         bucket = self.conn.get_bucket(bucket_name)
         key = bucket.get_key(key_name)
@@ -37,11 +36,14 @@ class S3(object):
     @staticmethod
     def upload_string(bucket_name, key_name, contents, partition=True, bucket=None):
         """
+        Upload content to an S3 bucket.
 
-        :param bucket_name:
-        :param key_name:
-        :param contents:
-        :return:
+        @param bucket_name The name of the bucket to store the object
+        @param key_name The name to store the content
+        @param contents The contents to be uploaded in the Key
+        @param partition A `bool` if the key should be put into a partitioned folder
+        @param bucket A `boto.s3.connect.S3Connection` (optional)
+        @return The full Key name found in S3
         """
         if not bucket:
             connection = boto.connect_s3()
@@ -58,6 +60,13 @@ class S3(object):
 
     @staticmethod
     def get_string(bucket_name, key_name):
+        """
+        Get a string representation of the object within the specified bucket.
+
+        @param bucket_name The name of the bucket to look for they key
+        @param key_name The full name of the key to find within the bucket
+        @return A `str` representation of the contents within the object
+        """
         connection = boto.connect_s3()
         bucket = connection.get_bucket(bucket_name)
         key = Key(bucket=bucket, name=key_name)
@@ -68,12 +77,11 @@ class S3(object):
         """
         Generates what is required for a form to post directly to S3 bucket.
 
-        :param bucket_name:
-        :param expires_in:
-        :param key_name:
-        :param acl:
-        :return: Returns a dictionary ready to send to the client to produce a Form.
-        :rtype: dict
+        @param bucket_name:
+        @param expires_in:
+        @param key_name:
+        @param acl:
+        @return: Returns a `dict` ready to send to the client to produce a Form.
         """
         if not key_name:
             date = arrow.utcnow().date()
@@ -102,12 +110,12 @@ class S3(object):
     @staticmethod
     def generate_download_url(bucket, key_name, region='ap-southeast-2'):
         """
+        Generates an expiring URL to download contents from an S3 bucket.
 
-        :param bucket:
-        :param key_name:
-        :param region:
-        :return:
-        :rtype: str
+        @param bucket A `str` of the bucket name
+        @param key_name The full key name to be found in the bucket
+        @param region The region to connect to.
+        @return An S3 URL to use to download S3 Key
         """
         if region:
             connection = boto.s3.connect_to_region(region)
@@ -127,6 +135,13 @@ class S3(object):
 
     @staticmethod
     def get_content_type(bucket_name, key_name):
+        """
+        Get the content type of the object in the bucket
+
+        @param bucket_name The bucket to look for the key
+        @param key_name The correct key name of the object found in the bucket
+        @return The content type e.g. application/json
+        """
         connection = boto.connect_s3()
         bucket = connection.get_bucket(bucket_name)
         return bucket.get_key(key_name).content_type

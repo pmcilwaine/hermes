@@ -31,9 +31,8 @@ class Job(SQLObject):
     def save(record):
         """
 
-        :type record: dict
-        :param record:
-        :return:
+        @param record A `dict` of the job record to store
+        @return Job database record
         """
         if 'uuid' not in record:
             record['uuid'] = str(uuid.uuid4())
@@ -42,7 +41,6 @@ class Job(SQLObject):
             job = Job.selectBy(uuid=record['uuid']).getOne(None)
 
             if not job:
-                # todo better exception handling here
                 raise Exception('Cannot find job record to update')
 
             job.pop('uuid')

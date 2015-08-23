@@ -1,7 +1,7 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from hermes_cms.controller.public import Document
+from hermes_cms.controller.public.document import Document
 from hermes_cms.helpers.page import navigation
 from flask import Response
 from mako.lookup import TemplateLookup
@@ -9,6 +9,9 @@ from pkg_resources import resource_filename
 
 
 class Page(Document):
+    """
+    The Page Type Document. It only allows GET requests.
+    """
 
     def put(self):
         pass

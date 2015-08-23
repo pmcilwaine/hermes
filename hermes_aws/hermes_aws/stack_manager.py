@@ -14,9 +14,13 @@ class StackManager(object):
 
     def __init__(self, region, name=None, params=None, tmpl_args=None, template_path=None, stack=None):
         """
-        :type region: str
-        :param region: The region to use to manage the stack
-        :return:
+
+        @param region The region to use to manage the stack
+        @param name The name of the stack to use
+        @param params A `dict` stack name key/value with the value a `list` of `tuple`
+        @param tmpl_args A `dict` of key/value pairs to be replaced in the templates
+        @param template_path A `str` or `list` of where to find templates
+        @param stack A `str` of the S3 bucket name to store stack templates
         """
         if not isinstance(template_path, list) and template_path:
             template_path = [template_path]
@@ -38,6 +42,11 @@ class StackManager(object):
         self.stack_data = {}
 
     def add_stacks(self, stacks):
+        """
+        Add a list of stacks to run in parallel
+
+        @param stacks: A list of stack names which can be found in the template_path
+        """
         if not isinstance(stacks, list):
             stacks = [stacks]
 
@@ -51,10 +60,9 @@ class StackManager(object):
         """
         Validates the template before attempting to apply it.
 
-        :type contents: str
-        :param contents:
-        :return: bool
-        :raises BotoServerError
+        @param contents: A `str` of the aws cloud formation template to validate
+        @return bool
+        @throw BotoServerError
         """
         try:
             self.conn.validate_template(template_body=contents)
@@ -78,8 +86,10 @@ class StackManager(object):
 
     def create_stacks(self):
         """
+        Create all the stacks provided in add_stacks
 
-        :return:
+        @see add_stacks
+
         """
         update_stack = True
 
@@ -120,11 +130,8 @@ class StackManager(object):
 
     def delete_stacks(self, stacks):
         """
-        Will delete a list of stacks
-
-        :type stacks: list
-        :param stacks:
-        :return:
+        Will delete a list of stacks.
+        @param stacks: A `list` of stacks to delete. Will delete them in the order provided
         """
 
         for stack in stacks:

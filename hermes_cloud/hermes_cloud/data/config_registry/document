@@ -13,19 +13,19 @@
             "hermes_cms.templates.public"
         ],
         "public": {
-            "document_module": "hermes_cms.controller",
+            "document_module": "hermes_cms.controller.public.page",
             "document_class": "Page"
         }
     },
     "File": {
         "public": {
-            "document_module": "hermes_cms.controller",
+            "document_module": "hermes_cms.controller.public.file",
             "document_class": "File"
         }
     },
     "MultiPage": {
         "public": {
-            "document_module": "hermes_cms.controller",
+            "document_module": "hermes_cms.controller.public.multipage",
             "document_class": "Multipage"
         },
         "admin_helper": {
@@ -34,7 +34,7 @@
         }
     },
     "Error": {
-        "document_module": "hermes_cms.controller",
+        "document_module": "hermes_cms.controller.public.error",
         "document_class": "Error"
     }
 }

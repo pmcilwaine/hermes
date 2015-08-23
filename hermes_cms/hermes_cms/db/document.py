@@ -77,10 +77,10 @@ class Document(SQLObject):
     @staticmethod
     def get_document(record):
         """
+        Get the full document from S3
 
-        :type record: Document
-        :param record:
-        :return:
+        @param record A `Document` database object
+        @return A `dict` of the document
         """
         filename = '/tmp/data/{0}'.format(record.uuid)
         if os.path.exists(filename):
@@ -100,6 +100,12 @@ class Document(SQLObject):
 
     @staticmethod
     def delete_document(doc_uuid):
+        """
+        Marks all documents to archived. No data is deleted.
+
+        @param doc_uuid The uuid of the document to delete
+        @return The Document database object
+        """
         record = Document.selectBy(uuid=doc_uuid).getOne(None)
 
         # todo must do better exception handling
@@ -113,9 +119,14 @@ class Document(SQLObject):
 
     @staticmethod
     def restore_document(doc_uuid):
+        """
+        Marks all documents to restored.
+
+        @param doc_uuid The uuid of the document to restore
+        @return The Document database object
+        """
         record = Document.selectBy(uuid=doc_uuid).getOne(None)
 
-        # todo must do better exception handling
         if not record:
             raise Exception('Cannot find document')
 
