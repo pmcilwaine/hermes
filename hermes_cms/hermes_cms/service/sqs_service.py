@@ -34,6 +34,7 @@ class SQSService(Service):
         if not self.queue:
             raise SQSNotExistError('Queue "{0}" does not exist'.format(queue_name))
 
+    # pylint: disable=broad-except
     def do_action(self):
         """
 
@@ -45,7 +46,6 @@ class SQSService(Service):
             try:
                 self.job_class.do_work(message)
                 self._sqs_conn.delete_message(self.queue, message)
-            # pylint: disable=broad-except
             except InvalidJobError as e:
                 log.warn('Deleting job as its invalid %s', str(e))
                 self._sqs_conn.delete_message(self.queue, message)
