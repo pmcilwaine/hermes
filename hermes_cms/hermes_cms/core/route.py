@@ -26,13 +26,13 @@ REGISTRY = {
             'hermes_cms.templates.public'
         ],
         "public": {
-            'document_module': 'hermes_cms.controller',
+            'document_module': 'hermes_cms.controller.public.page',
             'document_class': 'Page'
         }
     },
     "MultiPage": {
         "public": {
-            "document_module": "hermes_cms.controller.public",
+            "document_module": "hermes_cms.controller.public.multipage",
             "document_class": "Multipage"
         },
         "admin_helper": {
@@ -42,7 +42,7 @@ REGISTRY = {
     },
     'File': {
         "public": {
-            'document_module': 'hermes_cms.controller',
+            'document_module': 'hermes_cms.controller.public.file',
             'document_class': 'File'
         }
     },
