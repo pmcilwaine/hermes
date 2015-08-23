@@ -5,7 +5,7 @@ exports.config.sauceKey = process.env.SAUCE_KEY;
 
 var multiCapabilities = [];
 
-multiCapabilities.push({
+/*multiCapabilities.push({
     browserName: 'firefox',
     version: '37.0',
     platform: 'Windows 7'
@@ -15,7 +15,7 @@ multiCapabilities.push({
     browserName: 'chrome',
     version: '39.0',
     platform: 'Windows 7'
-});
+});*/
 
 multiCapabilities.push({
     browserName: 'firefox',

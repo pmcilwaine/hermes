@@ -3,10 +3,13 @@
 
 import logging
 from hermes_cms.db import Document
+from mako.runtime import Undefined
+from sqlobject.sqlbuilder import DESC, LIKE
 
 log = logging.getLogger('hermes_cms.helpers.page')
 NAVIGATION_ALL = 'all'
 NAVIGATION_CURRENT_DEPTH = 'current_depth'
+NAVIGATION_CHILDREN = 'children'
 
 
 def navigation(document, depth=None):
@@ -21,8 +24,6 @@ def navigation(document, depth=None):
     :rtype: dict
     """
 
-    log.debug('Document=%s', document)
-
     if depth not in [NAVIGATION_ALL, NAVIGATION_CURRENT_DEPTH]:
         pass
 
@@ -31,18 +32,25 @@ def navigation(document, depth=None):
     query = ((Document.q.archived == False) & (Document.q.show_in_menu == True) &
              (Document.q.published == True))
 
+    if depth == NAVIGATION_CHILDREN and (document and not isinstance(document['document'], Undefined)):
+        print document
+        query &= (LIKE(Document.q.path, '{0}%'.format(document['document']['path'])))
+
     results = []
     parent = {}
-    for page in Document.query(Document.all(), where=query, orderBy=Document.q.created,
-                               groupBy=(Document.q.id, Document.q.uuid, Document.q.created, Document.q.published,
-                                        Document.q.type, Document.q.name, Document.q.archived, Document.q.menutitle,
-                                        Document.q.show_in_menu, Document.q.parent, Document.q.path,
-                                        Document.q.user_id)):
+
+    for page in Document.query(Document.all(), where=query,
+                               orderBy=(Document.q.id, Document.q.path, DESC(Document.q.created)),
+                               distinctOn=Document.q.id, distinct=True):
+
+        current = False
+        if document and not isinstance(document['document'], Undefined):
+            current = document['document']['path'].startswith(page.path)
 
         record = {
-            'url': '/' if page.url == 'index' else page.url,
+            'url': '/' if page.url == 'index' else '/' + page.url,
             'menutitle': page.menutitle,
-            'current': document['document']['path'].startswith(page.path),
+            'current': current,
             'children': []
         }
 
@@ -52,6 +60,4 @@ def navigation(document, depth=None):
         else:
             results.append(record)
 
-    log.debug('Navigation has %d results', len(results))
-    log.debug(results)
     return results

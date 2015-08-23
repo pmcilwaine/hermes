@@ -11,8 +11,8 @@ CREATE TABLE users (
 );
 
 CREATE TABLE document (
-    id SERIAL PRIMARY KEY,
-    uuid char(36) UNIQUE,
+    id SERIAL ,
+    uuid char(36) PRIMARY KEY,
     url char(255),
     created TIMESTAMP without time zone,
     published BOOL,
@@ -26,6 +26,8 @@ CREATE TABLE document (
     user_id INTEGER
 );
 
+CREATE INDEX document_id ON document (id);
+
 CREATE TABLE job (
     id SERIAL PRIMARY KEY,
     uuid char(36) UNIQUE,
@@ -36,4 +38,5 @@ CREATE TABLE job (
     message text
 );
 
-INSERT INTO users (email, password, first_name, last_name, created, modified, permissions) VALUES ('test@example.org', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', 'Test', 'User', NOW(), NOW(), 'add_document,modify_document,delete_document,restore_deleted_document,restore_version_document,add_user,modify_user,delete_user,restore_user');
+INSERT INTO users (email, password, first_name, last_name, created, modified, permissions, archived) VALUES ('test@example.org', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', 'Test', 'User', NOW(), NOW(), 'list_document,add_document,modify_document,delete_document,restore_deleted_document,restore_version_document,list_job,list_user,add_user,modify_user,delete_user,restore_user', 'F');
+INSERT INTO users (email, password, first_name, last_name, created, modified, permissions, archived) VALUES ('testing@example.org', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', 'Test', 'User', NOW(), NOW(), 'list_document,list_user,list_job', 'F');

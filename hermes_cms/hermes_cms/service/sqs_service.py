@@ -2,9 +2,13 @@
 # -*- coding: utf-8 -*-
 import boto.sqs
 import logging
-from hermes_cms.service.service import Service
+from hermes_cms.core.log import setup_logging
 
-log = logging.getLogger('hermes_cms.service.sqs_service')
+setup_logging(logfile='service.ini')
+log = logging.getLogger('hermes.service.sqs_service')
+
+from hermes_cms.service.service import Service
+from hermes_cms.service.job import InvalidJobError
 
 
 class SQSNotExistError(Exception):
@@ -30,6 +34,7 @@ class SQSService(Service):
         if not self.queue:
             raise SQSNotExistError('Queue "{0}" does not exist'.format(queue_name))
 
+    # pylint: disable=broad-except
     def do_action(self):
         """
 
@@ -40,6 +45,9 @@ class SQSService(Service):
             log.info('Got message for job %s', self.name)
             try:
                 self.job_class.do_work(message)
+                self._sqs_conn.delete_message(self.queue, message)
+            except InvalidJobError as e:
+                log.warn('Deleting job as its invalid %s', str(e))
                 self._sqs_conn.delete_message(self.queue, message)
             except Exception as e:
                 log.exception(e)

@@ -1,6 +1,7 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import json
 import logging
 from flask import Flask, current_app, Response
 from hermes_cms.core.registry import Registry
@@ -9,6 +10,7 @@ from sqlobject import sqlhub, connectionForURI
 
 setup_logging()
 log = logging.getLogger('hermes_cms.app')
+
 
 def db_connect():
     database_url = current_app.config.get('DATABASE')
@@ -54,7 +56,13 @@ def create_app(app_name='hermes_cms', config_obj=None, blueprints=None):
 
     def error_handler(error):
         log.exception(str(error))
-        return Response(status=500)
+        return Response(response=json.dumps({
+            'notify_msg': {
+                'title': 'Server Error',
+                'message': 'An internal server error occurred.',
+                'type': 'success'
+            }
+        }), content_type='application/json', status=500)
 
     app.register_error_handler(Exception, error_handler)
     app.before_request_funcs.setdefault(None, []).append(db_connect)

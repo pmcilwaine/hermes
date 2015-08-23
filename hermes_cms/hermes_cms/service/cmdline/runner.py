@@ -32,6 +32,7 @@ class DaemonApplication(object):
         while True:
             try:
                 config = Registry().get(self.config_file)
+            # pylint: disable=broad-except
             except Exception as e:
                 log.exception(e)
 

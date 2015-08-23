@@ -20,7 +20,7 @@
 
             <div class="form-group" ng-class="{'has-error': pageForm.parent.$invalid}">
                 <label>Parent</label>
-                <input type="text" class="form-control" name="parent" ng-model="record.document.parent">
+                <select class="form-control" name="parent" ng-model="parent" ng-options="document.name for document in document_list"></select>
                 <p ng-show="pageForm.parent.$invalid" class="help-block">{{ errors.parent }}</p>
             </div>
 
@@ -38,8 +38,20 @@
 
             <div class="form-group" ng-class="{'has-error': pageForm.content.$invalid}">
                 <label>Content</label>
-                <textarea class="form-control" ng-model="record.page.content" name="content"></textarea>
+                <textarea id="page_content_field" ui-tinymce="{theme: 'modern', theme_url: '/assets/admin/tinymce/themes/modern/theme.min.js', skin_url: '/assets/admin/tinymce/skins/lightgray', height: 400}" class="form-control" ng-model="record.page.content" name="content"></textarea>
                 <p ng-show="pageForm.content.$invalid" class="help-block">{{ errors.content }}</p>
+            </div>
+
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="record.document.published" value="1"> Publish Document
+                </label>
+            </div>
+
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="record.document.show_in_menu" value="1"> Show in Navigation
+                </label>
             </div>
 
             <button type="submit" class="btn btn-primary" accesskey="s">Save</button>

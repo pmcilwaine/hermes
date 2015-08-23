@@ -3,8 +3,9 @@
 
 import logging
 from hermes_cms.db import Document
+from hermes_cms.helpers import common
 from sqlobject.sqlbuilder import IN, DESC
-from flask import Response, request
+from flask import request
 
 log = logging.getLogger('hermes_cms.core.route')
 
@@ -25,13 +26,13 @@ REGISTRY = {
             'hermes_cms.templates.public'
         ],
         "public": {
-            'document_module': 'hermes_cms.controller',
+            'document_module': 'hermes_cms.controller.public.page',
             'document_class': 'Page'
         }
     },
     "MultiPage": {
         "public": {
-            "document_module": "hermes_cms.controller.public",
+            "document_module": "hermes_cms.controller.public.multipage",
             "document_class": "Multipage"
         },
         "admin_helper": {
@@ -41,13 +42,21 @@ REGISTRY = {
     },
     'File': {
         "public": {
-            'document_module': 'hermes_cms.controller',
+            'document_module': 'hermes_cms.controller.public.file',
             'document_class': 'File'
         }
     },
     'Error': {
-        'document_module': 'hermes_cms.controller',
-        'document_class': 'Error'
+        'templates': {
+            '404': '404.html'
+        },
+        'template_modules': [
+            'hermes_cms.templates.public'
+        ],
+        'public': {
+            'document_module': 'hermes_cms.controller.public.error',
+            'document_class': 'Error'
+        }
     }
 }
 
@@ -55,10 +64,8 @@ REGISTRY = {
 def route(path):
     """
 
-    :type path: str
-    :param path:
-    :return:
-    :rtype: Response
+    @param path
+    @return Response
     """
 
     urls = [path]
@@ -72,7 +79,12 @@ def route(path):
     record = Document.select(IN(Document.q.url, urls), orderBy=(DESC(Document.q.url), DESC(Document.q.created)),
                              limit=1).getOne(None)
     if not record:
-        return Response(status=404)
+        registry_type = REGISTRY['Error']
+        public = registry_type['public']
+
+        document = {'status': 404}
+        controller = common.load_class(public['document_module'], public['document_class'], document, registry_type)
+        return controller.get()
 
     document = Document.get_document(record)
 

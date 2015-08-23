@@ -13,10 +13,10 @@ function help_text {
         BASE_URL:       Location of server to run tests against
 
     Developer example:
-        ci/integration_tests.sh -c ci
+        ci/e2e_test.sh -c ci
 
     CI example:
-        ci/integration_tests.sh -v 201502191412
+        ci/e2e_test.sh -v 201502191412
 
 EOF
     exit 1
@@ -64,6 +64,14 @@ done
 ROOT_DIR=$(readlink -m $(dirname $0)/..)
 cd ${ROOT_DIR}/tests
 
+# setup environment
+npm install
+
+mkdir -p ${ROOT_DIR}/tests/e2e/files
+# Download files so we can test
+curl --silent https://s3-ap-southeast-2.amazonaws.com/tests-paulmcilwaine-com/test-service.txt -o ${ROOT_DIR}/tests/e2e/files/test-service.txt
+curl --silent https://s3-ap-southeast-2.amazonaws.com/tests-paulmcilwaine-com/multipage.zip -o ${ROOT_DIR}/tests/e2e/files/multipage.zip
+
 export CONFIGURATION="${CONFIGURATION-ci}"
 export TEST="e2e"
 
@@ -100,5 +108,17 @@ until $(curl --output /dev/null --silent --head --fail --insecure ${BASE_URL}/lo
     fi
 done
 
+if [ "${CONFIGURATION}" = local ]; then
+    npm run webdriver 2> webdriver-debug.log &
+    while ! timeout 1 bash -c "echo > /dev/tcp/localhost/4444"; do sleep 1; done
+fi
+
 npm test
 status=$?
+
+# Kill the web-driver server
+if [ "${CONFIGURATION}" == "local" ]; then
+    curl http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer > /dev/null
+fi
+
+exit ${status}

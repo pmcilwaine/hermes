@@ -18,10 +18,19 @@ class User(SQLObject):
     password = StringCol(length=64)
     first_name = StringCol(length=255)
     last_name = StringCol(length=255)
-    created = DateTimeCol(default=datetime.now())
-    modified = DateTimeCol(default=datetime.now())
+    created = DateTimeCol(default=DateTimeCol.now())
+    modified = DateTimeCol(default=DateTimeCol.now())
     archived = BoolCol(default=False)
     permissions = StringCol(default='')
+
+    def _get_first_name(self):
+        return str(self._SO_get_first_name()).strip()
+
+    def _get_last_name(self):
+        return str(self._SO_get_last_name()).strip()
+
+    def _get_email(self):
+        return str(self._SO_get_email()).strip()
 
     def _set_password(self, value):
         # pylint: disable=no-member
@@ -36,6 +45,10 @@ class User(SQLObject):
             value = ','.join(value)
 
         self._SO_set_permissions(value)
+
+    def set(self, _suppress_set_sig=False, **kw):
+        kw['modified'] = datetime.now()
+        super(User, self).set(_suppress_set_sig, **kw)
 
     @staticmethod
     def hash_password(password):

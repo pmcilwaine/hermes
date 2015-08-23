@@ -3,15 +3,16 @@ exports.config = {
     mochaOpts: {
         timeout: 600000,
         allScriptsTimeout: 99999,
-        reporter: "mocha-jenkins-reporter",
+        reporter: "mocha-junit-reporter",
         reporterOptions: {
+            mochaFile: "report-e2e.xml",
             junit_report_name: "End-to-End Tests",
             junit_report_path: "report-e2e.xml",
             junit_report_stack: 1
         }
     },
     specs: 'specs/*.js',
-    getPageTimeout:600000,
+    getPageTimeout: 600000,
     allScriptsTimeout: 99999,
     maxSessions: 2,
     onPrepare: function () {

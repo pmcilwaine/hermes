@@ -9,7 +9,7 @@ var helpers = require('../../helpers/helpers.js');
 
 var path = require('path');
 
-describe('Documents', function () {
+describe.skip('Documents', function () {
 
     before(function () {
         mockHttp.register();
@@ -29,7 +29,7 @@ describe('Documents', function () {
     });
 
     it('Create Page Type Document', function () {
-        element.all(by.css('button')).get(0).click();
+        element.all(by.css('button')).get(1).click();
 
         var name = element(by.model('record.document.name'));
         var url = element(by.model('record.document.url'));
@@ -45,13 +45,13 @@ describe('Documents', function () {
         element.all(by.css('button')).get(0).click();
 
         var content = element(by.model('record.page.content'));
-        content.sendKeys('<p>Content for page</p>');
-        element.all(by.css('button')).get(0).click();
+        element.all(by.css('button[type=submit]')).get(0).click();
+
         expect(element.all(by.css('table tbody tr')).count()).to.eventually.equal(2);
     });
 
     it('Create File Type Document', function () {
-        element.all(by.css('button')).get(0).click();
+        element.all(by.css('button')).get(1).click();
 
         var name = element(by.model('record.document.name'));
         var url = element(by.model('record.document.url'));
@@ -68,22 +68,13 @@ describe('Documents', function () {
         var fileToUpload = '../../data/test_cases.dot',
             absolutePath = path.resolve(__dirname, fileToUpload);
 
-        //console.log(browser.driver.remote)
-
-        //var remote = require('protractor/node_modules/selenium-webdriver/remote');
-        //browser.setFileDetector(new remote.FileDetector);
-
-        //browser.driver.setFileDetector(new browser.driver.remote.FileDetector);
-        //file.sendKeys('https://s3-ap-southeast-2.amazonaws.com/tests-paulmcilwaine-com/systemwide_req_spec.dot');
         element.all(by.css('button')).get(0).click();
-        /*browser.manage().logs().get('browser').then(function(browserLog) {
-            console.log('\n log: ' + require('util').inspect(browserLog));
-        });*/
         expect(element.all(by.css('table tbody tr')).count()).to.eventually.equal(3);
     });
 
     it('Validation message is displayed for blank form', function () {
-        element.all(by.css('button')).get(0).click().then(function () {
+
+        element.all(by.css('button')).get(1).click().then(function () {
             element.all(by.css('button')).get(0).click().then(function () {
                 element.all(by.css('button')).get(0).click().then(function () {
 

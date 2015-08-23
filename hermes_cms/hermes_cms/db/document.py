@@ -12,6 +12,10 @@ from sqlobject.col import StringCol, DateTimeCol, BoolCol, IntCol
 from hermes_aws.s3 import S3
 
 
+class DocumentNotFound(Exception):
+    pass
+
+
 class Document(SQLObject):
     uuid = StringCol(length=36)  # this is the version record to be found in S3
     url = StringCol()  # this is unique for URL for each GID.
@@ -26,6 +30,12 @@ class Document(SQLObject):
     path = StringCol()  # Uses the gid as parentGID/currentGID etc.
     user_id = IntCol()
 
+    def _get_url(self):
+        return str(self._SO_get_url()).strip()
+
+    def _get_name(self):
+        return str(self._SO_get_name()).strip()
+
     def _get_type(self):
         return str(self._SO_get_type()).strip()
 
@@ -37,6 +47,9 @@ class Document(SQLObject):
         record['document']['archived'] = record['document'].get('archived', False)
 
         document_data = {'url': None, 'path': None, 'parent': 0, 'type': None}
+        if record.get('id'):
+            document_data['id'] = record.get('id')
+
         document_data.update(record['document'])
 
         document = Document(**document_data)
@@ -64,10 +77,10 @@ class Document(SQLObject):
     @staticmethod
     def get_document(record):
         """
+        Get the full document from S3
 
-        :type record: Document
-        :param record:
-        :return:
+        @param record A `Document` database object
+        @return A `dict` of the document
         """
         filename = '/tmp/data/{0}'.format(record.uuid)
         if os.path.exists(filename):
@@ -87,14 +100,40 @@ class Document(SQLObject):
 
     @staticmethod
     def delete_document(doc_uuid):
+        """
+        Marks all documents to archived. No data is deleted.
+
+        @param doc_uuid The uuid of the document to delete
+        @return The Document database object
+        """
         record = Document.selectBy(uuid=doc_uuid).getOne(None)
 
         # todo must do better exception handling
         if not record:
             raise Exception('Cannot find document')
 
-        update = Update(Document.sqlmeta.table, values={'archived': 1}, where=Document.q.url == record.url)
+        update = Update(Document.sqlmeta.table, values={'archived': True}, where=Document.q.id == record.id)
         Document._connection.query(Document._connection.sqlrepr(update))
+
+        return record
+
+    @staticmethod
+    def restore_document(doc_uuid):
+        """
+        Marks all documents to restored.
+
+        @param doc_uuid The uuid of the document to restore
+        @return The Document database object
+        """
+        record = Document.selectBy(uuid=doc_uuid).getOne(None)
+
+        if not record:
+            raise Exception('Cannot find document')
+
+        update = Update(Document.sqlmeta.table, values={'archived': False}, where=Document.q.id == record.id)
+        Document._connection.query(Document._connection.sqlrepr(update))
+
+        return record
 
     @staticmethod
     def all():
@@ -116,12 +155,25 @@ class Document(SQLObject):
         kwargs['staticTables'] = [Document.sqlmeta.table]
         kwargs['items'] = fields
         query = connection.sqlrepr(Select(**kwargs))
-        num_columns = len(fields)
 
         items = []
         for result in connection.queryAll(query):
-            _id, select_results = result[0], result[1:num_columns]
+            _id, select_results = result[0], result[1:]
             entry = Document.get(_id, selectResults=select_results)
             items.append(entry)
+
+        return items
+
+    @staticmethod
+    def query_as_dict(fields, **kwargs):
+        connection = Document._connection
+        kwargs['staticTables'] = [Document.sqlmeta.table]
+        kwargs['items'] = fields
+        query = connection.sqlrepr(Select(**kwargs))
+        cols = [field.fieldName for field in fields]
+
+        items = []
+        for result in connection.queryAll(query):
+            items.append(dict(zip(cols, result)))
 
         return items

@@ -1,10 +1,13 @@
 # Hermes
 
-Hermes is a Content Management System, that is built on top of Amazon Web Services.
+Hermes is a Content Management System that is built on top of Amazon Web Services.
 
 ## Features
 
 1. Content Migration
-1. Automated Deployment
-1. Automated Scaling using AWS infrastructure
-1. Document versioning and staging
+2. Automated Deployment
+3. Automated Scaling using AWS infrastructure
+4. Document versioning and staging
+
+## Admin REST API
+http://docs.hermes12.apiary.io/#reference

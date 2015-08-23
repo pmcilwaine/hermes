@@ -3,6 +3,10 @@
 
 
 class Document(object):
+    """
+    The base object for normal display of documents. All document types
+    must extend this class.
+    """
 
     def __init__(self, document, config):
         self._document = document

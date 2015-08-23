@@ -4,6 +4,10 @@ import json
 import boto
 import pytest
 import zipfile
+import sys
+from mock import patch, MagicMock, call
+sys.modules['hermes_cms.core.log'] = MagicMock()
+
 from datetime import datetime
 from cStringIO import StringIO
 from boto.s3.key import Key
@@ -12,7 +16,6 @@ from sqlobject.sqlbuilder import IN
 from boto.sqs.message import Message
 from hermes_cms.service.job import InvalidJobError
 from hermes_cms.service.migration_download import MigrationDownloadJob
-from mock import patch, MagicMock, call
 
 
 def side_effect(value):

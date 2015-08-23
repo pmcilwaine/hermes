@@ -7,7 +7,7 @@ from hermes_cms.helpers import common
 from sqlobject.sqlbuilder import DESC
 from hermes_cms.core.registry import Registry
 from hermes_cms.db import Document as DocumentDB
-from hermes_cms.core.auth import requires_permission
+from hermes_cms.core.auth import Auth, requires_permission
 from hermes_cms.validators import Document as DocumentValidation
 
 
@@ -39,15 +39,47 @@ class Document(MethodView):
                 document
             ).do_work()
 
-        return Response(response=json.dumps({}), status=200, content_type='application/json')
+        return Response(response=json.dumps({'notify_msg': {
+            'title': 'Document Modified' if document_data.get('id') else 'Document Added',
+            'message': '{0} has been {1}'.format(
+                str(document.name).strip(),
+                'modified' if document_data.get('id') else 'added'
+            ),
+            'type': 'success'
+        }}), status=200, content_type='application/json')
 
-    # pylint: disable=no-self-use
+    # pylint: disable=no-self-use,unused-argument
     @requires_permission('modify_document')
-    def put(self):
-        pass
+    def put(self, document_id=None):
+        return self.post()
 
-    # pylint: disable=no-self-use
+    def options(self):
+        user = session.get('auth_user', {})
+        option = {
+            'POST': Auth.has_permission(user, 'add_document'),
+            'PUT': Auth.has_permission(user, 'add_document,modify_document'),
+            'DELETE': Auth.has_permission(user, 'delete_document')
+        }
+
+        if request.args.get('method'):
+            if not option.get(request.args.get('method')):
+                option['notify_msg'] = {
+                    'title': 'No Permission',
+                    'message': 'You do not have permission to perform that action',
+                    'type': 'error'
+                }
+
+            return Response(
+                response=json.dumps(option),
+                status=403 if not option.get(request.args.get('method')) else 200,
+                content_type='application/json')
+
+        return Response(response=json.dumps(option), content_type='application/json', status=200)
+
+    # pylint: disable=no-self-use,unused-argument
     def get(self, document_id=None):
+
+        @requires_permission('list_document')
         def document_list():
 
             offset = int(request.args.get('offset', 0))
@@ -55,19 +87,17 @@ class Document(MethodView):
 
             documents = []
             for document in DocumentDB.query(DocumentDB.all(), where=DocumentDB.q.archived == False,
-                                             groupBy=(DocumentDB.q.id, DocumentDB.q.uuid, DocumentDB.q.created,
-                                                      DocumentDB.q.published, DocumentDB.q.type, DocumentDB.q.name,
-                                                      DocumentDB.q.archived, DocumentDB.q.menutitle,
-                                                      DocumentDB.q.show_in_menu, DocumentDB.q.parent,
-                                                      DocumentDB.q.path, DocumentDB.q.user_id),
-                                             orderBy=DESC(DocumentDB.q.created), start=offset, end=offset + limit):
+                                             orderBy=(DocumentDB.q.id, DocumentDB.q.path, DESC(DocumentDB.q.created)),
+                                             start=offset, end=offset + limit,
+                                             distinctOn=DocumentDB.q.id, distinct=True):
 
                 documents.append({
                     'id': document.id,
                     'uuid': document.uuid,
                     'name': document.name,
                     'url': document.url,
-                    'type': document.type
+                    'type': document.type,
+                    'path': document.path
                 })
 
             return Response(response=json.dumps({
@@ -85,7 +115,10 @@ class Document(MethodView):
                 # todo handle 404 requests correctly
                 return Response(response=json.dumps({}), status=404, content_type='application/json')
 
-            return Response(response=json.dumps(DocumentDB.get_document(record)), status=200,
+            content = DocumentDB.get_document(record)
+            content['id'] = record.id
+
+            return Response(response=json.dumps(content), status=200,
                             content_type='application/json')
 
         if not document_id:
@@ -97,4 +130,14 @@ class Document(MethodView):
     @requires_permission('delete_document')
     def delete(self, document_id):
         DocumentDB.delete_document(doc_uuid=document_id)
-        return Response(status=200)
+
+        document = DocumentDB.selectBy(uuid=document_id).getOne(None)
+        notification = {
+            'title': 'Deleted',
+            'message': '{0} has been deleted'.format(document.name.strip()),
+            'type': 'success'
+        }
+
+        return Response(response=json.dumps({'notify_msg': notification}),
+                        content_type='application/json',
+                        status=200)

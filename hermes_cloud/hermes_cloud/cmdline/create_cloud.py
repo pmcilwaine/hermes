@@ -1,17 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""
-Cloud Arguments
-- name of cloud
-- version of cloud
-- domain
-
-Optional Args
-- CMS Min Instances
-- CMS Max Instances
-- Stacks bucket
-"""
 import time
 import json
 import uuid
@@ -28,6 +17,27 @@ from hermes_aws import StackManager, S3
 
 
 class HermesCreateCloud(object):
+
+    """
+    It creates create_cloud callable program in your $PATH
+
+    create_cloud -d [domain] -n [name] -m [manifest] -k [key] --region [region] --min [min] --max [max]
+
+    Domain: The domain you wish to namespace your stacks too. This is recommended as S3 Buckets must be unique within
+        all of AWS.
+
+    Name: The name of the cloud. All stacks created are prefixed with this name
+
+    Manifest: The AMI Manifest file to read to create the cloud
+
+    Key: The AWS Key Pair used to assign to each instance for SSH login
+
+    Region: The region to install the stacks. By default this is ap-southeast-2 (Sydney)
+
+    Min: The minimum number of instances to have in the ASG.
+
+    Max: The maximum number of instances to have in the ASG.
+    """
 
     def __init__(self):
         parser = argparse.ArgumentParser()
@@ -213,7 +223,8 @@ class HermesCreateCloud(object):
             if name == "cms":
                 self.params[name].extend([
                     ('MinInstances', self.args.min),
-                    ('MinInstancesInService', 1)
+                    ('MinInstancesInService', 1),
+                    ('MaxInstances', self.args.max)
                 ])
 
         self.stack_mgr.add_stacks([

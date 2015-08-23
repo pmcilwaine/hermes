@@ -9,7 +9,7 @@
 <script src="/assets/admin/templates/template.js"></script>
 <script src="/assets/admin/js/app.js"></script>
 </head>
-<body>
+<body ng-controller="AppController as app">
 
 <nav class="navbar navbar-default">
     <div class="container-fluid">
@@ -20,7 +20,7 @@
     </div>
 </nav>
 
-<div class="container-fluid" ng-controller="AppController as app">
+<div class="container-fluid" style="margin-bottom: 50px;">
 
     <div ng-hide="app.loading" ui-view></div>
 

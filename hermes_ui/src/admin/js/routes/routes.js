@@ -32,12 +32,29 @@
                 }
             });
 
+            $stateProvider.state('document.restore', {
+                url: '/restore',
+                templateUrl: 'templates/views/document-restore-list.html',
+                controller: 'DocumentRestoreController',
+                resolve: {
+                    DocumentList: ['Documents', function (Documents) {
+                        return Documents.getAllRestore();
+                    }]
+                }
+            });
+
             $stateProvider.state('document.add', {
                 url: '/add',
                 templateUrl: 'templates/views/document-form.html',
                 controller: 'DocumentFormController',
                 resolve: {
-                    document: function () { return {}; }
+                    document: function () { return {}; },
+                    document_list: ['Documents', function (Documents) {
+                        return Documents.getAllWithRepeat(String.fromCharCode(160));
+                    }],
+                    option: ['Documents', function (Documents) {
+                        return Documents.hasPermission('POST');
+                    }]
                 }
             });
 
@@ -53,7 +70,10 @@
                             } else {
                                 return Documents.getNewDocument();
                             }
-                        }]
+                        }],
+                    document_list: ['Documents', function (Documents) {
+                        return Documents.getAllWithRepeat(String.fromCharCode(160));
+                    }]
                 }
             });
 
@@ -64,9 +84,15 @@
                 resolve: {
                     document: ['Documents', 'DocumentResource', '$stateParams',
                         function (Documents, DocumentResource, stateParams) {
-                            console.log(stateParams);
-                            return Documents.getNewDocument();
-                        }]
+                            if (stateParams.id) {
+                                return Documents.getDocument(stateParams.id);
+                            } else {
+                                return Documents.getNewDocument();
+                            }
+                        }],
+                    document_list: ['Documents', function (Documents) {
+                        return Documents.getAllWithRepeat(String.fromCharCode(160));
+                    }]
                 }
             });
 
@@ -77,9 +103,15 @@
                 resolve: {
                     document: ['Documents', 'DocumentResource', '$stateParams',
                         function (Documents, DocumentResource, stateParams) {
-                            console.log(stateParams);
-                            return Documents.getNewDocument();
-                        }]
+                            if (stateParams.id) {
+                                return Documents.getDocument(stateParams.id);
+                            } else {
+                                return Documents.getNewDocument();
+                            }
+                        }],
+                    document_list: ['Documents', function (Documents) {
+                        return Documents.getAllWithRepeat(String.fromCharCode(160));
+                    }]
                 }
             });
 
@@ -87,6 +119,17 @@
                 url: '/migration',
                 templateUrl: 'templates/views/migration-upload.html',
                 controller: 'MigrationUploadController'
+            });
+
+            $stateProvider.state('document.versions', {
+                url: '/version/{id:int}',
+                controller: 'RestoreDocumentVersionController',
+                templateUrl: 'templates/views/document-restore-version-list.html',
+                resolve: {
+                    DocumentList: ['Documents', '$stateParams', function (Documents, stateParams) {
+                        return Documents.listVersions(stateParams.id);
+                    }]
+                }
             });
 
             $stateProvider.state('users', {
@@ -118,6 +161,22 @@
                 }
             });
 
+            $stateProvider.state('users.restore', {
+                url: '/restore',
+                templateUrl: 'templates/views/restore-user-list.html',
+                controller: 'RestoreUserListController',
+                resolve: {
+                    UserList: ['RestoreUserResource', function (RestoreUserResource) {
+                        return RestoreUserResource.get().$promise.then(function (data) {
+                            return data.users;
+                        });
+                    }]
+                },
+                data: {
+                    tab: false
+                }
+            });
+
             $stateProvider.state('users.add', {
                 url: '/add',
                 templateUrl: 'templates/views/user-form.html',
@@ -128,6 +187,9 @@
                 resolve: {
                     user: ['Users', function (Users) {
                         return Users.createNew();
+                    }],
+                    option: ['Users', function (Users) {
+                        return Users.hasPermission('POST');
                     }]
                 }
             });

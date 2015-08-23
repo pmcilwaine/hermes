@@ -16,21 +16,21 @@ def create_document_mock(**kwargs):
 def single_level_nav():
     results = [create_document_mock(
         id=1,
-        url='/',
+        url='index',
         path='1/',
         parent=None,
         published=True,
         menutitle='Homepage'
     ), create_document_mock(
         id=2,
-        url='/first-page',
+        url='first-page',
         path='2/',
         parent=None,
         published=True,
         menutitle='First Page'
     ), create_document_mock(
         id=3,
-        url='/second-page',
+        url='second-page',
         path='3/',
         parent=None,
         published=True,
@@ -44,35 +44,35 @@ def single_level_nav():
 def two_level_nav():
     results = [create_document_mock(
         id=1,
-        url='/',
+        url='index',
         path='1/',
         parent=None,
         published=True,
         menutitle='Homepage'
     ), create_document_mock(
         id=2,
-        url='/first-page',
+        url='first-page',
         path='2/',
         parent=None,
         published=True,
         menutitle='First Page'
     ), create_document_mock(
         id=3,
-        url='/second-page',
+        url='second-page',
         path='3/',
         parent=None,
         published=True,
         menutitle='Second Page'
     ), create_document_mock(
         id=4,
-        url='/second-page/first-node',
+        url='second-page/first-node',
         path='3/4/',
         parent=3,
         published=True,
         menutitle='First Node'
     ), create_document_mock(
         id=5,
-        url='/second-page/second-node',
+        url='second-page/second-node',
         path='3/5/',
         parent=3,
         published=True,

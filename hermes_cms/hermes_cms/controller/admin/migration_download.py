@@ -1,5 +1,6 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
+import json
 import arrow
 import boto.sns
 from boto.exception import BotoServerError
@@ -44,7 +45,8 @@ class MigrationDownload(MethodView):
                 (not data.get('document') and data.get('all_documents'))):
             return Response(status=400)
 
-        name = 'Migration Download {0}'.format(arrow.now().format('YYYY-MM-DD HH:mm'))
+        name = data.get('name', 'Migration Download {0}'.format(arrow.now().format('YYYY-MM-DD HH:mm')))
+
         job = Job.save({
             'name': name,
             'status': 'pending',
@@ -64,4 +66,9 @@ class MigrationDownload(MethodView):
             log.error('Cannot publish Job=%s to Topic=%s "%s"', job.uuid, topic_arn, str(e))
             return Response(status=500)
 
-        return Response(status=200)
+        return Response(response=json.dumps({
+            'notify_msg': {
+                'title': 'Job Added',
+                'message': 'Migration job has been added. Download will be ready shortly.',
+                'type': 'success'
+            }}), content_type='application/json', status=200)

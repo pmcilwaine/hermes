@@ -7,6 +7,7 @@ def import_handler(module_name, class_name):
     mod = __import__(module_name, fromlist=[str(class_name)])
     return getattr(mod, class_name)
 
+
 class Service(object):
     """
     :type job_class: hermes_cms.service.job.Job

@@ -1,5 +1,6 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
+import json
 import arrow
 import logging
 import boto.sns
@@ -22,7 +23,8 @@ class MigrationUpload(MethodView):
 
         data['user_id'] = session['auth_user'].get('id', -1)
 
-        name = 'Migration Upload {0}'.format(arrow.now().format('YYYY-MM-DD HH:mm'))
+        name = data.get('name', 'Migration Upload {0}'.format(arrow.now().format('YYYY-MM-DD HH:mm')))
+
         job = Job.save({
             'name': name,
             'status': 'pending',
@@ -43,4 +45,9 @@ class MigrationUpload(MethodView):
             log.error('Cannot publish Job=%s to Topic=%s "%s"', job.uuid, topic_arn, str(e))
             return Response(status=500)
 
-        return Response(status=200)
+        return Response(response=json.dumps({
+            'notify_msg': {
+                'title': 'Job Added',
+                'message': 'Migration job has been added. Upload will commence shortly.',
+                'type': 'success'
+            }}), content_type='application/json', status=200)

@@ -14,6 +14,10 @@ class Registry(object):
     CACHE = '/tmp/config'
 
     def __init__(self, log=None):
+        """
+
+        @param log A python logging object
+        """
         self._log = log or logging.getLogger('hermes_cms.core.registry.Registry')
         self._bucket_name_ = None
         self._cache = {}
@@ -23,11 +27,10 @@ class Registry(object):
 
     def get(self, key):
         """
+        Get the registry configuration from the S3 configuration bucket
 
-        :type key: basestring
-        :param key: The name of the registry key file to retrieve
-        :return A dictionary which maybe empty as the file was not found.
-        :rtype: dict
+        @param key The name of the registry key file to retrieve
+        @return A dictionary which maybe empty as the file was not found.
         """
         value = self._read_key(key)
 
@@ -41,10 +44,10 @@ class Registry(object):
 
     def _read_cache(self, key):
         """
+        Read the key stored in cache otherwise return None
 
-        :type key: basestring
-        :param key: The name of the registry key file to retrieve
-        :rtype: basestring|None
+        @param key The name of the registry key file to retrieve
+        @return None if we cannot find the key in the cache.
         """
         if key in self._cache:
             return self._cache[key]
@@ -61,12 +64,9 @@ class Registry(object):
     def _write_key(self, key, value):
         """
 
-        :type key: basestring
-        :param key: The name of file in s3 storage
-        :type value: str
-        :param value: The string value retrieved from s3 storage
-        :return: No value returned
-        :rtype: None
+        @param key The name of file in s3 storage
+        @param value The string value retrieved from s3 storage
+        @return: No value returned
         """
         try:
             value = value.strip()
@@ -79,9 +79,8 @@ class Registry(object):
     def _read_key(self, key):
         """
 
-        :type key: basestring
-        :param key: The name of the registry key file to retrieve
-        :rtype: basestring|None
+        @param key The name of the registry key file to retrieve
+        @return basestring | None
         """
         value = self._read_cache(key)
         if value is not None:
@@ -94,9 +93,8 @@ class Registry(object):
     def _get_s3(self, resource):
         """
 
-        :type resource: basestring
-        :param resource: The name of the resource to retrieve
-        :return: No return value
+        @param resource The name of the resource to retrieve
+        @return No return value
         """
         conn = boto.connect_s3()
         bucket = conn.get_bucket(self._bucket_name)

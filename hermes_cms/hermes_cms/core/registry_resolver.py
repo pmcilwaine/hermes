@@ -13,9 +13,9 @@ class RegistryResolver(object):
     def _get_dict(self, dict_src, path):
         """
 
-        :param dict_src:
-        :param path:
-        :return:
+        @param dict_src The dictionary source to use to find keys in
+        @param path a path to find keys within object
+        @return parsed dictionary
         """
         dict_dest = dict_src
         for item in path.split('.'):

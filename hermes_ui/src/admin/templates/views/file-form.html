@@ -14,7 +14,7 @@
 
             <div class="form-group" ng-class="{'has-error': fileForm.parent.$invalid}">
                 <label>Parent</label>
-                <input type="text" class="form-control" name="parent" ng-model="record.document.parent">
+                <select class="form-control" name="parent" ng-model="parent" ng-options="document.name for document in document_list"></select>
                 <p ng-show="fileForm.parent.$invalid" class="help-block">{{ errors.parent }}</p>
             </div>
 
@@ -27,6 +27,18 @@
             <div class="form-group">
                 <label>File</label>
                 <input type="file" name="file" ngf-select="" ng-model="file" hermes-file-field clear-file="clearFile">
+            </div>
+
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="record.document.published" value="1"> Publish Document
+                </label>
+            </div>
+
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="record.document.show_in_menu" value="1"> Show in Navigation
+                </label>
             </div>
 
             <button type="submit" class="btn btn-primary" accesskey="s">Save</button>

@@ -117,7 +117,12 @@ def test_user_save(config, db_connect_mock, validation_mock, user_mock, permissi
         'id': 1,
         'email': 'test@example.org',
         'first_name': '',
-        'last_name': ''
+        'last_name': '',
+        'notify_msg': {
+            'title': 'Added User',
+            'type': 'success',
+            'message': 'User test@example.org has been added'
+        }
     }
 
     response = app().post('/admin/user', data=json.dumps({
@@ -214,23 +219,31 @@ def test_user_update(config, db_connect_mock, validation_mock, user_mock, permis
         'id': 2,
         'email': 'test@example.org',
         'first_name': 'Test',
-        'last_name': 'User'
+        'last_name': 'User',
+        'notify_msg': {
+            'title': 'Modified User',
+            'type': 'success',
+            'message': 'User test@example.org has been modified'
+        }
     }
 
     assert json.loads(response.data) == expected
     assert response.status_code == 200
 
 
+@patch('hermes_cms.core.auth.session')
+@patch.object(Auth, 'has_permission')
 @patch('hermes_cms.views.admin.Registry')
 @patch('hermes_cms.controller.admin.user.UserDB')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_user_get_list(config, db_connect_mock, user_mock, _mock, blueprint_config):
+def test_user_get_list(config, db_connect_mock, user_mock, _mock, permission_mock, session_mock, blueprint_config):
     config.return_value = blueprint_config
     db_connect_mock.return_value = None
     user_mock.selectBy.return_value = [
         MagicMock(email='test@example.org', first_name='Test', last_name='User', id=3)
     ]
+    permission_mock.return_value = True
 
     expected = {
         'users': [
@@ -281,14 +294,16 @@ def test_document_list_first_page_no_children(config, db_connect_mock, document_
                 'uuid': 'some-id',
                 'name': 'Homepage',
                 'url': '/',
-                'type': 'Page'
+                'type': 'Page',
+                'path': '1/'
             },
             {
                 'id': 2,
                 'uuid': 'some-id-2',
                 'name': 'Second Page',
                 'url': '/second-page',
-                'type': 'Page'
+                'type': 'Page',
+                'path': '2/'
             }
         ],
         'meta': {

@@ -11,7 +11,9 @@ module.exports = {
                     last_name: 'User'
                 }], documents = [{
                     name: 'Homepage',
-                    url: 'index'
+                    url: 'index',
+                    path: '1/',
+                    id: 1
                 }], uuid = function () {
                     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                         var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
@@ -23,21 +25,45 @@ module.exports = {
                     users: users
                 });
 
+                $httpBackend.when('OPTIONS', /.*/)
+                    .respond({
+                        'POST': true,
+                        'GET': true,
+                        'PUT': true,
+                        'DELETE': true
+                    });
+
                 $httpBackend.whenGET('/admin/user/1').respond(users[0]);
 
                 $httpBackend.whenPUT('/admin/user/1').respond(function (method, url, data) {
+
                     data = angular.fromJson(data);
+
+                    data.notify_msg = {
+                        title: 'test',
+                        message: 'message',
+                        type: 'success'
+                    };
+
                     users.forEach(function (item) {
                         if (item.email === data.email) {
                             item.first_name = data.first_name;
                         }
-                    })
+                    });
+
                     return [200, data, {}];
                 });
 
                 $httpBackend.whenPOST('/admin/user').respond(function (method, url, data) {
                     data = angular.fromJson(data);
                     data.id = users.length;
+
+                    data.notify_msg = {
+                        title: 'test',
+                        message: 'message',
+                        type: 'success'
+                    };
+
                     users.push(data);
                     return [200, data, {}];
                 });
@@ -48,6 +74,13 @@ module.exports = {
                     users = users.filter(function (item) {
                         return item.id !== user_id;
                     });
+
+                    data = {};
+                    data.notify_msg = {
+                        title: 'test',
+                        message: 'message',
+                        type: 'success'
+                    };
 
                     return [200, data, {}];
                 });
@@ -89,6 +122,7 @@ module.exports = {
                 }).respond(function (method, url, data) {
                     data = angular.fromJson(data);
                     data.document.id = documents.length;
+                    data.document.path = data.document.id + '/';
                     documents.push(data.document);
                     return [200, data.document, {}];
                 });
@@ -102,7 +136,6 @@ module.exports = {
                     action: '/admin/file/upload'
                 });
 
-                $httpBackend.when('OPTIONS', /.*/).passThrough();
             });
         };
 

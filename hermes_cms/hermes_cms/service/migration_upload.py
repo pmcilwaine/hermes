@@ -4,6 +4,11 @@ import json
 import boto
 import arrow
 import logging
+from hermes_cms.core.log import setup_logging
+
+setup_logging(logfile='service.ini')
+log = logging.getLogger('hermes.service.migration_upload')
+
 import zipfile
 from boto.s3.key import Key
 from cStringIO import StringIO
@@ -14,14 +19,11 @@ from sqlobject import sqlhub, connectionForURI
 from sqlobject.sqlbuilder import DESC
 import mimetypes
 
-log = logging.getLogger('hermes_cms.service.migration_upload')
-
 
 class MigrationUploadJob(Job):
 
     def __init__(self):
-        self.registry = Registry()
-        self.log = logging.getLogger('hermes_cms.service.migration_upload')
+        self.registry = Registry(log=log)
         database_url = str(self.registry.get('database').get('database'))
         sqlhub.processConnection = connectionForURI(database_url)
 
@@ -165,7 +167,7 @@ class MigrationUploadJob(Job):
         job_id = str(contents['Message'])
         job = JobDB.selectBy(uuid=job_id).getOne(None)
         if not job:
-            self.log.error('Cannot find job %s', job_id)
+            log.error('Cannot find job %s', job_id)
             raise InvalidJobError('Invalid Job ID: {0}'.format(job_id))
 
         job.set(status='running')

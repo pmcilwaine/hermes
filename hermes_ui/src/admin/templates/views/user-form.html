@@ -37,7 +37,7 @@
                         <div class="col-md-10">
                             <div class="checkbox">
                                 <label>
-                                    <input type="checkbox" ng-model="is_administrator"> Administrator User
+                                    <input type="checkbox" ng-model="is_administrator" ng-click="togglePermissions()"> Administrator User
                                 </label>
                             </div>
                             <hr>
@@ -45,14 +45,14 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4 col-md-offset-2">
-                            <div class="checkbox" ng-repeat="permission in permissions | limitTo: 5">
+                            <div class="checkbox" ng-repeat="permission in permissions | limitTo: 6">
                                 <label>
                                     <input type="checkbox" ng-model="user_permissions[permission.value]"> {{ ::permission.title }}
                                 </label>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="checkbox" ng-repeat="permission in permissions | slice:5:10">
+                            <div class="checkbox" ng-repeat="permission in permissions | slice:6:12">
                                 <label>
                                     <input type="checkbox" ng-model="user_permissions[permission.value]"> {{ ::permission.title }}
                                 </label>

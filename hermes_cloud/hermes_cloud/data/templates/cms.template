@@ -171,6 +171,65 @@
                 }
             }
         },
+        "CMSUpScalingPolicy": {
+            "Type": "AWS::AutoScaling::ScalingPolicy",
+            "Properties": {
+                "AdjustmentType" : "ChangeInCapacity",
+                "AutoScalingGroupName" : { "Ref" : "CMSASG" },
+                "Cooldown" : "60",
+                "ScalingAdjustment" : "1"
+            }
+        },
+        "CMSDownScalingPolicy": {
+            "Type": "AWS::AutoScaling::ScalingPolicy",
+            "Properties": {
+                "AdjustmentType" : "ChangeInCapacity",
+                "AutoScalingGroupName" : { "Ref" : "CMSASG" },
+                "Cooldown" : "60",
+                "ScalingAdjustment" : "-1"
+            }
+        },
+        "NetworkAlarmHigh": {
+            "Type": "AWS::CloudWatch::Alarm",
+            "Properties": {
+                "AlarmDescription": "Network scale up >= 2,000,000 bytes for 10 minutes",
+                "MetricName": "NetworkIn",
+                "Namespace": "AWS/EC2",
+                "Statistic": "Average",
+                "Period": "300",
+                "EvaluationPeriods": "2",
+                "Threshold": "2000000",
+                "AlarmActions": [ { "Ref": "CMSUpScalingPolicy" } ],
+                "Dimensions": [
+                    {
+                    "Name": "AutoScalingGroupName",
+                    "Value": { "Ref": "CMSASG" }
+                    }
+                ],
+                "ComparisonOperator": "GreaterThanThreshold"
+            }
+        },
+        "NetworkAlarmLow": {
+            "Type": "AWS::CloudWatch::Alarm",
+            "Properties": {
+                "AlarmDescription": "Network scale down < 1,000,000 bytes for 10 minutes",
+                "MetricName": "NetworkIn",
+                "Namespace": "AWS/EC2",
+                "Statistic": "Average",
+                "Period": "300",
+                "EvaluationPeriods": "2",
+                "Threshold": "1000000",
+                "AlarmActions": [ { "Ref": "CMSDownScalingPolicy" } ],
+                "Dimensions": [
+                    {
+                        "Name": "AutoScalingGroupName",
+                        "Value": { "Ref": "CMSASG" }
+                    }
+                ],
+                "ComparisonOperator": "LessThanThreshold"
+            }
+        },
+
         "CMSLaunchConfig": {
             "Type": "AWS::AutoScaling::LaunchConfiguration",
             "Properties": {

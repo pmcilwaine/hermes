@@ -9,11 +9,14 @@
         scope.user_permissions = {};
 
         scope.permissions = [
+            {value: 'list_document', title: 'List Documents'},
             {value: 'add_document', title: 'Add Document'},
             {value: 'modify_document', title: 'Modify Document'},
             {value: 'delete_document', title: 'Delete Document'},
             {value: 'restore_deleted_document', title: 'Restore Deleted Document'},
             {value: 'restore_version_document', title: 'Restore Version Document'},
+            {value: 'list_job', title: 'List Job'},
+            {value: 'list_user', title: 'List User'},
             {value: 'add_user', title: 'Add User'},
             {value: 'modify_user', title: 'Modify User'},
             {value: 'delete_user', title: 'Delete User'},
@@ -28,11 +31,11 @@
 
         scope.is_administrator = _.all(scope.user_permissions);
 
-        scope.$watch('is_administrator', function (is_administrator) {
+        scope.togglePermissions = function () {
             _.each(scope.user_permissions, function (value, key) {
-                scope.user_permissions[key] = is_administrator;
+                scope.user_permissions[key] = scope.is_administrator;
             });
-        });
+        };
 
         scope.submit = function () {
             // update scope.record
