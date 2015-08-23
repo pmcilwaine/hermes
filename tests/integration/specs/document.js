@@ -9,7 +9,7 @@ var helpers = require('../../helpers/helpers.js');
 
 var path = require('path');
 
-describe('Documents', function () {
+describe.skip('Documents', function () {
 
     before(function () {
         mockHttp.register();

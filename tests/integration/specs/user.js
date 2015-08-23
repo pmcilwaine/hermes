@@ -7,7 +7,7 @@ var expect = chai.expect;
 var mockHttp = require('./mocks/httpMock.js');
 var helpers = require('../../helpers/helpers.js');
 
-describe('Users', function () {
+describe.skip('Users', function () {
 
     before(function () {
         mockHttp.register();
