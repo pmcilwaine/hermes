@@ -89,6 +89,7 @@ class User(MethodView):
             return Response(response=e.as_json(), status=400, content_type='application/json')
 
     # pylint: disable=no-self-use
+    @requires_permission('list_user')
     def get(self, user_id=None):
         def _get_all_users():
             users = []

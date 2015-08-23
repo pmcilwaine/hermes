@@ -1,15 +1,17 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
 import json
-from flask import request, Response
 from flask.views import MethodView
-from hermes_cms.db import Job as JobDB
+from flask import request, Response
 from sqlobject.sqlbuilder import DESC
+from hermes_cms.db import Job as JobDB
+from hermes_cms.core.auth import requires_permission
 
 
 class Job(MethodView):
 
     # pylint: disable=no-self-use
+    @requires_permission('list_job')
     def get(self):
         """
 
