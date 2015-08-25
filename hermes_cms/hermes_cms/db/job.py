@@ -3,6 +3,7 @@
 
 import uuid
 import json
+import arrow
 from sqlobject import SQLObject
 from sqlobject.col import StringCol, DateTimeCol
 
@@ -36,6 +37,8 @@ class Job(SQLObject):
         """
         if 'uuid' not in record:
             record['uuid'] = str(uuid.uuid4())
+            record['created'] = arrow.utcnow()
+            record['modified'] = arrow.utcnow()
             job = Job(**record)
         else:
             job = Job.selectBy(uuid=record['uuid']).getOne(None)
@@ -44,6 +47,7 @@ class Job(SQLObject):
                 raise Exception('Cannot find job record to update')
 
             job.pop('uuid')
+            record['modified'] = arrow.utcnow()
             job.set(**record)
 
         return job
