@@ -10,6 +10,13 @@ from mako.lookup import TemplateLookup
 from hermes_aws.s3 import S3
 
 
+def is_boto_error_contain(e, error_str):
+    """ Check if server error contains error_str
+    """
+    return ((e.body and e.body.find(error_str) >= 0) or
+            (e.error_message and e.error_message.find(error_str) >= 0))
+
+
 class StackManager(object):
 
     def __init__(self, region, name=None, params=None, tmpl_args=None, template_path=None, stack=None):
@@ -116,11 +123,20 @@ class StackManager(object):
 
             try:
                 if update_stack:
-                    pass
+                    self.conn.update_stack(stack_names[stack], template_body=response,
+                                           parameters=self.params.get(stack),
+                                           capabilities=['CAPABILITY_IAM'])
                 else:
                     self.conn.create_stack(stack_names[stack], template_body=response,
                                            parameters=self.params.get(stack),
                                            capabilities=['CAPABILITY_IAM'])
+            except BotoServerError as e:
+                if is_boto_error_contain(e, 'No updates are to be performed'):
+                    print 'No updates to perform'
+                else:
+                    print 'Template Failed'
+                    print response
+                    raise e
             except Exception as e:
                 print 'Template Failed'
                 print response
