@@ -5,7 +5,7 @@ import mimetypes
 from hermes_cms.controller.public.document import Document
 from hermes_cms.core.registry import Registry
 from hermes_aws import S3
-from flask import request, Response
+from flask import request, Response, redirect
 
 
 # pylint: disable=abstract-method
@@ -13,6 +13,9 @@ class Multipage(Document):
 
     def get(self):
         registry = Registry()
+
+        if request.path == '/{0}'.format(self._document['document']['url']):
+            return redirect('{0}/'.format(request.path))
 
         (_, key_name) = request.path.split('/{0}'.format(self._document['document']['url']))
         if not key_name or '/' == key_name:
