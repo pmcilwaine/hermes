@@ -20,11 +20,11 @@
   sudo_user: centos
 
 - name: Get Packer Package 64bit
-  get_url: url=https://dl.bintray.com/mitchellh/packer/packer_0.7.5_linux_amd64.zip dest=~/packer_0.7.5_linux_amd64.zip
+  get_url: url=https://dl.bintray.com/mitchellh/packer/packer_0.8.6_linux_amd64.zip dest=~/packer_0.8.6_linux_amd64.zip
   sudo: yes
   sudo_user: centos
 
 - name: Unarchive Package
-  unarchive: src=~/packer_0.7.5_linux_amd64.zip dest=~/go/bin
+  unarchive: src=~/packer_0.8.6_linux_amd64.zip dest=~/go/bin
   sudo: yes
   sudo_user: centos
