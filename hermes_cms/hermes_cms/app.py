@@ -20,8 +20,6 @@ def db_connect():
 
 
 def db_close(resp):
-    if hasattr(sqlhub, 'threadConnection'):
-        sqlhub.threadConnection.close()
     return resp
 
 
