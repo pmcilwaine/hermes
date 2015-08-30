@@ -194,7 +194,7 @@ class HermesCreateCloud(object):
         cursor.execute("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'document')")
         record = cursor.fetchone()
 
-        if record is False:
+        if record[0] is False:
             tables = open(resource_filename('hermes_cloud', 'data/database/create.sql'), 'r').read().split(';')
             for table in tables:
                 try:
