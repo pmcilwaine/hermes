@@ -12,7 +12,7 @@
             "url": "/migration",
             "module_name": "hermes_cms.controller.admin.migration_download",
             "class_name": "MigrationDownload",
-            "methods": ["POST"]
+            "methods": ["POST", "OPTIONS"]
         },
         {
             "name": "job",

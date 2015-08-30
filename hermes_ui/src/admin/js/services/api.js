@@ -42,7 +42,8 @@
         }])
         .factory('MigrationDownloadResource', ['$resource', function (resource) {
             return resource('/admin/migration', {}, {
-                newJob: {method: 'post'}
+                newJob: {method: 'post'},
+                options: {method: 'OPTIONS'}
             });
         }])
         .factory('RestoreUserResource', ['$resource', function (resource) {

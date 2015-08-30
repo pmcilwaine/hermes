@@ -2,13 +2,14 @@
 # -*- coding: utf-8 -*-
 import json
 import arrow
-import boto.sns
-from boto.exception import BotoServerError
 import logging
-from flask import request, Response
-from flask.views import MethodView
+import boto.sns
 from hermes_cms.db import Job
+from flask.views import MethodView
+from boto.exception import BotoServerError
+from flask import request, Response, session
 from hermes_cms.core.registry import Registry
+from hermes_cms.core.auth import Auth, requires_permission
 
 log = logging.getLogger('hermes_cms.controller.admin.multipage_download')
 
@@ -16,6 +17,7 @@ log = logging.getLogger('hermes_cms.controller.admin.multipage_download')
 class MigrationDownload(MethodView):
 
     # pylint: disable=no-self-use
+    @requires_permission('download_archive_document')
     def post(self):
         """
 
@@ -72,3 +74,24 @@ class MigrationDownload(MethodView):
                 'message': 'Migration job has been added. Download will be ready shortly.',
                 'type': 'success'
             }}), content_type='application/json', status=200)
+
+    def options(self):
+        user = session.get('auth_user', {})
+        option = {
+            'POST': Auth.has_permission(user, 'download_archive_document'),
+        }
+
+        if request.args.get('method'):
+            if not option.get(request.args.get('method')):
+                option['notify_msg'] = {
+                    'title': 'No Permission',
+                    'message': 'You do not have permission to perform that action',
+                    'type': 'error'
+                }
+
+            return Response(
+                response=json.dumps(option),
+                status=403 if not option.get(request.args.get('method')) else 200,
+                content_type='application/json')
+
+        return Response(response=json.dumps(option), content_type='application/json', status=200)
