@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from hermes_cms.core import Auth
+from hermes_cms.core.auth import requires_permission, Auth
 from flask import Blueprint, Response, request, json
 from mako.lookup import TemplateLookup
 from pkg_resources import resource_filename
@@ -38,11 +38,14 @@ def url_rules():
 
 @route.route('/', methods=['GET'])
 @Auth.is_logged_in
+@requires_permission(['list_document', 'list_job', 'list_user'])
 def index():
     return Response(response=lookup.get_template('index.html').render(), status=200)
 
 
 @route.route('/upload_url', methods=['POST'])
+@Auth.is_logged_in
+@requires_permission(['list_document', 'list_job', 'list_user'])
 def sign_upload_url():
     registry = Registry()
 
@@ -57,6 +60,8 @@ def sign_upload_url():
 
 
 @route.route('/download_url', methods=['POST'])
+@Auth.is_logged_in
+@requires_permission(['list_document', 'list_job', 'list_user'])
 def sign_download_url():
     data = request.json
 

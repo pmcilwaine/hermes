@@ -80,15 +80,18 @@ def blueprint_config():
     return instance
 
 
+@patch.object(Auth, 'has_permission')
 @patch('hermes_cms.views.admin.Registry')
 @patch('hermes_cms.core.auth.session')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_index(config, db_connect_mock, session_mock, registry_mock, blueprint_config, admin_rules_config):
+def test_index(config, db_connect_mock, session_mock, registry_mock, permission_mock, blueprint_config,
+               admin_rules_config):
     config.return_value = blueprint_config
     registry_mock.return_value = admin_rules_config
     db_connect_mock.return_value = None
     session_mock.get.return_value = True
+    permission_mock.return_value = True
 
     response = app().get('/admin/')
     assert response.status_code == 200
