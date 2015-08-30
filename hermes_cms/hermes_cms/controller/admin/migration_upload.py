@@ -9,6 +9,7 @@ from flask.views import MethodView
 from flask import request, Response, session
 from boto.exception import BotoServerError
 from hermes_cms.core.registry import Registry
+from hermes_cms.core.auth import Auth, requires_permission
 
 log = logging.getLogger('hermes_cms.controller.admin.multipage_upload')
 
@@ -16,6 +17,7 @@ log = logging.getLogger('hermes_cms.controller.admin.multipage_upload')
 class MigrationUpload(MethodView):
 
     # pylint: disable=no-self-use
+    @requires_permission('upload_archive_document')
     def post(self):
         data = request.json
         if not data or not data.get('file'):
@@ -51,3 +53,24 @@ class MigrationUpload(MethodView):
                 'message': 'Migration job has been added. Upload will commence shortly.',
                 'type': 'success'
             }}), content_type='application/json', status=200)
+
+    def options(self):
+        user = session.get('auth_user', {})
+        option = {
+            'POST': Auth.has_permission(user, 'upload_archive_document'),
+        }
+
+        if request.args.get('method'):
+            if not option.get(request.args.get('method')):
+                option['notify_msg'] = {
+                    'title': 'No Permission',
+                    'message': 'You do not have permission to perform that action',
+                    'type': 'error'
+                }
+
+            return Response(
+                response=json.dumps(option),
+                status=403 if not option.get(request.args.get('method')) else 200,
+                content_type='application/json')
+
+        return Response(response=json.dumps(option), content_type='application/json', status=200)

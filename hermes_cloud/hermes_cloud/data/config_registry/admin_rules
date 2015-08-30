@@ -5,7 +5,7 @@
             "url": "/migration_upload",
             "module_name": "hermes_cms.controller.admin.migration_upload",
             "class_name": "MigrationUpload",
-            "methods": ["POST"]
+            "methods": ["POST", "OPTIONS"]
         },
         {
             "name": "migration_download",

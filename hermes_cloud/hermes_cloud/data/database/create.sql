@@ -38,5 +38,5 @@ CREATE TABLE job (
     message text
 );
 
-INSERT INTO users (email, password, first_name, last_name, created, modified, permissions, archived) VALUES ('test@example.org', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', 'Test', 'User', NOW(), NOW(), 'list_document,add_document,modify_document,delete_document,restore_deleted_document,restore_version_document,list_job,list_user,add_user,modify_user,delete_user,restore_user,download_archive_document', 'F');
+INSERT INTO users (email, password, first_name, last_name, created, modified, permissions, archived) VALUES ('test@example.org', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', 'Test', 'User', NOW(), NOW(), 'list_document,add_document,modify_document,delete_document,restore_deleted_document,restore_version_document,list_job,list_user,add_user,modify_user,delete_user,restore_user,download_archive_document,upload_archive_document', 'F');
 INSERT INTO users (email, password, first_name, last_name, created, modified, permissions, archived) VALUES ('testing@example.org', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', 'Test', 'User', NOW(), NOW(), 'list_document,list_user,list_job', 'F');
