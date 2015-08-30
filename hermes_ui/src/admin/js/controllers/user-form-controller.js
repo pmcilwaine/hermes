@@ -16,6 +16,7 @@
             {value: 'restore_deleted_document', title: 'Restore Deleted Document'},
             {value: 'restore_version_document', title: 'Restore Version Document'},
             {value: 'download_archive_document', title: 'Download Migration Archive'},
+            {value: 'upload_archive_document', title: 'Upload Migration Archive'},
             {value: 'list_job', title: 'List Job'},
             {value: 'list_user', title: 'List User'},
             {value: 'add_user', title: 'Add User'},

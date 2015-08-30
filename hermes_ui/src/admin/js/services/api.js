@@ -37,7 +37,8 @@
         }])
         .factory('MigrationUploadResource', ['$resource', function (resource) {
             return resource('/admin/migration_upload', {}, {
-                post: {method: 'POST'}
+                post: {method: 'POST'},
+                options: {method: 'OPTIONS'}
             });
         }])
         .factory('MigrationDownloadResource', ['$resource', function (resource) {

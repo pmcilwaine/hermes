@@ -6,6 +6,7 @@ import pytest
 import boto.sns
 from moto import mock_sns
 from mock import MagicMock, patch
+from hermes_cms.core.auth import Auth
 from hermes_cms.app import create_app
 
 
@@ -49,23 +50,27 @@ def blueprint_config():
     return instance
 
 
+@patch.object(Auth, 'has_permission')
 @patch('hermes_cms.views.admin.Registry')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_invalid_post(config_mock, db_connect_mock, registry_mock, blueprint_config, admin_rules_config):
+def test_invalid_post(config_mock, db_connect_mock, registry_mock, permission_mock, blueprint_config, admin_rules_config):
     config_mock.return_value = blueprint_config
     registry_mock.return_value = admin_rules_config
     db_connect_mock.return_value = None
+    permission_mock.return_value = True
     response = app().post('/admin/migration_upload')
     assert response.status_code == 400
 
 
+@patch.object(Auth, 'has_permission')
 @patch('hermes_cms.views.admin.Registry')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_post_invalid_data(config_mock, db_connect_mock, _mock, blueprint_config):
+def test_post_invalid_data(config_mock, db_connect_mock, _mock, permission_mock, blueprint_config):
     config_mock.return_value = blueprint_config
     db_connect_mock.return_value = None
+    permission_mock.return_value = True
     response = app().post('/admin/migration_upload', data=json.dumps({
         'test': {}
     }), content_type='application/json')
@@ -73,6 +78,7 @@ def test_post_invalid_data(config_mock, db_connect_mock, _mock, blueprint_config
 
 
 @mock_sns
+@patch.object(Auth, 'has_permission')
 @patch('hermes_cms.views.admin.Registry')
 @patch('hermes_cms.controller.admin.migration_upload.session')
 @patch('hermes_cms.controller.admin.migration_upload.arrow')
@@ -81,7 +87,7 @@ def test_post_invalid_data(config_mock, db_connect_mock, _mock, blueprint_config
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
 def test_post_specific_documents(app_registry, db_connect_mock, job_mock, registry_mock, arrow_mock, session_mock,
-                                 _mock, blueprint_config):
+                                 _mock, permission_mock, blueprint_config):
     arrow_mock.now.return_value = arrow.get(2015, 7, 1, 20, 0, 0)
 
     conn = boto.sns.connect_to_region('ap-southeast-2')
@@ -89,6 +95,8 @@ def test_post_specific_documents(app_registry, db_connect_mock, job_mock, regist
 
     session_mock.return_value = {}
     app_registry.return_value = blueprint_config
+
+    permission_mock.return_value = True
 
     def side_effect(value):
         return {
