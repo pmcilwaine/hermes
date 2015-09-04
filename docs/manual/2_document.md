@@ -8,7 +8,7 @@ This section describes how to use documents within the Hermes Content Management
 
 ## What is a Document?
 
-A document is a unique accessible via a URL within the Content Management System (CMS). Documents are versioned which allows versions to be restored.
+A document is a uniquely accessible URL within the Content Management System (CMS). Documents are versioned so they can be restored from a certain point in time, as well as no document is deleted so is recoverable.
 
 \newpage
 
@@ -34,6 +34,8 @@ In the Document List view, click on add Document.
 
 ![Page Form](assets/page-form.png "Page Form")
 
+It may take some time for the submit to be successful as its saving the data into the Database as well as storing a document object within Amazon S3.
+
 \newpage
 
 ## Create a File 
@@ -56,6 +58,8 @@ In the Document List view, click on add Document.
 10. Click the Choose File or Browse button to select the file to be uploaded.
 
 ![File Form](assets/file-form.png "File Form")
+
+It may take some time for the submit to be successful as its saving the data into the Database as well as storing a document object within Amazon S3.
 
 \newpage
 
@@ -80,13 +84,15 @@ In the Document List view, click on add Document.
 
 ![MultiPage Form](assets/multipage-form.png "MultiPage Form")
 
+It may take some time for the submit to be successful as its saving the data into the Database as well as storing a document object within Amazon S3.
+
 \newpage
 
 ## Modify Document
 
 ![Document List](assets/document-list.png "Document List")
 
-To modify a document find the document you want to modify and click the "Edit" button. You will be then shown the appropriate document
+To modify a document find the document you want to modify and click the "Edit" button. You will be then shown the appropriate document. If you get a No permission message displayed, it means the account you have logged in with does not allow you to modify documents.
 
 \newpage
 
@@ -100,7 +106,9 @@ All validation of fields apply when modifying a document.
 
 ![Document List](assets/document-list.png "Document List")
 
-To delete a document find the document you want to delete and click the "Delete" button. This will will remove the document from the list. See Restore Document to find out how to restore a document.
+To delete a document find the document you want to delete and click the "Delete" button. This will will remove the document from the list. See Restore Document to find out how to restore a document. 
+
+If you get a "No Permission" error message, it means the account you are logged in with does not have permission to delete documents. You will need to get an Administrator to give you additional permissions.
 
 \newpage
 
@@ -120,7 +128,15 @@ Find the document to restore and click Restore. Once clicked the document will b
 
 ![Document List](assets/document-list.png "Document List")
 
-Find the document you need to restore a particular version 
+Find the document you need to restore a particular version. Then click on the version button. 
+
+\newpage
+
+![Restore Document Version](assets/document-version.png "Restore Document Version")
+
+This will display a list of versions of the document. Select the version of the document you wish to restore. This will now become the latest document version.
+
+You cannot view the contents of the document to compare against at this stage.
 
 \newpage
 
@@ -132,6 +148,8 @@ In the above Figure there are checkboxes which can be checked to mark documents 
 
 ![Download Migration Archive](assets/migration-download.png "Download Migration Archive")
 
+If you get a "No Permission" error message, it means the account you are logged in with does not have permission to delete documents. You will need to get an Administrator to give you additional permissions.
+
 \newpage
 
 ## Upload Migration Archive
@@ -141,6 +159,8 @@ To upload a migration archive to the system. You will need to ensure you have fi
 ![Upload Migration](assets/migration-upload.png "Upload Migration")
 
 You will need to ensure that you upload the correct ZIP archive. When the ZIP file is uploaded a Job is created (See Jobs) where you can track the upload. An invalid Migration archive will fail.
+
+If you get a "No Permission" error message, it means the account you are logged in with does not have permission to delete documents. You will need to get an Administrator to give you additional permissions.
 
 \newpage
 

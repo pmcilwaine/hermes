@@ -36,11 +36,15 @@ Below are the main classes that make up the Hermes system.
 
 Each package below produces an RPM artefact which is uploaded into a YUM repository and later used within the creation of an Amazon Image (AMI) using packer.
 
-![Hermes AWS](assets/hermes_aws.jpg "Hermes AWS")
+![Package](assets/package_diagram.jpg "Package")
+
+\newpage
 
 ### Deployment
 
-![Hermes AWS](assets/hermes_aws.jpg "Hermes AWS")
+![Deployment](assets/AWS_Deployment.png "Deployment")
+
+\newpage
 
 ## Project Structure
 
