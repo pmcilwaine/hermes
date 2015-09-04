@@ -6,7 +6,7 @@ Hermes is a Content Management System (CMS) utilising Amazon Web Services (AWS).
 
 ## Installation
 
-The system is installed using automated scripts. A first installation of the system will contain no documents and only 2 users which should be removed for production use.
+The system is installed using automated scripts. A first installation of the system will contain no documents and only 2 users which should be removed for production use. Please see deveoper documentation on installation and setup.
 
 ## Access and Logging details
 
