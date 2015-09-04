@@ -6,6 +6,8 @@ import json
 import uuid
 import yaml
 import boto
+import urlparse
+import boto.exception
 import psycopg2
 import boto.ec2
 import boto.rds
@@ -104,7 +106,10 @@ class HermesCreateCloud(object):
         for bucket in buckets:
             bucket_name = self._format_name(bucket)
             print 'Creating bucket %s' % (bucket_name, )
-            conn.create_bucket(bucket_name, location=self.args.region)
+            try:
+                conn.create_bucket(bucket_name, location=self.args.region)
+            except boto.exception.S3CreateError:
+                print 'Bucket %s already exists not creating' % (bucket_name, )
 
     def _generate_http_upload_policy(self, buckets):
         conn = boto.s3.connect_to_region(self.args.region)
@@ -113,12 +118,25 @@ class HermesCreateCloud(object):
             _bucket.set_cors_xml('<?xml version="1.0" encoding="UTF-8"?><CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><CORSRule><AllowedOrigin>*</AllowedOrigin><AllowedMethod>GET</AllowedMethod><AllowedMethod>PUT</AllowedMethod><AllowedMethod>POST</AllowedMethod><MaxAgeSeconds>3000</MaxAgeSeconds><AllowedHeader>*</AllowedHeader></CORSRule></CORSConfiguration>')
 
     def _build_rds(self):
-        self.tmpl_args['rds'] = {
-            'username': self._format_name('system_database').replace('-', '_'),
-            'password': uuid.uuid4(),
-            'db_name': self._format_name('cmsdb').replace('-', '_'),
-            'instance_id': self._format_name('cmsdb')
-        }
+        try:
+            config = json.loads(S3.get_string(self._format_name('config'), 'database'))
+            parse = urlparse.urlparse(config['database'])
+            (username, contents, port) = parse.netloc.split(':')
+            (password, contents) = contents.split('@')
+
+            self.tmpl_args['rds'] = {
+                'username': username,
+                'password': password,
+                'db_name': self._format_name('cmsdb').replace('-', '_'),
+                'instance_id': self._format_name('cmsdb')
+            }
+        except boto.exception.S3ResponseError:
+            self.tmpl_args['rds'] = {
+                'username': self._format_name('system_database').replace('-', '_'),
+                'password': uuid.uuid4(),
+                'db_name': self._format_name('cmsdb').replace('-', '_'),
+                'instance_id': self._format_name('cmsdb')
+            }
 
     def _upload_config_registry(self):
         for filename in ['blueprint', 'document', 'jobs', 'admin_rules']:
@@ -134,10 +152,14 @@ class HermesCreateCloud(object):
                 describe = conn.describe_db_instances(self.tmpl_args['rds']['instance_id'])
                 info = describe['DescribeDBInstancesResponse']['DescribeDBInstancesResult']['DBInstances'][0]
                 if info['DBInstanceStatus'] == 'available':
-                    self.rds_config['database'] = 'postgres://{0}:{1}@{2}:{3}/{4}'.format(
-                        self.tmpl_args['rds']['username'], self.tmpl_args['rds']['password'],
-                        info['Endpoint']['Address'], '5432', self.tmpl_args['rds']['db_name']
-                    )
+                    # check if we have it in config already
+                    try:
+                        self.rds_config = json.loads(S3.get_string(self._format_name('config'), 'database'))
+                    except boto.exception.S3ResponseError:
+                        self.rds_config['database'] = 'postgres://{0}:{1}@{2}:{3}/{4}'.format(
+                            self.tmpl_args['rds']['username'], self.tmpl_args['rds']['password'],
+                            info['Endpoint']['Address'], '5432', self.tmpl_args['rds']['db_name']
+                        )
                     break
 
                 print 'rds', info['DBInstanceStatus']
@@ -165,26 +187,25 @@ class HermesCreateCloud(object):
         security_group.authorize(ip_protocol='tcp', from_port='5432', to_port='5432', cidr_ip='0.0.0.0/0')
 
         print 'connecting to db'
-        db_conn = psycopg2.connect("dbname='{0}' host='{1}' user='{2}' password='{3}' port='{4}'".format(
-            self.tmpl_args['rds']['db_name'],
-            info['Endpoint']['Address'],
-            self.tmpl_args['rds']['username'],
-            self.tmpl_args['rds']['password'],
-            '5432'
-        ))
+        db_conn = psycopg2.connect(self.rds_config['database'])
 
         cursor = db_conn.cursor()
-        tables = open(resource_filename('hermes_cloud', 'data/database/create.sql'), 'r').read().split(';')
-        for table in tables:
-            try:
-                if table:
-                    cursor.execute('{0};'.format(table))
-            except psycopg2.ProgrammingError:
-                pass
 
-        db_conn.commit()
-        cursor.close()
-        conn.close()
+        cursor.execute("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'document')")
+        record = cursor.fetchone()
+
+        if record[0] is False:
+            tables = open(resource_filename('hermes_cloud', 'data/database/create.sql'), 'r').read().split(';')
+            for table in tables:
+                try:
+                    if table:
+                        cursor.execute('{0};'.format(table))
+                except psycopg2.ProgrammingError:
+                    pass
+
+            db_conn.commit()
+            cursor.close()
+            conn.close()
 
         security_group.revoke(ip_protocol='tcp', from_port='5432', to_port='5432', cidr_ip='0.0.0.0/0')
 

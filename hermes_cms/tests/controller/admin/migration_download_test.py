@@ -7,6 +7,7 @@ import boto.sns
 from moto import mock_sns
 from mock import MagicMock, patch
 from hermes_cms.app import create_app
+from hermes_cms.core.auth import Auth
 
 
 def app():
@@ -50,23 +51,29 @@ def blueprint_config():
     return instance
 
 
+@patch.object(Auth, 'has_permission')
 @patch('hermes_cms.views.admin.Registry')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_invalid_post(config_mock, db_connect_mock, registry_mock, blueprint_config, admin_rules_config):
+def test_invalid_post(config_mock, db_connect_mock, registry_mock, permission_mock, blueprint_config, admin_rules_config):
     config_mock.return_value = blueprint_config
     db_connect_mock.return_value = None
     registry_mock.return_value = admin_rules_config
+    permission_mock.return_value = True
+
     response = app().post('/admin/migration')
     assert response.status_code == 400
 
 
+@patch.object(Auth, 'has_permission')
 @patch('hermes_cms.views.admin.Registry')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_post_invalid_data(config_mock, db_connect_mock, registry_mock, blueprint_config):
+def test_post_invalid_data(config_mock, db_connect_mock, registry_mock, permission_mock, blueprint_config):
     config_mock.return_value = blueprint_config
     db_connect_mock.return_value = None
+    permission_mock.return_value = True
+
     response = app().post('/admin/migration', data=json.dumps({
         'document': [{'parent_id': 'uuid'}],
         'all_documents': True
@@ -74,12 +81,15 @@ def test_post_invalid_data(config_mock, db_connect_mock, registry_mock, blueprin
     assert response.status_code == 400
 
 
+@patch.object(Auth, 'has_permission')
 @patch('hermes_cms.views.admin.Registry')
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
-def test_post_invalid_data_2(config_mock, db_connect_mock, registry_mock, blueprint_config):
+def test_post_invalid_data_2(config_mock, db_connect_mock, registry_mock, permission_mock, blueprint_config):
     config_mock.return_value = blueprint_config
     db_connect_mock.return_value = None
+    permission_mock.return_value = True
+
     response = app().post('/admin/migration', data=json.dumps({
         'document': [],
         'all_documents': False
@@ -88,6 +98,7 @@ def test_post_invalid_data_2(config_mock, db_connect_mock, registry_mock, bluepr
 
 
 @mock_sns
+@patch.object(Auth, 'has_permission')
 @patch('hermes_cms.views.admin.Registry')
 @patch('hermes_cms.controller.admin.migration_download.arrow')
 @patch('hermes_cms.controller.admin.migration_download.Registry')
@@ -95,9 +106,10 @@ def test_post_invalid_data_2(config_mock, db_connect_mock, registry_mock, bluepr
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
 def test_post_specific_documents(app_registry, db_connect_mock, job_mock, registry_mock, arrow_mock, _mock,
-                                 blueprint_config):
+                                 permission_mock, blueprint_config):
 
     arrow_mock.now.return_value = arrow.get(2015, 7, 1, 20, 0, 0)
+    permission_mock.return_value = True
 
     conn = boto.sns.connect_to_region('ap-southeast-2')
     topic = conn.create_topic('migrationdownload')
@@ -130,6 +142,7 @@ def test_post_specific_documents(app_registry, db_connect_mock, job_mock, regist
 
 
 @mock_sns
+@patch.object(Auth, 'has_permission')
 @patch('hermes_cms.views.admin.Registry')
 @patch('hermes_cms.controller.admin.migration_download.arrow')
 @patch('hermes_cms.controller.admin.migration_download.Registry')
@@ -137,12 +150,13 @@ def test_post_specific_documents(app_registry, db_connect_mock, job_mock, regist
 @patch('hermes_cms.app.db_connect')
 @patch('hermes_cms.app.Registry')
 def test_post_specific_documents_2(app_registry, db_connect_mock, job_mock, registry_mock, arrow_mock,
-                                   _mock, blueprint_config):
+                                   _mock, permission_mock, blueprint_config):
 
     arrow_mock.now.return_value = arrow.get(2015, 7, 1, 20, 0, 0)
 
     conn = boto.sns.connect_to_region('ap-southeast-2')
     topic = conn.create_topic('migrationdownload')
+    permission_mock.return_value = True
 
     app_registry.return_value = blueprint_config
 

@@ -15,35 +15,36 @@
         };
 
         scope.downloadMigration = function () {
-            var modalInstance = modal.open({
-                controller: 'JobModalFormController',
-                templateUrl: 'templates/views/job-name-form.html',
-                backdropClass: 'modal-backdrop h-full'
-            });
-
-            modalInstance.result.then(function (job_name) {
-                var payload = {"document": [], "all_documents": scope.allItemsSelected};
-                if (job_name) {
-                    payload.name = job_name;
-                }
-
-                _.forEach(scope.selectedItems, function (bool, uuid) {
-                    payload.document.push({parent_id: uuid});
+            MigrationDownload.options({method: 'POST'}).$promise.then(function () {
+                var modalInstance = modal.open({
+                    controller: 'JobModalFormController',
+                    templateUrl: 'templates/views/job-name-form.html',
+                    backdropClass: 'modal-backdrop h-full'
                 });
 
-                MigrationDownload.newJob(payload, function ok() {
+                modalInstance.result.then(function (job_name) {
+                    var payload = {"document": [], "all_documents": scope.allItemsSelected};
+                    if (job_name) {
+                        payload.name = job_name;
+                    }
+
+                    _.forEach(scope.selectedItems, function (bool, uuid) {
+                        payload.document.push({parent_id: uuid});
+                    });
+
+                    MigrationDownload.newJob(payload, function ok() {
+                        scope.selectItems = {};
+                        scope.hasItemSelected = false;
+                        scope.allItemsSelected = false;
+                    }, function fail () {
+                        console.log('didnt post data');
+                    });
+                }, function () {
                     scope.selectItems = {};
                     scope.hasItemSelected = false;
                     scope.allItemsSelected = false;
-                }, function fail () {
-                    console.log('didnt post data');
                 });
-            }, function () {
-                scope.selectItems = {};
-                scope.hasItemSelected = false;
-                scope.allItemsSelected = false;
             });
-
         };
 
         scope.deleteItem = function (index) {

@@ -118,7 +118,19 @@
             $stateProvider.state('document.migration', {
                 url: '/migration',
                 templateUrl: 'templates/views/migration-upload.html',
-                controller: 'MigrationUploadController'
+                controller: 'MigrationUploadController',
+                resolve: {
+                    option: ['MigrationUploadResource', '$q', function (MigrationUploadResource, $q) {
+                        var deferred = $q.defer();
+                        MigrationUploadResource.options({method: 'POST'}).$promise.then(function () {
+                            deferred.resolve(true)
+                        }, function () {
+                            deferred.reject(false)
+                        });
+
+                        return deferred.promise;
+                    }]
+                }
             });
 
             $stateProvider.state('document.versions', {

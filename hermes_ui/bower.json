@@ -1,6 +1,6 @@
 {
   "name": "hermes_ui",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Hermes CMS UI",
   "moduleType": [
     "node"
