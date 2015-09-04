@@ -23,7 +23,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='hermes_cms',
-    version='0.6.0',
+    version='0.7.0',
     description='Hermes CMS',
     long_description=read('README.md'),
     author='Paul Mcilwaine',
