@@ -1,6 +1,7 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import cgi
 import logging
 from hermes_cms.db import Document
 from mako.runtime import Undefined
@@ -49,7 +50,7 @@ def navigation(document, depth=None):
 
         record = {
             'url': '/' if page.url == 'index' else '/' + page.url,
-            'menutitle': page.menutitle,
+            'menutitle': cgi.escape(page.menutitle),
             'current': current,
             'children': []
         }

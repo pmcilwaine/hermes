@@ -41,6 +41,27 @@ def single_level_nav():
 
 
 @pytest.fixture
+def simple_nav():
+    results = [create_document_mock(
+        id=1,
+        url='index',
+        path='1/',
+        parent=None,
+        published=True,
+        menutitle='<script>Homepage</script>'
+    ), create_document_mock(
+        id=2,
+        url='first-page',
+        path='2/',
+        parent=None,
+        published=True,
+        menutitle='<strong>First Page</strong>'
+    )]
+
+    return results
+
+
+@pytest.fixture
 def two_level_nav():
     results = [create_document_mock(
         id=1,
@@ -145,6 +166,28 @@ def test_second_level_navigation(document_mock, two_level_nav):
                     'children': []
                 }
             ]
+        }
+    ]
+
+    assert navigation({'document': {'path': '3/4/'}}) == expected
+
+
+@patch('hermes_cms.helpers.page.Document')
+def test_encode_menutitle(document_mock, simple_nav):
+    document_mock.query.return_value = simple_nav
+
+    expected = [
+        {
+            'url': '/',
+            'menutitle': '&lt;script&gt;Homepage&lt;/script&gt;',
+            'current': False,
+            'children': []
+        },
+        {
+            'url': '/first-page',
+            'menutitle': '&lt;strong&gt;First Page&lt;/strong&gt;',
+            'current': False,
+            'children': []
         }
     ]
 
