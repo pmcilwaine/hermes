@@ -30,6 +30,11 @@
 
             if (scope.file) {
 
+                if (scope.file[0].type !== 'application/zip') {
+                    scope.migrationForm.file.$setValidity('file', false);
+                    return false;
+                }
+
                 promises.push(generate_url().then(function ok (form) {
                     var fields = {}, file, deferred = $q.defer();
 
@@ -65,13 +70,13 @@
 
             }
 
-            $q.all(promises).then(function ok () {
+            /*$q.all(promises).then(function ok () {
                 MigrationUploadResource.post(scope.record, function ok () {
                     $state.go('document.list');
                 });
             }, function fail () {
                 scope.clearFile = true;
-            });
+            });*/
 
         };
     };
