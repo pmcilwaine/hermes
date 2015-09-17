@@ -70,13 +70,13 @@
 
             }
 
-            /*$q.all(promises).then(function ok () {
+            $q.all(promises).then(function ok () {
                 MigrationUploadResource.post(scope.record, function ok () {
                     $state.go('document.list');
                 });
             }, function fail () {
                 scope.clearFile = true;
-            });*/
+            });
 
         };
     };
