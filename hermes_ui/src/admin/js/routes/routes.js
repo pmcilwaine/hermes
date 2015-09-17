@@ -224,6 +224,13 @@
                 url: '/job',
                 templateUrl: 'templates/views/job.html',
                 controller: 'JobListController',
+                resolve: {
+                    jobs: ['JobResource', function (JobResource) {
+                        return JobResource.get().$promise.then(function (response) {
+                            return response;
+                        });
+                    }]
+                },
                 data: {
                     tab: true,
                     label: 'Jobs'
