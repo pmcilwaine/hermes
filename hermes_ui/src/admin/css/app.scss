@@ -16,4 +16,8 @@ textarea {
   height: 100%;
 }
 
+td {
+  word-break: break-all;
+}
+
 @import "../../share/css/nav";
