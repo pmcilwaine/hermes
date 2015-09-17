@@ -123,9 +123,9 @@
                     option: ['MigrationUploadResource', '$q', function (MigrationUploadResource, $q) {
                         var deferred = $q.defer();
                         MigrationUploadResource.options({method: 'POST'}).$promise.then(function () {
-                            deferred.resolve(true)
+                            deferred.resolve(true);
                         }, function () {
-                            deferred.reject(false)
+                            deferred.reject(false);
                         });
 
                         return deferred.promise;
