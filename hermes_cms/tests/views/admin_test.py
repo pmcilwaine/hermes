@@ -298,7 +298,8 @@ def test_document_list_first_page_no_children(config, db_connect_mock, document_
                 'name': 'Homepage',
                 'url': '/',
                 'type': 'Page',
-                'path': '1/'
+                'path': '1/',
+                'published': True
             },
             {
                 'id': 2,
@@ -306,7 +307,8 @@ def test_document_list_first_page_no_children(config, db_connect_mock, document_
                 'name': 'Second Page',
                 'url': '/second-page',
                 'type': 'Page',
-                'path': '2/'
+                'path': '2/',
+                'published': True
             }
         ],
         'meta': {
