@@ -100,7 +100,10 @@ def test_do_work_invalid_document(jobdb_mock, document_mock, registry_mock, conn
     with pytest.raises(FatalJobError):
         service.do_work(message)
 
-    assert job.set.call_args_list == [call(status='running'), call(status='failed')]
+    assert job.set.call_args_list == [call(status='running'),
+                                      call(message={'document': '56d3c182-f72f-4216-9e94-1756bf67564d',
+                                                    'on_complete': {'alter': {}}, 'reason': 'No Document exists'},
+                                           status='failed')]
 
 
 @mock_s3
