@@ -146,7 +146,10 @@ def test_invalid_archive_missing_manifest(job_mock, registry_mock, connection_mo
     with pytest.raises(InvalidJobError):
         service.do_work(message)
 
-    assert job.set.call_args_list == [call(status='running'), call(status='failed')]
+    assert job.set.call_args_list == [call(status='running'),
+                                      call(message={'file': {'key': 'archive.zip'},
+                                                     'reason': 'Unable to retrieve manifest in archive'},
+                                           status='failed')]
 
 
 @mock_s3
@@ -198,7 +201,10 @@ def test_validate_manifest_fail(job_mock, registry_mock, connection_mock, manife
     with pytest.raises(InvalidJobError):
         service.do_work(message)
 
-    assert job.set.call_args_list == [call(status='running'), call(status='failed')]
+    assert job.set.call_args_list == [call(status='running'),
+                                      call(message={'reason': 'Manifest found is not valid', 'user_id': 1,
+                                                    'file': {'key': 'archive.zip'}},
+                                           status='failed')]
 
 
 @mock_s3
