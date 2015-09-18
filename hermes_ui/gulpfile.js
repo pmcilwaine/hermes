@@ -154,6 +154,13 @@ gulp.task('styles_public', function () {
         .pipe($.size({title: 'Public CSS'}));
 });
 
+gulp.task('fonts_public', function () {
+    gulp.src([
+        'bower_components/bootstrap/fonts/*'
+    ])
+    .pipe(gulp.dest(buildPaths.publicRoot + '/fonts'))
+})
+
 gulp.task('clean', del.bind(null, [
     'dist/*',
     '!dist/.git'
@@ -162,7 +169,7 @@ gulp.task('clean', del.bind(null, [
 }));
 
 gulp.task('styles', function () {
-    runSequence('bower', ['styles_public', 'styles_admin', 'stylevendor_public']);
+    runSequence('bower', ['styles_public', 'styles_admin', 'stylevendor_public', 'fonts_public']);
 });
 
 gulp.task('watch', function () {
