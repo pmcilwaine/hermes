@@ -30,7 +30,7 @@
 
             if (scope.file) {
 
-                if (scope.file[0].type !== 'application/zip') {
+                if (scope.file[0].type !== 'application/zip' && !scope.file[0].name.match(/\.zip$/)) {
                     scope.migrationForm.file.$setValidity('file', false);
                     return false;
                 }

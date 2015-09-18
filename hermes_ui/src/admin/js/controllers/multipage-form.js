@@ -51,7 +51,7 @@
 
             if (scope.file) {
 
-                if (scope.file[0].type !== 'application/zip' || !scope.file[0].name.match(/\.zip$/)) {
+                if (scope.file[0].type !== 'application/zip' && !scope.file[0].name.match(/\.zip$/)) {
                     scope.multipageForm.file.$setValidity('file', false);
                     return false;
                 }
