@@ -28,7 +28,9 @@ class RestoreDocument(MethodView):
                 'name': document.name,
                 'url': document.url,
                 'type': document.type,
-                'path': document.path
+                'path': document.path,
+                'created': str(document.created),
+                'published': document.published
             })
 
         return Response(response=json.dumps({

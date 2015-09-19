@@ -23,13 +23,17 @@
                 <tr>
                     <th>Name</th>
                     <th>Url</th>
+                    <th>Created</th>
+                    <th>Published</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="document in documents">
-                    <td>{{ document.name }}</td>
-                    <td>{{ document.url }}</td>
+                    <td>{{ ::document.name }}</td>
+                    <td>{{ ::document.url }}</td>
+                    <td>{{ ::document.created }}</td>
+                    <td class="text-center"><span class="glyphicon" ng-class="{'glyphicon-ok': document.published, 'glyphicon-remove': !document.published}"></span></td>
                     <td>
                         <button ng-click="restoreVersion($index);" class="btn btn-danger btn-sm">Restore</button>
                     </td>

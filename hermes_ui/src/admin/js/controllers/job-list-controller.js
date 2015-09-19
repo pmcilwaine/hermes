@@ -2,12 +2,8 @@
 
     var dependencies, jobController;
 
-    jobController = function (scope, JobResource, DownloadUrlResource, $window) {
-        scope.jobs = [];
-
-        JobResource.get(function (response) {
-            scope.jobs = response.jobs;
-        });
+    jobController = function (scope, jobs, DownloadUrlResource, $window) {
+        scope.jobs = jobs.jobs;
 
         scope.download = function (index) {
             console.log(scope.jobs[index].message.download);
@@ -22,7 +18,7 @@
 
     dependencies = [
         '$scope',
-        'JobResource',
+        'jobs',
         'DownloadUrlResource',
         '$window',
         jobController

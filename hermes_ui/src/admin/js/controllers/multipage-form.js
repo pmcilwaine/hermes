@@ -51,6 +51,11 @@
 
             if (scope.file) {
 
+                if (scope.file[0].type !== 'application/zip' && !scope.file[0].name.match(/\.zip$/)) {
+                    scope.multipageForm.file.$setValidity('file', false);
+                    return false;
+                }
+
                 promises.push(generate_url().then(function ok (form) {
                     var fields = {}, file, deferred = $q.defer();
 

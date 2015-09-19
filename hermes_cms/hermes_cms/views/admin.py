@@ -38,14 +38,14 @@ def url_rules():
 
 @route.route('/', methods=['GET'])
 @Auth.is_logged_in
-@requires_permission(['list_document', 'list_job', 'list_user'])
+@requires_permission(['list_document'])
 def index():
     return Response(response=lookup.get_template('index.html').render(), status=200)
 
 
 @route.route('/upload_url', methods=['POST'])
 @Auth.is_logged_in
-@requires_permission(['list_document', 'list_job', 'list_user'])
+@requires_permission(['list_document'])
 def sign_upload_url():
     registry = Registry()
 
@@ -61,7 +61,7 @@ def sign_upload_url():
 
 @route.route('/download_url', methods=['POST'])
 @Auth.is_logged_in
-@requires_permission(['list_document', 'list_job', 'list_user'])
+@requires_permission(['list_document'])
 def sign_download_url():
     data = request.json
 

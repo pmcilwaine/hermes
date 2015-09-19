@@ -46,7 +46,8 @@ class Job(MethodView):
                 'name': job.name,
                 'status': job.status.title(),
                 'created': job.created.strftime('%Y-%m-%d %H:%M:%S'),
-                'message': {k: v for k, v in job.message.iteritems() if k in ('download', 'content')}
+                'message': {k: v for k, v in job.message.iteritems() if k in ('download', 'content')},
+                'reason': job.message.get('reason', '')
             })
 
         return Response(response=json.dumps({

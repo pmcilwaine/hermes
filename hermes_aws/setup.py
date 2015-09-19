@@ -23,7 +23,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='hermes_aws',
-    version='0.7.0',
+    version='0.8.0',
     description='Hermes AWS',
     long_description=read('README.md'),
     author='Paul Mcilwaine',

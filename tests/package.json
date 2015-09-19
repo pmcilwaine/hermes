@@ -1,6 +1,6 @@
 {
   "name": "hermes_tests",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "This will run the integration and end to end tests for the hermes cms.",
   "repository": {
     "type": "git",

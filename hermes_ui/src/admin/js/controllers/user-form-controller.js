@@ -39,6 +39,10 @@
             });
         };
 
+        scope.checkAdmin = function () {
+            scope.is_administrator = _.all(scope.user_permissions);
+        };
+
         scope.submit = function () {
             // update scope.record
             scope.record.permissions = [];

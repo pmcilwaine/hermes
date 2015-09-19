@@ -123,9 +123,9 @@
                     option: ['MigrationUploadResource', '$q', function (MigrationUploadResource, $q) {
                         var deferred = $q.defer();
                         MigrationUploadResource.options({method: 'POST'}).$promise.then(function () {
-                            deferred.resolve(true)
+                            deferred.resolve(true);
                         }, function () {
-                            deferred.reject(false)
+                            deferred.reject(false);
                         });
 
                         return deferred.promise;
@@ -224,6 +224,13 @@
                 url: '/job',
                 templateUrl: 'templates/views/job.html',
                 controller: 'JobListController',
+                resolve: {
+                    jobs: ['JobResource', function (JobResource) {
+                        return JobResource.get().$promise.then(function (response) {
+                            return response;
+                        });
+                    }]
+                },
                 data: {
                     tab: true,
                     label: 'Jobs'
