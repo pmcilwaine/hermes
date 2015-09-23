@@ -48,11 +48,12 @@ class MultipageJob(Job):
             raise InvalidJobError('Invalid Job ID: {0}'.format(job_id))
 
         job.set(status='running')
+        message = job.message
 
         document = Document.selectBy(uuid=job.message['document']).getOne(None)
         if not document:
-            job.message['reason'] = 'No Document exists'
-            job.set(status='failed', message=job.message)
+            message['reason'] = 'No Document exists'
+            job.set(status='failed', message=message)
             raise FatalJobError('No Document Exists')
 
         record = Document.get_document(document)

@@ -4,6 +4,7 @@
 
     pageController = function (scope, document_list, $state, document, Documents) {
         scope.record = document;
+        scope.savingForm = false;
 
         scope.parent = _.reduce(_.filter(document_list, function (item) {
             return item.id === scope.record.document.parent;
@@ -21,13 +22,16 @@
             }
 
             console.log('attempted to submit');
+            scope.savingForm = true;
             Documents.save(scope.record).then(function ok (msg) {
                 console.log('ok');
                 console.log(msg);
+                scope.savingForm = false;
                 $state.go('document.list');
             }, function fail (msg) {
-               console.log('failed');
+                console.log('failed');
                 console.log(msg);
+                scope.savingForm = false;
             });
         };
 
