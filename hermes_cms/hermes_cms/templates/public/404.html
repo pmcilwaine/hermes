@@ -19,7 +19,7 @@
                 <ul class="nav navbar-nav">
                     % for item in nav({'document': document}):
                     <li${' class="active"' if item['current'] else ''}>
-                    <a href="${item['url']}">${item['menutitle']}</a>
+                        <a href="${item['url']}" title="${item['menutitle']}">${item['menutitle'][0:50]}</a>
                     </li>
                     % endfor
                 </ul>
@@ -41,7 +41,14 @@
                 <ul class="nav nav-pills nav-stacked nav-list">
                     % for item in nav({'document': document}, depth='children'):
                     <li${' class="active"' if item['current'] else ''}>
-                    <a href="${item['url']}">${item['menutitle']}</a>
+                    <a href="${item['url']}" title="${item['menutitle']}">${item['menutitle'][0:50]}</a>
+                    % if item['children']:
+                    <ul class="nav nav-pills nav-stacked nav-list">
+                        % for child in item['children']:
+                        <li><a href="${child['url']}" title="${child['menutitle']}">${child['menutitle'][0:50]}</a></li>
+                        % endfor
+                    </ul>
+                    % endif
                     </li>
                     % endfor
                 </ul>

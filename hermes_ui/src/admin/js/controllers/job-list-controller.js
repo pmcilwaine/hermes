@@ -5,6 +5,11 @@
     jobController = function (scope, jobs, DownloadUrlResource, $window) {
         scope.jobs = jobs.jobs;
 
+        scope.jobs.forEach(function (job) {
+            job.created = moment(job.created, 'YYYY-MM-DD HH:mm:ss').add(10,
+                'hours').format('MMMM Do YYYY, h:mm:ss a');
+        });
+
         scope.download = function (index) {
             console.log(scope.jobs[index].message.download);
             DownloadUrlResource.post(scope.jobs[index].message.download, function ok (response) {
