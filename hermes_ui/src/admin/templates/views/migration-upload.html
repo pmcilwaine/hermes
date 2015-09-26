@@ -16,11 +16,12 @@
             <div class="form-group" ng-class="{'has-error': migrationForm.file.$invalid}">
                 <label>File</label>
                 <input type="file" name="file" accept=".zip" ngf-pattern="'.zip'" ngf-select="" ng-model="file" hermes-file-field clear-file="clearFile">
+                <progressbar value="progressPercentage" max="100" ng-show="savingForm"></progressbar>
                 <p ng-show="migrationForm.file.$invalid" class="help-block">Must be a ZIP file</p>
             </div>
 
-            <button type="submit" class="btn btn-primary" accesskey="s">Save</button>
-            <button type="button" ui-sref="document.list" class="btn btn-default">Cancel</button>
+            <button type="submit" class="btn btn-primary" accesskey="s" ng-disabled="savingForm">Save</button>
+            <button type="button" ui-sref="document.list" class="btn btn-default" ng-disabled="savingForm">Cancel</button>
 
         </form>
     </div>
