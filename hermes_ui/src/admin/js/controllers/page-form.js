@@ -6,6 +6,11 @@
         scope.record = document;
         scope.savingForm = false;
 
+        if (!scope.record.document) {
+            $state.go('document.add');
+            return;
+        }
+
         scope.parent = _.reduce(_.filter(document_list, function (item) {
             return item.id === scope.record.document.parent;
         }));
