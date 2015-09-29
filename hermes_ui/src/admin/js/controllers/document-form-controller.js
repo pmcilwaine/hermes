@@ -4,7 +4,12 @@
 
     documentController = function (scope, document_list, $state, Documents) {
         scope.record = {
-            document: {}
+            document: {
+                type: 'Page'
+            },
+            page: {
+                template: 'Standard'
+            }
         };
 
         scope.parent = 0;
