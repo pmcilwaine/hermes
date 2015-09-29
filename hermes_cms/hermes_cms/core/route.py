@@ -5,7 +5,7 @@ import logging
 from hermes_cms.db import Document
 from hermes_cms.helpers import common
 from sqlobject.sqlbuilder import IN, DESC
-from flask import request
+from flask import request, redirect
 
 log = logging.getLogger('hermes_cms.core.route')
 
@@ -78,6 +78,10 @@ def route(path):
     log.debug('Attempting to get urls %s', urls)
     record = Document.select(IN(Document.q.url, urls), orderBy=(DESC(Document.q.url), DESC(Document.q.created)),
                              limit=1).getOne(None)
+
+    if not record and 'index' in urls:
+        return redirect('/login')
+
     if not record:
         registry_type = REGISTRY['Error']
         public = registry_type['public']
