@@ -2,12 +2,13 @@
 
     var dependencies, documentController;
 
-    documentController = function (scope, modal, DocumentList, Documents, MigrationDownload) {
+    documentController = function (scope, modal, DocumentList, Permissions, Documents, MigrationDownload) {
         scope.documents = DocumentList.documents;
         scope.selectedItems = {};
 
         scope.hasItemSelected = false;
         scope.allItemsSelected = false;
+        scope.permissions = Permissions;
 
         scope.toggleItemSelect = function (document) {
             scope.selectedItems[document.uuid] = !scope.selectedItems[document.uuid];
@@ -48,12 +49,25 @@
         };
 
         scope.deleteItem = function (index) {
-            var record = scope.documents[index];
-            Documents.deleteById(record.uuid).then(function ok () {
-                scope.documents.splice(index, 1);
-            }, function fail (msg) {
-                console.log('Delete Failed');
-                console.log(msg);
+            var record = scope.documents[index],
+                modalInstance;
+
+            if (!scope.permissions.DELETE) {
+                Documents.deleteById(record.uuid);
+                return;
+            }
+
+            modalInstance = modal.open({
+                controller: 'DeleteController',
+                templateUrl: 'templates/views/delete.html',
+                backdropClass: 'modal-backdrop h-full'
+            });
+
+            modalInstance.result.then(function () {
+                Documents.deleteById(record.uuid).then(function ok () {
+                    scope.documents.splice(index, 1);
+                }, function fail () {
+                });
             });
         };
     };
@@ -62,6 +76,7 @@
         '$scope',
         '$modal',
         'DocumentList',
+        'Permissions',
         'Documents',
         'MigrationDownloadResource',
         documentController

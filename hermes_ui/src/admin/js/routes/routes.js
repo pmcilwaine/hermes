@@ -10,7 +10,8 @@
                 controller: 'DocumentListController',
                 resolve: {
                     DocumentList: function () { return {}; },
-                    document: function () { return {}; }
+                    document: function () { return {}; },
+                    Permissions: function () { return {}; }
                 },
                 data: {
                     tab: false,
@@ -25,6 +26,15 @@
                 resolve: {
                     DocumentList: ['Documents', function (Documents) {
                         return Documents.getAll();
+                    }],
+                    Permissions: ['DocumentResource', '$q', function (DocumentResource, q) {
+                        var deferred = q.defer();
+                        DocumentResource.options().$promise.then(function (response) {
+                            deferred.resolve(response);
+                        }, function () {
+                            deferred.reject();
+                        });
+                        return deferred.promise;
                     }]
                 },
                 data: {
