@@ -26,7 +26,7 @@ describe('Delete Document', function () {
 
             // click on delete button
             elements.first().all(by.css('button')).get(2).click().then(function () {
-                element.all(by.css('.modal-footer btn-primary')).get(0).click();
+                element.all(by.css('.modal-footer .btn-primary')).get(0).click();
             });
 
         });
