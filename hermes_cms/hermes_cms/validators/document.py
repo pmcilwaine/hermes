@@ -72,4 +72,4 @@ class DocumentForm(CustomForm):
             raise ValidationError('URL is already in use')
 
         if not re.match(r'^[a-z-0-9/]+$', field.data):
-            raise ValidationError('Invalid URL. Cannot contain spaces')
+            raise ValidationError('URL cannot contain spaces.')
