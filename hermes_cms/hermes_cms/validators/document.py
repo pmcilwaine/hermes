@@ -1,5 +1,6 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
+import re
 from sqlobject.sqlbuilder import IN
 from hermes_cms.validators.customform import CustomForm
 from hermes_cms.db.document import Document as DocumentDB
@@ -69,3 +70,6 @@ class DocumentForm(CustomForm):
         query = (IN(DocumentDB.q.url, urls) & (DocumentDB.q.id != form.id.data) & (DocumentDB.q.type == 'MultiPage'))
         if DocumentDB.select(query).count():
             raise ValidationError('URL is already in use')
+
+        if not re.match(r'^[a-z-0-9/]+$', field.data):
+            raise ValidationError('Invalid URL. Cannot contain spaces')
