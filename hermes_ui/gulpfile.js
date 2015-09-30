@@ -78,8 +78,8 @@ gulp.task('jstinymce', function () {
     ])
     .pipe(gulp.dest(buildPaths.hermes.jsTinymce + '/skins'));
 
-    return gulp.src(['bower_components/tinymce-dist/plugins/**/*.min.js'])
-        .pipe(gulp.dest(buildPaths.hermes.jsTinymce + '/plugins'));
+    return gulp.src(['bower_components/tinymce-dist/plugins/**/*.js'])
+        .pipe(gulp.dest(buildPaths.hermes.jsAdmin + '/plugins'));
 });
 
 gulp.task('jsvendor_public', function() {

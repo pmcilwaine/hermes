@@ -38,7 +38,7 @@
 
             <div class="form-group" ng-class="{'has-error': pageForm.content.$invalid}">
                 <label>Content</label>
-                <textarea id="page_content_field" ui-tinymce="{theme: 'modern', theme_url: '/assets/admin/tinymce/themes/modern/theme.min.js', skin_url: '/assets/admin/tinymce/skins/lightgray', height: 400}" class="form-control" ng-model="record.page.content" name="content"></textarea>
+                <textarea id="page_content_field" ui-tinymce="{plugins: 'paste', paste_as_text: true, theme: 'modern', theme_url: '/assets/admin/tinymce/themes/modern/theme.min.js', skin_url: '/assets/admin/tinymce/skins/lightgray', height: 400}" class="form-control" ng-model="record.page.content" name="content"></textarea>
                 <p ng-show="pageForm.content.$invalid" class="help-block">{{ errors.content }}</p>
             </div>
 
