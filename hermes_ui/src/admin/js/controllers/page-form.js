@@ -5,6 +5,7 @@
     pageController = function (scope, document_list, $state, document, Documents) {
         scope.record = document;
         scope.savingForm = false;
+        scope.errors = {};
 
         if (!scope.record.document) {
             $state.go('document.add');
@@ -17,7 +18,6 @@
         scope.document_list = document_list;
         // TODO this should be pulled in from Configuration Registry
         scope.pageTemplates = [
-            'Homepage',
             'Standard'
         ];
 
@@ -26,16 +26,15 @@
                 scope.record.document.parent = scope.parent.id;
             }
 
-            console.log('attempted to submit');
             scope.savingForm = true;
-            Documents.save(scope.record).then(function ok (msg) {
-                console.log('ok');
-                console.log(msg);
-                scope.savingForm = false;
+            Documents.save(scope.record).then(function ok () {
                 $state.go('document.list');
             }, function fail (msg) {
-                console.log('failed');
-                console.log(msg);
+                _.each(msg.data.fields, function (value, key) {
+                    scope.pageForm[key].$dirty = true;
+                    scope.pageForm[key].$setValidity(key, false);
+                    scope.errors[key] = value;
+                });
                 scope.savingForm = false;
             });
         };
