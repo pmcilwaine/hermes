@@ -52,15 +52,17 @@
                 }
             });
 
-            Users.save(scope.record).then(function save () {
-                state.go('users.list');
-            }, function failed(msg) {
-                _.each(msg.data.fields, function (value, key) {
-                    scope.userForm[key].$dirty = true;
-                    scope.userForm[key].$setValidity(key, false);
-                    scope.errors[key] = value;
+            if (!scope.userForm.$invalid) {
+                Users.save(scope.record).then(function save() {
+                    state.go('users.list');
+                }, function failed(msg) {
+                    _.each(msg.data.fields, function (value, key) {
+                        scope.userForm[key].$dirty = true;
+                        scope.userForm[key].$setValidity(key, false);
+                        scope.errors[key] = value;
+                    });
                 });
-            });
+            }
         };
     };
 
