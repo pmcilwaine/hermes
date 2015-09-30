@@ -12,6 +12,12 @@
                 <p ng-show="fileForm.name.$invalid" class="help-block">{{ errors.name }}</p>
             </div>
 
+            <div class="form-group" ng-class="{'has-error': fileForm.menutitle.$invalid}">
+                <label>Menu Title</label>
+                <input type="text" class="form-control" name="menutitle" ng-model="record.document.menutitle">
+                <p ng-show="fileForm.menutitle.$invalid" class="help-block">{{ errors.menutitle }}</p>
+            </div>
+
             <div class="form-group" ng-class="{'has-error': fileForm.parent.$invalid}">
                 <label>Parent</label>
                 <select class="form-control" name="parent" ng-model="parent" ng-options="document.name for document in document_list"></select>

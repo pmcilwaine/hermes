@@ -3,9 +3,19 @@
     var dependencies, documentController;
 
     documentController = function (scope, document_list, $state, Documents) {
+        var rewriteUrl = function () {
+            var url = _.snakeCase(scope.record.document.name).replace(/_/g, '-');
+            if (scope.parent.url) {
+                scope.record.document.url = scope.parent.url + '/' + url;
+            } else {
+                scope.record.document.url = url;
+            }
+        };
+
         scope.record = {
             document: {
-                type: 'Page'
+                type: 'Page',
+                url: undefined
             },
             page: {
                 template: 'Standard'
@@ -56,8 +66,14 @@
         };
 
         scope.$watch('parent', function (item) {
-            if (!!item && scope.record.document.url === undefined) {
-                scope.record.document.url = item.url + '/';
+            if (!!item && item.url) {
+                rewriteUrl();
+            }
+        });
+
+        scope.$watch('record.document.name', function (name) {
+            if (name) {
+                rewriteUrl();
             }
         });
     };
