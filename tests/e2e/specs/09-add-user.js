@@ -20,6 +20,7 @@ describe('Add User', function () {
 
                 helpers.waitUntilDisplayed(by.model('record.email')).sendKeys(browser.params.add_user.email);
                 helpers.waitUntilDisplayed(by.model('record.password')).sendKeys(browser.params.add_user.password);
+                helpers.waitUntilDisplayed(by.model('confirm_password')).sendKeys(browser.params.add_user.password);
                 helpers.waitUntilDisplayed(by.model('record.first_name')).sendKeys(browser.params.add_user.first_name);
                 helpers.waitUntilDisplayed(by.model('record.last_name')).sendKeys(browser.params.add_user.last_name);
 
@@ -34,6 +35,7 @@ describe('Add User', function () {
 
                 helpers.waitUntilDisplayed(by.model('record.email')).sendKeys(browser.params.add_user.email);
                 helpers.waitUntilDisplayed(by.model('record.password')).sendKeys(browser.params.add_user.password);
+                helpers.waitUntilDisplayed(by.model('confirm_password')).sendKeys(browser.params.add_user.password);
                 helpers.waitUntilDisplayed(by.model('record.first_name')).sendKeys(browser.params.add_user.first_name);
                 helpers.waitUntilDisplayed(by.model('record.last_name')).sendKeys(browser.params.add_user.last_name);
 
@@ -58,20 +60,24 @@ describe('Add User', function () {
         });
     });
 
-    /*describe('Does not have permission', function () {
+    describe('Does not have permission', function () {
 
         before(function () {
             helpers.userLogin();
             helpers.clickUserMenu();
         });
 
-        it.skip('Cannot create new user account', function () {
-
+        it('Cannot create new user account', function () {
+             helpers.waitForUrl(/\/user\/list$/);
+             helpers.waitUntilDisplayed(by.css('button'), 1).click().then(function () {
+                 expect(element.all(by.css('.alert')).count()).to.eventually.equal(1);
+                 element.all(by.css('.alert button')).get(0).click();
+             });
         });
 
         after(function () {
             browser.get('/logout');
         });
-    });*/
+    });
 
 });
