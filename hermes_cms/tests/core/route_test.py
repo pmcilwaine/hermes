@@ -14,3 +14,12 @@ def test_no_page_found(document_mock, nav_mock, session_mock):
 
     response = route('abc-def')
     assert response.status_code == 404
+
+
+@patch('hermes_cms.core.route.Document')
+def test_no_homepage_found(document_mock):
+    document_mock.select.return_value.getOne.return_value = None
+    response = route('index')
+
+    assert response.status_code == 302
+    assert response.headers['Location'] == '/login'
