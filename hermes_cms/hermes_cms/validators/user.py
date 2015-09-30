@@ -42,4 +42,4 @@ class User(CustomForm):
             if user_record and not field.data:
                 return True
 
-        validators.Length(min=6, max=36, message='Must enter a password')(form, field)
+        validators.Length(min=6, max=36, message='Must enter a password between 6 and 36 characters')(form, field)
