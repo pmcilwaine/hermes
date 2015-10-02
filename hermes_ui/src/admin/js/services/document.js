@@ -15,7 +15,7 @@
                     var repeat = document.path.split(/\//).length - 2;
                     document.name = _.repeat(repeat_str, 3 * repeat) + document.name;
                 });
-                return response.documents;
+                return _.union([{id: 0}], response.documents);
             });
         };
 
