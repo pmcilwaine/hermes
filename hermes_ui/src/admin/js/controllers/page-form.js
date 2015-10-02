@@ -3,6 +3,15 @@
     var dependencies, pageController;
 
     pageController = function (scope, document_list, $state, document, Documents) {
+        var rewriteUrl = function () {
+            var url = _.snakeCase(scope.record.document.name).replace(/_/g, '-');
+            if (scope.parent.url) {
+                scope.record.document.url = scope.parent.url + '/' + url;
+            } else {
+                scope.record.document.url = url;
+            }
+        };
+
         scope.record = document;
         scope.savingForm = false;
         scope.errors = {};
@@ -20,6 +29,14 @@
         scope.pageTemplates = [
             'Standard'
         ];
+
+        scope.$watch('parent', function (item) {
+            if (!!item && item.url) {
+                rewriteUrl();
+            } else if (item && item.id === 0) {
+                rewriteUrl();
+            }
+        });
 
         scope.submit = function () {
             if (scope.parent) {
