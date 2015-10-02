@@ -3,7 +3,16 @@
     var dependencies, fileController;
 
     fileController = function (scope, document_list, $state, $q, document, GenerateUrl, Documents, Upload) {
-        var formUpload = {};
+        var formUpload = {},
+            rewriteUrl = function () {
+                var url = _.snakeCase(scope.record.document.name).replace(/_/g, '-');
+                if (scope.parent.url) {
+                    scope.record.document.url = scope.parent.url + '/' + url;
+                } else {
+                    scope.record.document.url = url;
+                }
+            };
+
         scope.record = document;
         scope.savingForm = false;
         scope.progressPercentage = 0;
@@ -15,6 +24,14 @@
 
         scope.errors = {};
         scope.clearFile = false;
+
+        scope.$watch('parent', function (item) {
+            if (!!item && item.url) {
+                rewriteUrl();
+            } else if (item && item.id === 0) {
+                rewriteUrl();
+            }
+        });
 
         var generate_url = function () {
             var deferred = $q.defer();

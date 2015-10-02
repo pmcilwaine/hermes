@@ -68,6 +68,8 @@
         scope.$watch('parent', function (item) {
             if (!!item && item.url) {
                 rewriteUrl();
+            } else if (item && item.id === 0) {
+                rewriteUrl();
             }
         });
 
