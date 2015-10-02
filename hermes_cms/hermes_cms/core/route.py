@@ -4,7 +4,7 @@
 import logging
 from hermes_cms.db import Document
 from hermes_cms.helpers import common
-from sqlobject.sqlbuilder import IN, DESC
+from sqlobject.sqlbuilder import IN, DESC, AND
 from flask import request, redirect, session
 
 log = logging.getLogger('hermes_cms.core.route')
@@ -76,7 +76,8 @@ def route(path):
             urls.append(tmp_str)
 
     log.debug('Attempting to get urls %s', urls)
-    record = Document.select(IN(Document.q.url, urls), orderBy=(DESC(Document.q.url), DESC(Document.q.created)),
+    record = Document.select(AND(IN(Document.q.url, urls), Document.q.archived == False, Document.q.published == True),
+                             orderBy=(DESC(Document.q.url), DESC(Document.q.created)),
                              limit=1).getOne(None)
 
     if not record and 'index' in urls and 'auth_user' not in session:
