@@ -165,7 +165,8 @@
                 },
                 resolve: {
                     UserList: function () { return {}; },
-                    user: function () { return {}; }
+                    user: function () { return {}; },
+                    Permissions: function () { return {}; }
                 }
             });
 
@@ -176,6 +177,15 @@
                 resolve: {
                     UserList: ['Users', function (Users) {
                         return Users.getAll();
+                    }],
+                    Permissions: ['UserResource', '$q', function (UserResource, q) {
+                        var deferred = q.defer();
+                        UserResource.options().$promise.then(function (response) {
+                            deferred.resolve(response);
+                        }, function () {
+                            deferred.reject();
+                        });
+                        return deferred.promise;
                     }]
                 },
                 data: {

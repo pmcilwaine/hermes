@@ -2,16 +2,24 @@
 
     var dependencies, userController;
 
-    userController = function (scope, modal, userList, Users) {
+    userController = function (scope, modal, userList, Permissions, Users) {
         scope.users = userList;
+        scope.permissions = Permissions;
 
         scope.deleteItem = function (index) {
-            var modalInstance = modal.open({
+            var record = scope.users[index],
+                modalInstance;
+
+            if (!scope.permissions.DELETE) {
+                Users.deleteById(record.id);
+                return;
+            }
+
+            modalInstance = modal.open({
                 controller: 'DeleteController',
                 templateUrl: 'templates/views/delete.html',
                 backdropClass: 'modal-backdrop h-full'
-            }),
-                record = scope.users[index];
+            });
 
             modalInstance.result.then(function () {
                 Users.deleteById(record.id).then(function ok () {
@@ -26,6 +34,7 @@
         '$scope',
         '$modal',
         'UserList',
+        'Permissions',
         'Users',
         userController
     ];
