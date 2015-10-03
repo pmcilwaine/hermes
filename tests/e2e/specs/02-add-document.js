@@ -271,6 +271,7 @@ describe('Add Document', function () {
 
                 name.sendKeys(browser.params.add_page.name);
                 menutitle.sendKeys(browser.params.add_page.menutitle);
+                url.clear();
                 url.sendKeys(browser.params.add_page.url);
 
                 helpers.selectDropdown(type, browser.params.add_page.type);
