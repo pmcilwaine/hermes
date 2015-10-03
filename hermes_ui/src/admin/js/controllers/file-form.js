@@ -3,8 +3,19 @@
     var dependencies, fileController;
 
     fileController = function (scope, document_list, $state, $q, document, GenerateUrl, Documents, Upload) {
-        var formUpload = {};
+        var formUpload = {},
+            rewriteUrl = function () {
+                var url = _.snakeCase(scope.record.document.name).replace(/_/g, '-');
+                if (scope.parent.url) {
+                    scope.record.document.url = scope.parent.url + '/' + url;
+                } else {
+                    scope.record.document.url = url;
+                }
+            };
+
         scope.record = document;
+        scope.savingForm = false;
+        scope.progressPercentage = 0;
 
         scope.parent = _.reduce(_.filter(document_list, function (item) {
             return item.id === scope.record.document.parent;
@@ -13,6 +24,14 @@
 
         scope.errors = {};
         scope.clearFile = false;
+
+        scope.$watch('parent', function (item) {
+            if (!!item && item.url) {
+                rewriteUrl();
+            } else if (item && item.id === 0) {
+                rewriteUrl();
+            }
+        });
 
         var generate_url = function () {
             var deferred = $q.defer();
@@ -38,6 +57,7 @@
             var promises = [];
             console.log('attempted to submit');
             scope.errors = {};
+            scope.savingForm = true;
 
             console.log(scope.record);
             console.log(scope.file);
@@ -74,9 +94,8 @@
                         fields: fields
                     });
 
-                    file.progress(function () {
-                        //console.log('progress');
-                        //console.log(evt);
+                    file.progress(function (evt) {
+                        scope.progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
                     });
 
                     file.then(function ok (response) {
@@ -98,8 +117,11 @@
 
             $q.all(promises).then(function ok () {
                 Documents.save(scope.record).then(function ok () {
+                    scope.savingForm = false;
                     $state.go('document.list');
                 }, function fail (response) {
+                    scope.savingForm = false;
+                    scope.progressPercentage = 0;
                     if (response.fields) {
                         _.forEach(response.fields, function (value, key) {
                             scope.fileForm[key].$dirty = true;
@@ -111,6 +133,8 @@
 
             }, function fail (responses) {
                 scope.clearFile = true;
+                scope.savingForm = false;
+                scope.progressPercentage = 0;
 
                 _.forEach(responses, function (response) {
                    if (response.fields) {

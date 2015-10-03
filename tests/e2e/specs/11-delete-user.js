@@ -30,14 +30,19 @@ describe('Delete User', function () {
                 };
             });
 
-            item.all(by.css('button')).get(1).click(function () {
-                var items = element.all(by.css('tbody tr')).filter(function (elem) {
-                    return elem.all(by.css('td')).get(0).getText().then(function (text) {
-                        return text.trim() === browser.params.add_user.email;
+            item.all(by.css('button')).get(1).click().then(function () {
+                element.all(by.css('.modal-footer .btn-primary')).get(0).click().then(function () {
+
+                    var items = element.all(by.css('tbody tr')).filter(function (elem) {
+                        return elem.all(by.css('td')).get(0).getText().then(function (text) {
+                            return text.trim() === browser.params.add_user.email;
+                        });
                     });
+
+                    expect(items.count()).to.eventually.equal(0);
+
                 });
 
-                expect(items.count()).to.eventually.equal(0);
             });
         });
 

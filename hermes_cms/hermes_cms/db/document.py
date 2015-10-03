@@ -53,15 +53,16 @@ class Document(SQLObject):
         document_data.update(record['document'])
 
         document = Document(**document_data)
-        if not document.path:
-            path = "%d/" % (document.id, )
-            # todo this query is wrong, fix it.
-            parent = Document.selectBy(id=record['document']['parent']).getOne(None)
-            if parent:
-                path = "%s%s" % (parent.path, path)
 
-            record['document']['path'] = path
-            document.set(path=path)
+        # ensure the path is always updated correctly.
+        path = "%d/" % (document.id, )
+        # todo this query is wrong, fix it.
+        parent = Document.selectBy(id=record['document']['parent']).getOne(None)
+        if parent:
+            path = "%s%s" % (parent.path, path)
+
+        record['document']['path'] = path
+        document.set(path=path)
 
         # upload files
         record['document']['created'] = str(record['document']['created'])

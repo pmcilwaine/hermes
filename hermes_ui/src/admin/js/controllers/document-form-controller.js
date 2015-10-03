@@ -3,8 +3,23 @@
     var dependencies, documentController;
 
     documentController = function (scope, document_list, $state, Documents) {
+        var rewriteUrl = function () {
+            var url = _.snakeCase(scope.record.document.name).replace(/_/g, '-');
+            if (scope.parent.url) {
+                scope.record.document.url = scope.parent.url + '/' + url;
+            } else {
+                scope.record.document.url = url;
+            }
+        };
+
         scope.record = {
-            document: {}
+            document: {
+                type: 'Page',
+                url: undefined
+            },
+            page: {
+                template: 'Standard'
+            }
         };
 
         scope.parent = 0;
@@ -51,8 +66,16 @@
         };
 
         scope.$watch('parent', function (item) {
-            if (!!item && scope.record.document.url === undefined) {
-                scope.record.document.url = item.url + '/';
+            if (!!item && item.url) {
+                rewriteUrl();
+            } else if (item && item.id === 0) {
+                rewriteUrl();
+            }
+        });
+
+        scope.$watch('record.document.name', function (name) {
+            if (name) {
+                rewriteUrl();
             }
         });
     };

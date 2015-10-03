@@ -10,7 +10,8 @@
                 controller: 'DocumentListController',
                 resolve: {
                     DocumentList: function () { return {}; },
-                    document: function () { return {}; }
+                    document: function () { return {}; },
+                    Permissions: function () { return {}; }
                 },
                 data: {
                     tab: false,
@@ -25,6 +26,15 @@
                 resolve: {
                     DocumentList: ['Documents', function (Documents) {
                         return Documents.getAll();
+                    }],
+                    Permissions: ['DocumentResource', '$q', function (DocumentResource, q) {
+                        var deferred = q.defer();
+                        DocumentResource.options().$promise.then(function (response) {
+                            deferred.resolve(response);
+                        }, function () {
+                            deferred.reject();
+                        });
+                        return deferred.promise;
                     }]
                 },
                 data: {
@@ -155,7 +165,8 @@
                 },
                 resolve: {
                     UserList: function () { return {}; },
-                    user: function () { return {}; }
+                    user: function () { return {}; },
+                    Permissions: function () { return {}; }
                 }
             });
 
@@ -166,6 +177,15 @@
                 resolve: {
                     UserList: ['Users', function (Users) {
                         return Users.getAll();
+                    }],
+                    Permissions: ['UserResource', '$q', function (UserResource, q) {
+                        var deferred = q.defer();
+                        UserResource.options().$promise.then(function (response) {
+                            deferred.resolve(response);
+                        }, function () {
+                            deferred.reject();
+                        });
+                        return deferred.promise;
                     }]
                 },
                 data: {

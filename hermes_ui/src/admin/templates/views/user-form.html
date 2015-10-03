@@ -18,6 +18,12 @@
                 <p ng-show="userForm.password.$invalid" class="help-block">{{ errors.password }}</p>
             </div>
 
+            <div class="form-group" ng-class="{'has-error': userForm.confirmpassword.$invalid}" ng-show="record.password">
+                <label>Confirm Password</label>
+                <input type="password" class="form-control" name="confirmpassword" ng-model="confirm_password" ng-pattern="record.password">
+                <p ng-show="userForm.confirmpassword.$invalid" class="help-block">{{ errors.confirmpassword }}</p>
+            </div>
+
             <div class="form-group" ng-class="{'has-error': userForm.first_name.$invalid}">
                 <label>First Name</label>
                 <input type="text" class="form-control" name="first_name" ng-model="record.first_name">

@@ -24,13 +24,18 @@
         scope.record = {};
         scope.clearFile = false;
 
+        scope.savingForm = false;
+        scope.progressPercentage = 0;
+
         scope.submit = function () {
             var promises = [];
             scope.errors = {};
+            scope.savingForm = true;
 
             if (scope.file) {
 
                 if (scope.file[0].type !== 'application/zip' && !scope.file[0].name.match(/\.zip$/)) {
+                    scope.savingForm = false;
                     scope.migrationForm.file.$setValidity('file', false);
                     return false;
                 }
@@ -56,7 +61,8 @@
                         fields: fields
                     });
 
-                    file.progress(function () {
+                    file.progress(function (evt) {
+                        scope.progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
                     });
 
                     file.then(function ok (response) {
@@ -72,9 +78,12 @@
 
             $q.all(promises).then(function ok () {
                 MigrationUploadResource.post(scope.record, function ok () {
+                    scope.savingForm = false;
                     $state.go('document.list');
                 });
             }, function fail () {
+                scope.savingForm = false;
+                scope.progressPercentage = 0;
                 scope.clearFile = true;
             });
 

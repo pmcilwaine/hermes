@@ -171,12 +171,13 @@ class MigrationUploadJob(Job):
             raise InvalidJobError('Invalid Job ID: {0}'.format(job_id))
 
         job.set(status='running')
+        message = job.message
 
         # get archive file
         archive_key = self.bucket.get_key(job.message['file']['key'])
         if not archive_key:
-            job.message['reason'] = 'Cannot find the archive in the S3 bucket.'
-            job.set(status='failed', message=job.message)
+            message['reason'] = 'Cannot find the archive in the S3 bucket.'
+            job.set(status='failed', message=message)
             raise InvalidJobError('Cannot find archive in S3 bucket.')
 
         fp = StringIO(archive_key.get_contents_as_string())
@@ -185,13 +186,13 @@ class MigrationUploadJob(Job):
         try:
             manifest_content = MigrationUploadJob._get_manifest(handle)
         except Exception:
-            job.message['reason'] = 'Unable to retrieve manifest in archive'
-            job.set(status='failed', message=job.message)
+            message['reason'] = 'Unable to retrieve manifest in archive'
+            job.set(status='failed', message=message)
             raise InvalidJobError('Unable to retrieve manifest')
 
         if not MigrationUploadJob._validate_manifest(manifest_content['documents']):
-            job.message['reason'] = 'Manifest found is not valid'
-            job.set(status='failed', message=job.message)
+            message['reason'] = 'Manifest found is not valid'
+            job.set(status='failed', message=message)
             raise InvalidJobError('Manifest is not valid')
 
         for document in manifest_content['documents']:

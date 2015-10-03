@@ -34,7 +34,6 @@ def navigation(document, depth=None):
              (Document.q.published == True))
 
     if depth == NAVIGATION_CHILDREN and (document and not isinstance(document['document'], Undefined)):
-        print document
         query &= (LIKE(Document.q.path, '{0}%'.format(document['document']['path'])))
 
     results = []

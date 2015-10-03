@@ -13,7 +13,7 @@
             </div>
 
             <div class="form-group" ng-class="{'has-error': pageForm.menutitle.$invalid}">
-                <label>Menutitle</label>
+                <label>Menu Title</label>
                 <input type="text" class="form-control" name="menutitle" ng-model="record.document.menutitle">
                 <p ng-show="documentForm.menutitle.$invalid" class="help-block">{{ errors.menutitle }}</p>
             </div>
@@ -38,7 +38,7 @@
 
             <div class="form-group" ng-class="{'has-error': pageForm.content.$invalid}">
                 <label>Content</label>
-                <textarea id="page_content_field" ui-tinymce="{theme: 'modern', theme_url: '/assets/admin/tinymce/themes/modern/theme.min.js', skin_url: '/assets/admin/tinymce/skins/lightgray', height: 400}" class="form-control" ng-model="record.page.content" name="content"></textarea>
+                <textarea id="page_content_field" ui-tinymce="{plugins: 'paste', paste_as_text: true, theme: 'modern', theme_url: '/assets/admin/tinymce/themes/modern/theme.min.js', skin_url: '/assets/admin/tinymce/skins/lightgray', height: 400}" class="form-control" ng-model="record.page.content" name="content"></textarea>
                 <p ng-show="pageForm.content.$invalid" class="help-block">{{ errors.content }}</p>
             </div>
 
@@ -54,8 +54,8 @@
                 </label>
             </div>
 
-            <button type="submit" class="btn btn-primary" accesskey="s">Save</button>
-            <button type="button" ui-sref="document.list" class="btn btn-default">Cancel</button>
+            <button type="submit" class="btn btn-primary" accesskey="s" ng-disabled="savingForm">Save</button>
+            <button type="button" ui-sref="document.list" class="btn btn-default" ng-disabled="savingForm">Cancel</button>
 
         </form>
 

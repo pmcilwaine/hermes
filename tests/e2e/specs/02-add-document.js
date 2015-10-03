@@ -24,6 +24,7 @@ describe('Add Document', function () {
 
                 helpers.waitUntilDisplayed(by.model('record.document.name')).sendKeys(browser.params.add_page.name)
                 helpers.waitUntilDisplayed(by.model('record.document.menutitle')).sendKeys(browser.params.add_page.menutitle);
+                helpers.waitUntilDisplayed(by.model('record.document.url')).clear();
                 helpers.waitUntilDisplayed(by.model('record.document.url')).sendKeys(browser.params.add_page.url);
 
                 var type = helpers.waitUntilDisplayed(by.model('record.document.type'));
@@ -270,6 +271,7 @@ describe('Add Document', function () {
 
                 name.sendKeys(browser.params.add_page.name);
                 menutitle.sendKeys(browser.params.add_page.menutitle);
+                url.clear();
                 url.sendKeys(browser.params.add_page.url);
 
                 helpers.selectDropdown(type, browser.params.add_page.type);

@@ -12,6 +12,12 @@
                 <p ng-show="fileForm.name.$invalid" class="help-block">{{ errors.name }}</p>
             </div>
 
+            <div class="form-group" ng-class="{'has-error': fileForm.menutitle.$invalid}">
+                <label>Menu Title</label>
+                <input type="text" class="form-control" name="menutitle" ng-model="record.document.menutitle">
+                <p ng-show="fileForm.menutitle.$invalid" class="help-block">{{ errors.menutitle }}</p>
+            </div>
+
             <div class="form-group" ng-class="{'has-error': fileForm.parent.$invalid}">
                 <label>Parent</label>
                 <select class="form-control" name="parent" ng-model="parent" ng-options="document.name for document in document_list"></select>
@@ -27,6 +33,7 @@
             <div class="form-group" ng-class="{'has-error': multipageForm.file.$invalid}">
                 <label>File</label>
                 <input type="file" name="file" accept=".zip" ngf-select="" ng-model="file" hermes-file-field clear-file="clearFile">
+                <progressbar value="progressPercentage" max="100" ng-show="savingForm"></progressbar>
                 <p ng-show="multipageForm.file.$invalid" class="help-block">Must be a ZIP file</p>
             </div>
 
@@ -42,8 +49,8 @@
                 </label>
             </div>
 
-            <button type="submit" class="btn btn-primary" accesskey="s">Save</button>
-            <button type="button" ui-sref="document.list" class="btn btn-default">Cancel</button>
+            <button type="submit" class="btn btn-primary" accesskey="s" ng-disabled="savingForm">Save</button>
+            <button type="button" ui-sref="document.list" class="btn btn-default" ng-disabled="savingForm">Cancel</button>
 
         </form>
 
