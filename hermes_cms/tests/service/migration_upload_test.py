@@ -13,6 +13,12 @@ from hermes_cms.service.job import InvalidJobError
 from hermes_cms.service.migration_upload import MigrationUploadJob
 
 
+@pytest.fixture(autouse=True)
+def mock_s3_region(monkeypatch):
+    # moto doesn't mock this
+    monkeypatch.setattr("boto.s3.bucket.Bucket.get_location", lambda self: '')
+
+
 def side_effect(value):
     return {
         'database': MagicMock(),
