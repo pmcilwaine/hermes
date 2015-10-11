@@ -25,11 +25,8 @@ class MigrationDownloadJob(Job):
         database_url = str(self.registry.get('database').get('database'))
         sqlhub.processConnection = connectionForURI(database_url)
 
-        conn = boto.connect_s3()
-        file_conn = boto.connect_s3()
-
-        self.bucket = conn.get_bucket(self.registry.get('storage').get('bucket_name'))
-        self.files_bucket = file_conn.get_bucket(self.registry.get('files').get('bucket_name'))
+        self.bucket = None
+        self.files_bucket = None
 
     # pylint: disable=no-self-use
     def _get_document_query(self, documents):
@@ -122,6 +119,12 @@ class MigrationDownloadJob(Job):
 
         if not message:
             return
+
+        conn = boto.connect_s3()
+        file_conn = boto.connect_s3()
+
+        self.bucket = conn.get_bucket(self.registry.get('storage').get('bucket_name'))
+        self.files_bucket = file_conn.get_bucket(self.registry.get('files').get('bucket_name'))
 
         contents = json.loads(message.get_body())
 
