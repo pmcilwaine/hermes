@@ -6,8 +6,8 @@
         scope.jobs = jobs.jobs;
 
         scope.jobs.forEach(function (job) {
-            job.created = moment(job.created, 'YYYY-MM-DD HH:mm:ss').add(10,
-                'hours').format('MMMM Do YYYY, h:mm:ss a');
+            job.created = moment.utc(job.created,
+                'YYYY-MM-DD HH:mm:ss').tz('Australia/Sydney').format('MMMM Do YYYY, h:mm:ss a');
         });
 
         scope.download = function (index) {

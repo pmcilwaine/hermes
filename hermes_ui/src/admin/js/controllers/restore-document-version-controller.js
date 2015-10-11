@@ -6,8 +6,8 @@
         scope.documents = DocumentList.documents;
 
         scope.documents.forEach(function (document) {
-            document.created = moment(document.created, 'YYYY-MM-DD HH:mm:ss').add(10,
-                'hours').format('MMMM Do YYYY, h:mm:ss a');
+            document.created = moment.utc(document.created,
+                'YYYY-MM-DD HH:mm:ss').tz('Australia/Sydney').format('MMMM Do YYYY, h:mm:ss a');
         });
 
         scope.restoreVersion = function (index) {
