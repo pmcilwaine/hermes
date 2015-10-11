@@ -39,6 +39,11 @@ class MultipageJob(Job):
 
         conn = boto.connect_s3()
         bucket = conn.get_bucket(self.registry.get('files').get('bucket_name'))
+        bucket_location = bucket.get_location()
+        if bucket_location:
+            conn = boto.s3.connect_to_region(bucket_location)
+            bucket = conn.get_bucket(self.registry.get('files').get('bucket_name'))
+
         contents = json.loads(message.get_body())
 
         job_id = str(contents['Message'])
