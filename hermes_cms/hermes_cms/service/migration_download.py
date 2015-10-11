@@ -126,6 +126,16 @@ class MigrationDownloadJob(Job):
         self.bucket = conn.get_bucket(self.registry.get('storage').get('bucket_name'))
         self.files_bucket = file_conn.get_bucket(self.registry.get('files').get('bucket_name'))
 
+        bucket_location = self.bucket.get_location()
+        if bucket_location:
+            conn = boto.s3.connect_to_region(bucket_location)
+            self.bucket = conn.get_bucket(self.registry.get('storage').get('bucket_name'))
+
+        bucket_location = self.files_bucket.get_location()
+        if bucket_location:
+            file_conn = boto.s3.connect_to_region(bucket_location)
+            self.files_bucket = file_conn.get_bucket(self.registry.get('files').get('bucket_name'))
+
         contents = json.loads(message.get_body())
 
         job_id = str(contents['Message'])

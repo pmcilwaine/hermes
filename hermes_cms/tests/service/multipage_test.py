@@ -15,6 +15,12 @@ from hermes_cms.service.multipage import MultipageJob
 zip_fileb64 = 'UEsDBAoAAAAAABFk+UZxwozlFQAAABUAAAAKABwAaW5kZXguaHRtbFVUCQADQfWyVUH1slV1eAsAAQT1AQAABBQAAAA8aDE+SGVsbG8gV29ybGQ8L2gxPgpQSwECHgMKAAAAAAARZPlGccKM5RUAAAAVAAAACgAYAAAAAAABAAAApIEAAAAAaW5kZXguaHRtbFVUBQADQfWyVXV4CwABBPUBAAAEFAAAAFBLBQYAAAAAAQABAFAAAABZAAAAAAA='
 
 
+@pytest.fixture(autouse=True)
+def mock_s3_region(monkeypatch):
+    # moto doesn't mock this
+    monkeypatch.setattr("boto.s3.bucket.Bucket.get_location", lambda self: '')
+
+
 def side_effect(value):
     return {
         'database': MagicMock(),
