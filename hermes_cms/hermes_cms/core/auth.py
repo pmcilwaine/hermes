@@ -18,7 +18,7 @@ class Auth(object):
         @param password: The password as plaintext to use.
         @return User|None
         """
-        return User.selectBy(email=email, password=User.hash_password(password)).getOne(None)
+        return User.selectBy(email=email, password=User.hash_password(password), archived=False).getOne(None)
 
     @staticmethod
     def create_session(user):
